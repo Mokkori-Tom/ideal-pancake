@@ -53,7 +53,7 @@ curl -L -o "%cd%\nvim-win64.zip"  "https://github.com/neovim/neovim/releases/dow
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\nvim-win64.zip"
 echo export XDG_CONFIG_HOME='%cd%\.config' >> %cd%\.bashrc
 echo export PATH='%cd%\nvim-win64\bin':$PATH >> %cd%\.bashrc
-echo export vim.cmd('colorscheme vim') >> %cd%\.config\nvim\init.lua
+echo vim.cmd('colorscheme vim') >> %cd%\.config\nvim\init.lua
 
 :::: Python ::::
 :: Pythonのダウンロードと解凍、環境設定
