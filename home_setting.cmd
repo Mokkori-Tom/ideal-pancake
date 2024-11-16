@@ -47,9 +47,9 @@ echo PROMPT_COMMAND="history -a; history -n" >> %cd%\PortableGit\etc\bash.bashrc
 
 :::: Neovim ::::
 :: Neovimのダウンロードと解凍、PATH設定
-curl -L -o "%cd%\nvim-win64.zip"  "https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-win64.zip"
-"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\nvim-win64.zip"
-echo export PATH='%cd%\nvim-win64\bin':$PATH >> %cd%\.bashrc
+::curl -L -o "%cd%\nvim-win64.zip"  "https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-win64.zip"
+::"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\nvim-win64.zip"
+::echo export PATH='%cd%\nvim-win64\bin':$PATH >> %cd%\.bashrc
 
 :::: Python ::::
 :: Pythonのダウンロードと解凍、環境設定
@@ -98,7 +98,7 @@ echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> %cd%\.bashrc
 :: 不要なダウンロードファイルを削除
 mkdir %cd%\Download
 del %cd%\PortableGit-2.47.0.2-64-bit.7z.exe
-del %cd%\nvim-win64.zip
+::del %cd%\nvim-win64.zip
 del %cd%\python-3.13.0-embed-amd64.zip
 del %cd%\node-v22.11.0-win-x64.zip
 del %cd%\cmake-3.31.0-windows-x86_64.zip
