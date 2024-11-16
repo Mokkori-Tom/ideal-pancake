@@ -90,7 +90,7 @@ curl -L -o "%cd%\cmake-3.31.0-windows-x86_64.zip"  "https://github.com/Kitware/C
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\cmake-3.31.0-windows-x86_64.zip"
 echo export PATH='%cd%\cmake-3.31.0-windows-x86_64\bin':$PATH >> %cd%\.bashrc
 
-::::PortableGit_binのパスは常に最下に::::
+::::PortableGit\usr\binのパスは常に最下に::::
 echo #PortableGit_binのパスは常に最下に >> %cd%\.bashrc
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> %cd%\.bashrc
 
