@@ -19,7 +19,8 @@ type nul > %cd%\.pythonrc.py
 type nul > %cd%\.bash_history
 type nul > %cd%\.bashrc
 mkdir %cd%\.config\nvim
-type nul > %cd%\.config\nvim\init.lua
+type nul > %cd%\.config\nvim\init.vim
+type nul > %cd%\.config\nvim\_init.lua
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
