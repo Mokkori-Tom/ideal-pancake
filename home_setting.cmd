@@ -106,7 +106,7 @@ echo #PortableGit_binのパスは常に最下に >> %cd%\.bashrc
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> %cd%\.bashrc
 
 ::::vim_pulgin_setting::::
-%curl -L -o "%cd%\cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+curl -L -o "%cd%\cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 setlocal enabledelayedexpansion
 (
     echo -- Plugin manager setup
