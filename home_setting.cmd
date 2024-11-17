@@ -127,7 +127,7 @@ setlocal enabledelayedexpansion
     echo(
     echo -- init.lua
     echo vim.cmd [[filetype plugin on]]
-) > "%cd%\.config\nvim\init.lua"
+) >> "%cd%\.config\nvim\init.lua"
 echo init.lua has been written successfully
 
 :::: ダウンロード後のクリーンアップ ::::
