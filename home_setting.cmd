@@ -19,8 +19,8 @@ type nul > %cd%\.pythonrc.py
 type nul > %cd%\.bash_history
 type nul > %cd%\.bashrc
 mkdir %cd%\.config\nvim
-type nul > %cd%\.config\nvim\init.vim
-type nul > %cd%\.config\nvim\_init.lua
+type nul > %cd%\.config\nvim\_init.vim
+type nul > %cd%\.config\nvim\init.lua
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
@@ -54,7 +54,6 @@ curl -L -o "%cd%\nvim-win64.zip"  "https://github.com/neovim/neovim/releases/dow
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\nvim-win64.zip"
 echo export XDG_CONFIG_HOME='%cd%\.config' >> %cd%\.bashrc
 echo export PATH='%cd%\nvim-win64\bin':$PATH >> %cd%\.bashrc
-echo vim.cmd('colorscheme vim') >> %cd%\.config\nvim\init.lua
 
 :::: Python ::::
 :: Pythonのダウンロードと解凍、環境設定
@@ -105,6 +104,31 @@ echo export PATH='%cd%\cmake-3.31.0-windows-x86_64\bin':$PATH >> %cd%\.bashrc
 ::::PortableGit\usr\binのパスは常に最下に::::
 echo #PortableGit_binのパスは常に最下に >> %cd%\.bashrc
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> %cd%\.bashrc
+
+::::vim_pulgin_setting::::
+%curl -L -o "%cd%\cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+setlocal enabledelayedexpansion
+(
+    echo -- Plugin manager setup
+    echo local plug = vim.fn['plug#begin']('~/.vim/plugged')
+    echo(
+    echo -- List your plugins here
+    echo vim.fn['plug#']('vim-denops/denops.vim')
+    echo vim.fn['plug#']('vim-denops/denops-helloworld.vim')
+    echo vim.fn['plug#']('preservim/nerdcommenter')
+    echo(
+    echo vim.fn['plug#end']()
+    echo(
+    echo -- 行番号を表示
+    echo vim.opt.number = true
+    echo(
+    echo -- カラースキームの設定
+    echo vim.cmd('colorscheme vim')
+    echo(
+    echo -- init.lua
+    echo vim.cmd [[filetype plugin on]]
+) > "%cd%\.config\nvim\init.lua"
+echo init.lua has been written successfully
 
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
