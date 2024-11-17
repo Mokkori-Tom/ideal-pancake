@@ -82,6 +82,13 @@ curl -L -o "%cd%\python-3130\get-pip.py"  "https://bootstrap.pypa.io/pip/get-pip
 "%cd%\python-3130\python.exe" "%cd%\python-3130\get-pip.py"
 echo export PATH='%cd%\python-3130\Scripts':$PATH >> %cd%\.bashrc
 
+::::Deno_JS ::::
+:: Deno_jsのダウンロードと解凍、PATH設定
+curl -L -o "%cd%\deno-x86_64-pc-windows-msvc.zip"  "https://github.com/denoland/deno/releases/download/v2.0.6/deno-x86_64-pc-windows-msvc.zip"
+mkdir %cd%\deno-206
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\deno-x86_64-pc-windows-msvc.zip"  -d "%cd%\deno-206"
+echo export PATH='%cd%\deno-206':$PATH >> %cd%\.bashrc
+
 :::: NodeJS ::::
 :: Node.jsのダウンロードと解凍、PATH設定
 curl -L -o "%cd%\node-v22.11.0-win-x64.zip"  "https://nodejs.org/dist/v22.11.0/node-v22.11.0-win-x64.zip"
@@ -104,6 +111,7 @@ mkdir %cd%\Download
 del %cd%\PortableGit-2.47.0.2-64-bit.7z.exe
 del %cd%\nvim-win64.zip
 del %cd%\python-3.13.0-embed-amd64.zip
+del %cd%\deno-x86_64-pc-windows-msvc.zip
 del %cd%\node-v22.11.0-win-x64.zip
 del %cd%\cmake-3.31.0-windows-x86_64.zip
 
