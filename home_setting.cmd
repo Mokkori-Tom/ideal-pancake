@@ -24,7 +24,7 @@ type nul > %cd%\.config\nvim\init.lua
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
 echo source '%cd%\.bashrc' >> %cd%\PortableGit\etc\bash.bashrc
-echo export HOME=%cd% >> %cd%\PortableGit\etc\bash.bashrc
+echo export 'HOME=%cd%' >> %cd%\PortableGit\etc\bash.bashrc
 echo export LANG=ja_JP.UTF-8 >> %cd%\PortableGit\etc\bash.bashrc
 echo export LANGUAGE=ja_JP.ja >> %cd%\PortableGit\etc\bash.bashrc
 
