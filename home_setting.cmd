@@ -106,29 +106,25 @@ echo #PortableGit_binのパスは常に最下に >> %cd%\.bashrc
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> %cd%\.bashrc
 
 ::::vim_pulgin_setting::::
-curl -L -o "%cd%\cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-setlocal enabledelayedexpansion
-(
-    echo -- Plugin manager setup
-    echo local plug = vim.fn['plug#begin']('~/.vim/plugged')
-    echo(
-    echo -- List your plugins here
-    echo vim.fn['plug#']('vim-denops/denops.vim')
-    echo vim.fn['plug#']('vim-denops/denops-helloworld.vim')
-    echo vim.fn['plug#']('preservim/nerdcommenter')
-    echo(
-    echo vim.fn['plug#end']()
-    echo(
-    echo -- 行番号を表示
-    echo vim.opt.number = true
-    echo(
-    echo -- カラースキームの設定
-    echo vim.cmd('colorscheme vim')
-    echo(
-    echo -- init.lua
-    echo vim.cmd [[filetype plugin on]]
-) >> "%cd%\.config\nvim\init.lua"
-echo init.lua has been written successfully
+curl -L -o "%cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+echo -- Plugin manager setup >> "%cd%\.config\nvim\init.lua"
+echo local plug = vim.fn['plug#begin']('~/.vim/plugged') >> "%cd%\.config\nvim\init.lua"
+echo. >> "%cd%\.config\nvim\init.lua"
+echo -- List your plugins here >> "%cd%\.config\nvim\init.lua"
+echo vim.fn['plug#']('vim-denops/denops.vim') >> "%cd%\.config\nvim\init.lua"
+echo vim.fn['plug#']('vim-denops/denops-helloworld.vim') >> "%cd%\.config\nvim\init.lua"
+echo vim.fn['plug#']('preservim/nerdcommenter') >> "%cd%\.config\nvim\init.lua"
+echo. >> "%cd%\.config\nvim\init.lua"
+echo vim.fn['plug#end']() >> "%cd%\.config\nvim\init.lua"
+echo. >> "%cd%\.config\nvim\init.lua"
+echo -- 行番号を表示 >> "%cd%\.config\nvim\init.lua"
+echo vim.opt.number = true >> "%cd%\.config\nvim\init.lua"
+echo. >> "%cd%\.config\nvim\init.lua"
+echo -- カラースキームの設定 >> "%cd%\.config\nvim\init.lua"
+echo vim.cmd('colorscheme vim') >> "%cd%\.config\nvim\init.lua"
+echo. >> "%cd%\.config\nvim\init.lua"
+echo -- init.lua >> "%cd%\.config\nvim\init.lua"
+echo vim.cmd [[filetype plugin on]] >> "%cd%\.config\nvim\init.lua"
 
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
