@@ -76,8 +76,8 @@ move /y "%cd%\python-313\python313_temp._pth" "%cd%\python-313\python313._pth"
 endlocal
 
 :: pipをダウンロードしてインストール
-curl --ssl-no-revoke -L -o "%cd%\python-3130\get-pip.py"  "https://bootstrap.pypa.io/pip/get-pip.py"
-"%cd%\python-3130\python.exe" "%cd%\python-3130\get-pip.py"
+curl --ssl-no-revoke -L -o "%cd%\python-313\get-pip.py"  "https://bootstrap.pypa.io/pip/get-pip.py"
+"%cd%\python-313\python.exe" "%cd%\python-313\get-pip.py"
 echo export PATH='%cd%\python-313\Scripts':$PATH >> "%cd%\.bashrc"
 
 ::::Deno_JS ::::
