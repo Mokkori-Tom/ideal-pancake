@@ -60,7 +60,7 @@ echo export PATH='%cd%\nvim-win64\bin':$PATH >> "%cd%\.bashrc"
 curl --ssl-no-revoke -L -o "%cd%\python-3.13.0-embed-amd64.zip"  "https://www.python.org/ftp/python/3.13.0/python-3.13.0-embed-amd64.zip"
 mkdir "%cd%\python-313"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\python-3.13.0-embed-amd64.zip" -d "%cd%\python-313"
-echo export PATH='%cd%\python-3130':$PATH >> "%cd%\.bashrc"
+echo export PATH='%cd%\python-313':$PATH >> "%cd%\.bashrc"
 
 :: Python import siteを有効化
 setlocal enabledel /Qayedexpansion
@@ -78,7 +78,7 @@ endlocal
 :: pipをダウンロードしてインストール
 curl --ssl-no-revoke -L -o "%cd%\python-3130\get-pip.py"  "https://bootstrap.pypa.io/pip/get-pip.py"
 "%cd%\python-3130\python.exe" "%cd%\python-3130\get-pip.py"
-echo export PATH='%cd%\python-3130\Scripts':$PATH >> "%cd%\.bashrc"
+echo export PATH='%cd%\python-313\Scripts':$PATH >> "%cd%\.bashrc"
 
 ::::Deno_JS ::::
 :: Deno_jsのダウンロードと解凍、PATH設定
