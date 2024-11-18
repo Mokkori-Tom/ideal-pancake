@@ -1,7 +1,7 @@
 chcp 65001
 
 :: Git for WindowsのPortableバージョンをダウンロード
-curl -L -o "%cd%\PortableGit-2.47.0.2-64-bit.7z.exe" https://github.com/git-for-windows/git/releases/download/v2.47.0.windows.2/PortableGit-2.47.0.2-64-bit.7z.exe
+curl --ssl-no-revoke -L -o "%cd%\PortableGit-2.47.0.2-64-bit.7z.exe" "https://github.com/git-for-windows/git/releases/download/v2.47.0.windows.2/PortableGit-2.47.0.2-64-bit.7z.exe"
 
 echo 現在のディレクトリを選択してください。
 :: PortableGitのインストーラーを実行
@@ -15,98 +15,96 @@ set newpath=;%cd%\PortableGit\bin
 setx PATH "%oldpath%%newpath%"
 
 :: 必要な設定ファイルを作成
-type nul > %cd%\.pythonrc.py
-type nul > %cd%\.bash_history
-type nul > %cd%\.bashrc
-mkdir %cd%\.config\nvim
-type nul > %cd%\.config\nvim\_init.vim
-type nul > %cd%\.config\nvim\init.lua
+type nul > "%cd%\.pythonrc.py"
+type nul > "%cd%\.bash_history"
+type nul > ""%cd%\.bashrc""
+mkdir "%cd%\.config\nvim"
+type nul > "%cd%\.config\nvim\_init.vim"
+type nul > "%cd%\.config\nvim\init.lua"
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
-echo source '%cd%\.bashrc' >> %cd%\PortableGit\etc\bash.bashrc
-echo export 'HOME=%cd%' >> %cd%\PortableGit\etc\bash.bashrc
-echo export LANG=ja_JP.UTF-8 >> %cd%\PortableGit\etc\bash.bashrc
-echo export LANGUAGE=ja_JP.ja >> %cd%\PortableGit\etc\bash.bashrc
+echo source '"%cd%\.bashrc"' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo export 'HOME=%cd%' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo export LANG=ja_JP.UTF-8 >> "%cd%\PortableGit\etc\bash.bashrc"
+echo export LANGUAGE=ja_JP.ja >> "%cd%\PortableGit\etc\bash.bashrc"
 
 :: コマンド履歴の設定
-echo export HISTTIMEFORMAT='%%F %%T ' >> %cd%\PortableGit\etc\bash.bashrc
-echo export HISTFILE="$HOME\.bash_history" >> %cd%\PortableGit\etc\bash.bashrc
+echo export HISTTIMEFORMAT='%%F %%T ' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo export HISTFILE="$HOME\.bash_history" >> "%cd%\PortableGit\etc\bash.bashrc"
 
 :: プロンプトに日時と色を追加
-echo export PS1='\[\e[32m\][\D{%%Y-%%m-%%d %%H:%%M:%%S}]\[\e[0m\] \[\e[34m\]\u@\h\[\e[0m\]:\[\e[33m\]\w\[\e[0m\]\$ ' >> %cd%\PortableGit\etc\bash.bashrc
+echo export PS1='\[\e[32m\][\D{%%Y-%%m-%%d %%H:%%M:%%S}]\[\e[0m\] \[\e[34m\]\u@\h\[\e[0m\]:\[\e[33m\]\w\[\e[0m\]\$ ' >> "%cd%\PortableGit\etc\bash.bashrc"
 
 :: Python関連設定を追加
-echo export PYTHONSTARTUP="$HOME\.pythonrc.py" >> %cd%\PortableGit\etc\bash.bashrc
+echo export PYTHONSTARTUP="$HOME\.pythonrc.py" >> "%cd%\PortableGit\etc\bash.bashrc"
 
 :: エイリアスの設定を追加
-echo alias ll='ls -la' >> %cd%\PortableGit\etc\bash.bashrc
-echo alias edge='"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"' >> %cd%\PortableGit\etc\bash.bashrc
-echo alias exp='"C:\Windows\explorer.exe"' >> %cd%\PortableGit\etc\bash.bashrc
+echo alias ll='ls -la' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo alias edge='"C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo alias exp='"C:\Windows\explorer.exe"' >> "%cd%\PortableGit\etc\bash.bashrc"
 
 :: 履歴保存設定
-echo shopt -s histappend >> %cd%\PortableGit\etc\bash.bashrc
-echo PROMPT_COMMAND="history -a; history -n" >> %cd%\PortableGit\etc\bash.bashrc
+echo shopt -s histappend >> "%cd%\PortableGit\etc\bash.bashrc"
+echo PROMPT_COMMAND="history -a; history -n" >> "%cd%\PortableGit\etc\bash.bashrc"
 
 :::: Neovim ::::
 :: Neovimのダウンロードと解凍、PATH設定
-curl -L -o "%cd%\nvim-win64.zip"  "https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-win64.zip"
+curl --ssl-no-revoke -L -o "%cd%\nvim-win64.zip"  "https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-win64.zip"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\nvim-win64.zip"
-echo export XDG_CONFIG_HOME='%cd%\.config' >> %cd%\.bashrc
-echo export PATH='%cd%\nvim-win64\bin':$PATH >> %cd%\.bashrc
+echo export XDG_CONFIG_HOME='%cd%\.config' >> "%cd%\.bashrc"
+echo export PATH='%cd%\nvim-win64\bin':$PATH >> "%cd%\.bashrc"
 
 :::: Python ::::
 :: Pythonのダウンロードと解凍、環境設定
-curl -L -o "%cd%\python-3.13.0-embed-amd64.zip"  "https://www.python.org/ftp/python/3.13.0/python-3.13.0-embed-amd64.zip"
-mkdir "%cd%\python-3130"
-"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\python-3.13.0-embed-amd64.zip" -d "%cd%\python-3130"
-echo export PATH='%cd%\python-3130':$PATH >> %cd%\.bashrc
+curl --ssl-no-revoke -L -o "%cd%\python-3.13.0-embed-amd64.zip"  "https://www.python.org/ftp/python/3.13.0/python-3.13.0-embed-amd64.zip"
+mkdir "%cd%\python-313"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\python-3.13.0-embed-amd64.zip" -d "%cd%\python-313"
+echo export PATH='%cd%\python-3130':$PATH >> "%cd%\.bashrc"
 
 :: Python import siteを有効化
-move %cd%\python-3130\python313._pth %cd%\python-3130\python313._pthh
+setlocal enabledel /Qayedexpansion
 
-:: 指定文字列の置換
-set BEFORE_STRING=#import site
-set AFTER_STRING=import site
-set INPUT_FILE=%cd%\python-3130\python313._pthh
-set OUTPUT_FILE=%cd%\python-3130\python313._pth
-setlocal enabledelayedexpansion
-for /f "delims=" %%a in (%INPUT_FILE%) do (
-set line=%%a
-echo !line:%BEFORE_STRING%=%AFTER_STRING%!>>%OUTPUT_FILE%
-)
-del %cd%\python-3130\python313._pthh
+echo python313.zip > "%cd%\python-313\python313_temp._pth"
+echo . >> "%cd%\python-313\python313_temp._pth"
+echo. >> "%cd%\python-313\python313_temp._pth"
+echo # Uncomment to run site.main() automatically >> "%cd%\python-313\python313_temp._pth"
+echo import site >> "%cd%\python-313\python313_temp._pth"
+
+move /y "%cd%\python-313\python313_temp._pth" "%cd%\python-313\python313._pth"
+
+endlocal
 
 :: pipをダウンロードしてインストール
-curl -L -o "%cd%\python-3130\get-pip.py"  "https://bootstrap.pypa.io/pip/get-pip.py"
+curl --ssl-no-revoke -L -o "%cd%\python-3130\get-pip.py"  "https://bootstrap.pypa.io/pip/get-pip.py"
 "%cd%\python-3130\python.exe" "%cd%\python-3130\get-pip.py"
-echo export PATH='%cd%\python-3130\Scripts':$PATH >> %cd%\.bashrc
+echo export PATH='%cd%\python-3130\Scripts':$PATH >> "%cd%\.bashrc"
 
 ::::Deno_JS ::::
 :: Deno_jsのダウンロードと解凍、PATH設定
-curl -L -o "%cd%\deno-x86_64-pc-windows-msvc.zip"  "https://github.com/denoland/deno/releases/download/v2.0.6/deno-x86_64-pc-windows-msvc.zip"
-mkdir %cd%\deno-206
+curl --ssl-no-revoke -L -o "%cd%\deno-x86_64-pc-windows-msvc.zip"  "https://github.com/denoland/deno/releases/download/v2.0.6/deno-x86_64-pc-windows-msvc.zip"
+mkdir "%cd%\deno-206"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\deno-x86_64-pc-windows-msvc.zip"  -d "%cd%\deno-206"
-echo export PATH='%cd%\deno-206':$PATH >> %cd%\.bashrc
+echo export PATH='%cd%\deno-206':$PATH >> "%cd%\.bashrc"
 
 :::: NodeJS ::::
 :: Node.jsのダウンロードと解凍、PATH設定
-curl -L -o "%cd%\node-v22.11.0-win-x64.zip"  "https://nodejs.org/dist/v22.11.0/node-v22.11.0-win-x64.zip"
+curl --ssl-no-revoke -L -o "%cd%\node-v22.11.0-win-x64.zip"  "https://nodejs.org/dist/v22.11.0/node-v22.11.0-win-x64.zip"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\node-v22.11.0-win-x64.zip"
-echo export PATH='%cd%\node-v22.11.0-win-x64':$PATH >> %cd%\.bashrc
+echo export PATH='%cd%\node-v22.11.0-win-x64':$PATH >> "%cd%\.bashrc"
 
 :::: CMake ::::
 :: CMakeのダウンロードと解凍、PATH設定
-curl -L -o "%cd%\cmake-3.31.0-windows-x86_64.zip"  "https://github.com/Kitware/CMake/releases/download/v3.31.0/cmake-3.31.0-windows-x86_64.zip"
+curl --ssl-no-revoke -L -o "%cd%\cmake-3.31.0-windows-x86_64.zip"  "https://github.com/Kitware/CMake/releases/download/v3.31.0/cmake-3.31.0-windows-x86_64.zip"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\cmake-3.31.0-windows-x86_64.zip"
-echo export PATH='%cd%\cmake-3.31.0-windows-x86_64\bin':$PATH >> %cd%\.bashrc
+echo export PATH='%cd%\cmake-3.31.0-windows-x86_64\bin':$PATH >> "%cd%\.bashrc"
 
 ::::PortableGit\usr\binのパスは常に最下に::::
-echo #PortableGit_binのパスは常に最下に >> %cd%\.bashrc
-echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> %cd%\.bashrc
+echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
+echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
 
 ::::vim_pulgin_setting::::
-curl -L -o "%cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
+curl --ssl-no-revoke -L -o "%cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
 echo -- Plugin manager setup >> "%cd%\.config\nvim\init.lua"
 echo local plug = vim.fn['plug#begin']('~/.vim/plugged') >> "%cd%\.config\nvim\init.lua"
 echo. >> "%cd%\.config\nvim\init.lua"
@@ -128,13 +126,13 @@ echo vim.cmd [[filetype plugin on]] >> "%cd%\.config\nvim\init.lua"
 
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
-mkdir %cd%\Download
-del %cd%\PortableGit-2.47.0.2-64-bit.7z.exe
-del %cd%\nvim-win64.zip
-del %cd%\python-3.13.0-embed-amd64.zip
-del %cd%\deno-x86_64-pc-windows-msvc.zip
-del %cd%\node-v22.11.0-win-x64.zip
-del %cd%\cmake-3.31.0-windows-x86_64.zip
+mkdir "%cd%\Download"
+del /Q "%cd%\PortableGit-2.47.0.2-64-bit.7z.exe"
+del /Q "%cd%\nvim-win64.zip"
+del /Q "%cd%\python-3.13.0-embed-amd64.zip"
+del /Q "%cd%\deno-x86_64-pc-windows-msvc.zip"
+del /Q "%cd%\node-v22.11.0-win-x64.zip"
+del /Q "%cd%\cmake-3.31.0-windows-x86_64.zip"
 
 echo "インストールが終わってからエンターキーを押してね"
 pause
