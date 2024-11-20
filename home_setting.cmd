@@ -17,7 +17,7 @@ setx PATH "%oldpath%%newpath%"
 :: 必要な設定ファイルを作成
 type nul > "%cd%\.pythonrc.py"
 type nul > "%cd%\.bash_history"
-type nul > ""%cd%\.bashrc""
+type nul > "%cd%\.bashrc"
 mkdir "%cd%\nvim"
 type nul > "%cd%\nvim\_init.vim"
 type nul > "%cd%\nvim\init.lua"
