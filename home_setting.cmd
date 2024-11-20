@@ -28,7 +28,7 @@ type nul > "%cd%\nvim\init.lua"
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
 echo source '%cd%\.bashrc' >> "%cd%\PortableGit\etc\bash.bashrc"
-echo export HOME='%cd%' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo export HOME='%cd%' >> "%cd%\.bashrc"
 echo export XDG_CONFIG_HOME='%cd%' >> "%cd%\.bashrc"
 echo export XDG_DATA_HOME='%cd%\.local\share' >> "%cd%\.bashrc"
 echo export XDG_CACHE_HOME='%cd%\.local\cache' >> "%cd%\.bashrc"
