@@ -18,14 +18,15 @@ setx PATH "%oldpath%%newpath%"
 type nul > "%cd%\.pythonrc.py"
 type nul > "%cd%\.bash_history"
 type nul > ""%cd%\.bashrc""
-mkdir "%cd%\.config\nvim"
-type nul > "%cd%\.config\nvim\_init.vim"
-type nul > "%cd%\.config\nvim\init.lua"
+mkdir "%cd%\nvim"
+type nul > "%cd%\nvim\_init.vim"
+type nul > "%cd%\nvim\init.lua"
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
 echo source '"%cd%\.bashrc"' >> "%cd%\PortableGit\etc\bash.bashrc"
-echo export 'HOME=%cd%' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo export HOME='%cd%' >> "%cd%\PortableGit\etc\bash.bashrc"
+echo export XDG_CONFIG_HOME='%cd%' >> "%cd%\.bashrc"
 echo export LANG=ja_JP.UTF-8 >> "%cd%\PortableGit\etc\bash.bashrc"
 echo export LANGUAGE=ja_JP.ja >> "%cd%\PortableGit\etc\bash.bashrc"
 
@@ -52,7 +53,6 @@ echo PROMPT_COMMAND="history -a; history -n" >> "%cd%\PortableGit\etc\bash.bashr
 :: Neovimのダウンロードと解凍、PATH設定
 curl --ssl-no-revoke -L -o "%cd%\nvim-win64.zip"  "https://github.com/neovim/neovim/releases/download/v0.10.2/nvim-win64.zip"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\nvim-win64.zip"
-echo export XDG_CONFIG_HOME='%cd%\.config' >> "%cd%\.bashrc"
 echo export PATH='%cd%\nvim-win64\bin':$PATH >> "%cd%\.bashrc"
 
 :::: Python ::::
