@@ -18,13 +18,10 @@ setx PATH "%oldpath%%newpath%"
 type nul > "%cd%\.pythonrc.py"
 type nul > "%cd%\.bash_history"
 type nul > "%cd%\.bashrc"
-mkdir "%cd%\nvim"
 mkdir "%cd%\.local\share"
 mkdir "%cd%\.local\cache"
 mkdir "%cd%\.local\state"
 mkdir "%cd%\localappdata"
-type nul > "%cd%\nvim\_init.vim"
-type nul > "%cd%\nvim\init.lua"
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
