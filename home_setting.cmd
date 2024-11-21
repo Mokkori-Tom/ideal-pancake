@@ -101,11 +101,11 @@ curl --ssl-no-revoke -L -o "%cd%\node-v22.11.0-win-x64.zip"  "https://nodejs.org
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\node-v22.11.0-win-x64.zip"
 echo export PATH='%cd%\node-v22.11.0-win-x64':$PATH >> "%cd%\.bashrc"
 
-:::: CMake ::::
-:: CMakeのダウンロードと解凍、PATH設定
-curl --ssl-no-revoke -L -o "%cd%\cmake-3.31.0-windows-x86_64.zip"  "https://github.com/Kitware/CMake/releases/download/v3.31.0/cmake-3.31.0-windows-x86_64.zip"
-"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\cmake-3.31.0-windows-x86_64.zip"
-echo export PATH='%cd%\cmake-3.31.0-windows-x86_64\bin':$PATH >> "%cd%\.bashrc"
+:::: Clang ::::
+:: Clangのダウンロードと解凍、PATH設定
+curl --ssl-no-revoke -L -o "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"  "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
+tar -xf "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
+echo export PATH='%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc\bin':$PATH >> "%cd%\.bashrc"
 
 ::::PortableGit\usr\binのパスは常に最下に::::
 echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
