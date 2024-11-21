@@ -111,26 +111,8 @@ echo export PATH='%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc\bin':$PATH >> "%
 echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
 
-::::vim_pulgin_setting::::
-curl --ssl-no-revoke -L -o "%cd%\nvim-win64\share\nvim\runtime\autoload\plug.vim"  "https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim"
-echo -- Plugin manager setup >> "%cd%\nvim\init.lua"
-echo local plug = vim.fn['plug#begin']('~/.vim/plugged') >> "%cd%\nvim\init.lua"
-echo. >> "%cd%\nvim\init.lua"
-echo -- List your plugins here >> "%cd%\nvim\init.lua"
-echo vim.fn['plug#']('vim-denops/denops.vim') >> "%cd%\nvim\init.lua"
-echo vim.fn['plug#']('vim-denops/denops-helloworld.vim') >> "%cd%\nvim\init.lua"
-echo vim.fn['plug#']('preservim/nerdcommenter') >> "%cd%\nvim\init.lua"
-echo. >> "%cd%\nvim\init.lua"
-echo vim.fn['plug#end']() >> "%cd%\nvim\init.lua"
-echo. >> "%cd%\nvim\init.lua"
-echo -- 行番号を表示 >> "%cd%\nvim\init.lua"
-echo vim.opt.number = true >> "%cd%\nvim\init.lua"
-echo. >> "%cd%\nvim\init.lua"
-echo -- カラースキームの設定 >> "%cd%\nvim\init.lua"
-echo vim.cmd('colorscheme vim') >> "%cd%\nvim\init.lua"
-echo. >> "%cd%\nvim\init.lua"
-echo -- init.lua >> "%cd%\nvim\init.lua"
-echo vim.cmd [[filetype plugin on]] >> "%cd%\nvim\init.lua"
+::::nvim_pulgin_setting::::
+git clone https://github.com/LazyVim/starter %cd%/nvim
 
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
