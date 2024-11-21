@@ -111,6 +111,10 @@ echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
 ::::nvim_pulgin_setting::::
 "%cd%\PortableGit\bin\git.exe" clone "https://github.com/LazyVim/starter" "%cd%\nvim"
 
+::フォント::
+curl --ssl-no-revoke -L -o "%cd%\0xProto.zip"  "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/0xProto.zip"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\0xProto.zip"
+
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
 mkdir "%cd%\Download"
@@ -121,6 +125,7 @@ del /Q "%cd%\deno-x86_64-pc-windows-msvc.zip"
 del /Q "%cd%\node-v22.11.0-win-x64.zip"
 del /Q "%cd%\cmake-3.31.0-windows-x86_64.zip"
 del /Q "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar"
+del /Q "%cd%\0xProto.zip"
 
 echo "インストールが終わってからエンターキーを押してね"
 pause
