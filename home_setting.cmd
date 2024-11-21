@@ -112,7 +112,7 @@ echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
 
 ::::nvim_pulgin_setting::::
-git clone https://github.com/LazyVim/starter %cd%/nvim
+"%cd%\PortableGit\bin\git.exe" clone "https://github.com/LazyVim/starter" "%cd%\nvim"
 
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
