@@ -117,8 +117,9 @@ echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
 "%cd%\PortableGit\bin\git.exe" clone "https://github.com/LazyVim/starter" "%cd%\nvim"
 
 ::フォント::
+mkdir "%cd%\0xProto"
 curl --ssl-no-revoke -L -o "%cd%\0xProto.zip"  "https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/0xProto.zip"
-"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\0xProto.zip"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\0xProto.zip" -d "%cd%\0xProto"
 
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
@@ -129,8 +130,9 @@ del /Q "%cd%\python-3.13.0-embed-amd64.zip"
 del /Q "%cd%\deno-x86_64-pc-windows-msvc.zip"
 del /Q "%cd%\node-v22.11.0-win-x64.zip"
 del /Q "%cd%\cmake-3.31.0-windows-x86_64.zip"
-del /Q "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar"
+del /Q "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
 del /Q "%cd%\0xProto.zip"
+del /Q "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
 
 echo "インストールが終わってからエンターキーを押してね"
 pause
