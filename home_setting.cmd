@@ -104,6 +104,11 @@ curl --ssl-no-revoke -L -o "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz
 tar -xf "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
 echo export PATH='%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc\bin':$PATH >> "%cd%\.bashrc"
 
+::repgrep::
+curl --ssl-no-revoke -L -o "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"  "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
+echo export PATH='%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu':$PATH >> "%cd%\.bashrc"
+
 ::::PortableGit\usr\binのパスは常に最下に::::
 echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
