@@ -123,6 +123,7 @@ del /Q "%cd%\python-3.13.0-embed-amd64.zip"
 del /Q "%cd%\deno-x86_64-pc-windows-msvc.zip"
 del /Q "%cd%\node-v22.11.0-win-x64.zip"
 del /Q "%cd%\cmake-3.31.0-windows-x86_64.zip"
+del /Q "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar"
 
 echo "インストールが終わってからエンターキーを押してね"
 pause
