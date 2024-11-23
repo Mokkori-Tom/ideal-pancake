@@ -133,7 +133,7 @@ echo export PATH='%cd%\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH >> "%cd%\.bashrc
 ::7z::
 curl --ssl-no-revoke -L -o "%cd%\7zr.exe"  "https://7-zip.org/a/7zr.exe"
 
-::repgrep::
+::mingw::
 curl --ssl-no-revoke -L -o "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"  "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/sjlj/x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
 "%cd%\7zr.exe" e "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
 echo export PATH='%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0\mingw64\bin':$PATH >> "%cd%\.bashrc"
@@ -156,6 +156,7 @@ del /Q "%cd%\HackGen_NF_v2.9.0.zip"
 del /Q "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
 del /Q "%cd%\tree-1.5.2.2-bin.zip"
 del /Q "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"
+del /Q "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
 
 echo "インストールが終わってからエンターキーを押してね"
 pause
