@@ -32,6 +32,7 @@ echo export XDG_DATA_HOME='%cd%\.local\share' >> "%cd%\.bashrc"
 echo export XDG_CACHE_HOME='%cd%\.local\cache' >> "%cd%\.bashrc"
 echo export XDG_STATE_HOME='%cd%\.local\state' >> "%cd%\.bashrc"
 echo export LOCALAPPDATA='%cd%\localappdata' >> "%cd%\.bashrc"
+echo export '%cd%\PortableGit\mingw64\bin' >> "%cd%\.bashrc"
 echo export LANG=ja_JP.UTF-8 >> "%cd%\PortableGit\etc\bash.bashrc"
 echo export LANGUAGE=ja_JP.ja >> "%cd%\PortableGit\etc\bash.bashrc"
 
