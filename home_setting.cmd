@@ -112,11 +112,6 @@ curl --ssl-no-revoke -L -o "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"  "htt
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
 echo export PATH='%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu':$PATH >> "%cd%\.bashrc"
 
-::repgrep::
-curl --ssl-no-revoke -L -o "%cd%\fd-v10.2.0-i686-pc-windows-msvc.zip"  "https://github.com/sharkdp/fd/releases/download/v10.2.0/fd-v10.2.0-i686-pc-windows-msvc.zip"
-"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\fd-v10.2.0-i686-pc-windows-msvc.zip"
-echo export PATH='%cd%\fd-v10.2.0-i686-pc-windows-msvc':$PATH >> "%cd%\.bashrc"
-
 ::bashtree::
 curl --ssl-no-revoke -L -o "%cd%\tree-1.5.2.2-bin.zip"  "http://downloads.sourceforge.net/gnuwin32/tree-1.5.2.2-bin.zip"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\tree-1.5.2.2-bin.zip" -d "%cd%\tree-1.5.2.2-bin"
