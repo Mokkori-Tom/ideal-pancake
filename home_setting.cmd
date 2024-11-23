@@ -121,7 +121,7 @@ curl --ssl-no-revoke -L -o "%cd%\tree-1.5.2.2-bin.zip"  "http://downloads.source
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\tree-1.5.2.2-bin.zip" -d "%cd%\tree-1.5.2.2-bin"
 echo export PATH='%cd%\tree-1.5.2.2-bin\bin':$PATH >> "%cd%\.bashrc"
 
-::bashtree::
+::fd::
 curl --ssl-no-revoke -L -o "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"  "https://github.com/sharkdp/fd/releases/download/v10.2.0/fd-v10.2.0-x86_64-pc-windows-msvc.zip"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"
 echo export PATH='%cd%\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH >> "%cd%\.bashrc"
@@ -151,6 +151,7 @@ del /Q "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
 del /Q "%cd%\HackGen_NF_v2.9.0.zip"
 del /Q "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
 del /Q "%cd%\tree-1.5.2.2-bin.zip"
+del /Q "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"
 
 echo "インストールが終わってからエンターキーを押してね"
 pause
