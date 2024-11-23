@@ -121,6 +121,11 @@ curl --ssl-no-revoke -L -o "%cd%\tree-1.5.2.2-bin.zip"  "http://downloads.source
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\tree-1.5.2.2-bin.zip" -d "%cd%\tree-1.5.2.2-bin"
 echo export PATH='%cd%\tree-1.5.2.2-bin\bin':$PATH >> "%cd%\.bashrc"
 
+::bashtree::
+curl --ssl-no-revoke -L -o "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"  "https://github.com/sharkdp/fd/releases/download/v10.2.0/fd-v10.2.0-x86_64-pc-windows-msvc.zip"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"
+echo export PATH='%cd%\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH >> "%cd%\.bashrc"
+
 ::::PortableGit\usr\binのパスは常に最下に::::
 echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
