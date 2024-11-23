@@ -15,14 +15,16 @@ set newpath=;%cd%\PortableGit\bin
 setx PATH "%oldpath%%newpath%"
 
 :: 必要な設定ファイルを作成
-type nul > "%cd%\.pythonrc.py"
-type nul > "%cd%\.bash_history"
-type nul > "%cd%\.bashrc"
 mkdir "%cd%\.local\share"
 mkdir "%cd%\.local\cache"
 mkdir "%cd%\.local\state"
 mkdir "%cd%\localappdata"
 mkdir "%cd%\tree-1.5.2.2-bin"
+mkdir "%cd%\nvim"
+type nul > "%cd%\.pythonrc.py"
+type nul > "%cd%\.bash_history"
+type nul > "%cd%\.bashrc"
+type nul > "%cd%\nvim\init.lua"
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
