@@ -20,11 +20,11 @@ mkdir "%cd%\.local\cache"
 mkdir "%cd%\.local\state"
 mkdir "%cd%\localappdata"
 mkdir "%cd%\tree-1.5.2.2-bin"
-mkdir "%cd%\nvim"
+::mkdir "%cd%\nvim"
 type nul > "%cd%\.pythonrc.py"
 type nul > "%cd%\.bash_history"
 type nul > "%cd%\.bashrc"
-type nul > "%cd%\nvim\init.lua"
+::type nul > "%cd%\nvim\init.lua"
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
@@ -104,9 +104,9 @@ echo export PATH='%cd%\node-v22.11.0-win-x64':$PATH >> "%cd%\.bashrc"
 
 :::: Clang ::::
 :: Clangのダウンロードと解凍、PATH設定
-curl --ssl-no-revoke -L -o "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"  "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
-tar -xf "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
-echo export PATH='%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc\bin':$PATH >> "%cd%\.bashrc"
+::curl --ssl-no-revoke -L -o "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"  "https://github.com/llvm/llvm-project/releases/download/llvmorg-18.1.8/clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
+::tar -xf "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
+::echo export PATH='%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc\bin':$PATH >> "%cd%\.bashrc"
 
 ::repgrep::
 curl --ssl-no-revoke -L -o "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"  "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
@@ -128,17 +128,25 @@ curl --ssl-no-revoke -L -o "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"  "https:
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"
 echo export PATH='%cd%\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH >> "%cd%\.bashrc"
 
+::::nvim_pulgin_setting::::
+"%cd%\PortableGit\bin\git.exe" clone "https://github.com/LazyVim/starter" "%cd%\nvim"
+
+::フォント::
+::mkdir "%cd%\HackGen_NF_v2.9.0"
+::curl --ssl-no-revoke -L -o "%cd%\HackGen_NF_v2.9.0.zip"  "https://github.com/yuru7/HackGen/releases/download/v2.9.0/HackGen_NF_v2.9.0.zip"
+::"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\HackGen_NF_v2.9.0.zip" -d "%cd%\HackGen_NF_v2.9.0"
+
+::7z::
+curl --ssl-no-revoke -L -o "%cd%\7zr.exe"  "https://7-zip.org/a/7zr.exe"
+
+::repgrep::
+curl --ssl-no-revoke -L -o "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"  "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/sjlj/x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
+"%cd%\7zr.exe" e "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
+echo export PATH='%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0\mingw64\bin':$PATH >> "%cd%\.bashrc"
+
 ::::PortableGit\usr\binのパスは常に最下に::::
 echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
 echo export PATH='%cd%\PortableGit\usr\bin':$PATH >> "%cd%\.bashrc"
-
-::::nvim_pulgin_setting::::
-::"%cd%\PortableGit\bin\git.exe" clone "https://github.com/LazyVim/starter" "%cd%\nvim"
-
-::フォント::
-mkdir "%cd%\HackGen_NF_v2.9.0"
-curl --ssl-no-revoke -L -o "%cd%\HackGen_NF_v2.9.0.zip"  "https://github.com/yuru7/HackGen/releases/download/v2.9.0/HackGen_NF_v2.9.0.zip"
-"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\HackGen_NF_v2.9.0.zip" -d "%cd%\HackGen_NF_v2.9.0"
 
 :::: ダウンロード後のクリーンアップ ::::
 :: 不要なダウンロードファイルを削除
