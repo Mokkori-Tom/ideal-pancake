@@ -130,12 +130,9 @@ echo export PATH='%cd%\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH >> "%cd%\.bashrc
 ::curl --ssl-no-revoke -L -o "%cd%\HackGen_NF_v2.9.0.zip"  "https://github.com/yuru7/HackGen/releases/download/v2.9.0/HackGen_NF_v2.9.0.zip"
 ::"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\HackGen_NF_v2.9.0.zip" -d "%cd%\HackGen_NF_v2.9.0"
 
-::7z::
-curl --ssl-no-revoke -L -o "%cd%\7zr.exe"  "https://7-zip.org/a/7zr.exe"
-
 ::mingw::
 curl --ssl-no-revoke -L -o "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"  "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/sjlj/x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
-"%cd%\7zr.exe" e "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
+tar -xf "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
 echo export PATH='%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0\mingw64\bin':$PATH >> "%cd%\.bashrc"
 
 ::::PortableGit\usr\binのパスは常に最下に::::
