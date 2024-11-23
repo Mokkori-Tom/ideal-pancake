@@ -131,7 +131,7 @@ echo export PATH='%cd%\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH >> "%cd%\.bashrc
 ::"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\HackGen_NF_v2.9.0.zip" -d "%cd%\HackGen_NF_v2.9.0"
 
 ::mingw::
-curl --ssl-no-revoke -L -o "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"  "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/sjlj/x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z/download"
+curl --ssl-no-revoke -L --limit-rate 100k -o "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"  "https://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/8.1.0/threads-posix/sjlj/x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z/download"
 tar -xf "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
 echo export PATH='%cd%\mingw64\bin':$PATH >> "%cd%\.bashrc"
 
