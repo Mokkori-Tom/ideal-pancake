@@ -22,6 +22,7 @@ mkdir "%cd%\.local\share"
 mkdir "%cd%\.local\cache"
 mkdir "%cd%\.local\state"
 mkdir "%cd%\localappdata"
+mkdir "%cd%\tree-1.5.2.2-bin"
 
 :: bash.bashrcにGit Bashの設定を追加
 :: ユーザーのホームディレクトリとエンコーディングを設定
@@ -90,7 +91,7 @@ echo export PATH='%cd%\python-313\Scripts':$PATH >> "%cd%\.bashrc"
 :: Deno_jsのダウンロードと解凍、PATH設定
 curl --ssl-no-revoke -L -o "%cd%\deno-x86_64-pc-windows-msvc.zip"  "https://github.com/denoland/deno/releases/download/v2.0.6/deno-x86_64-pc-windows-msvc.zip"
 mkdir "%cd%\deno-206"
-"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\deno-x86_64-pc-windows-msvc.zip"  -d "%cd%\deno-206"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\deno-x86_64-pc-windows-msvc.zip" -d "%cd%\deno-206"
 echo export PATH='%cd%\deno-206':$PATH >> "%cd%\.bashrc"
 
 :::: NodeJS ::::
@@ -109,6 +110,11 @@ echo export PATH='%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc\bin':$PATH >> "%
 curl --ssl-no-revoke -L -o "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"  "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
 echo export PATH='%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu':$PATH >> "%cd%\.bashrc"
+
+::bashtree::
+curl --ssl-no-revoke -L -o "%cd%\tree-1.5.2.2-bin.zip"  "http://downloads.sourceforge.net/gnuwin32/tree-1.5.2.2-bin.zip"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\tree-1.5.2.2-bin.zip" -d "%cd%\tree-1.5.2.2-bin"
+echo export PATH='%cd%\tree-1.5.2.2-bin\bin':$PATH >> "%cd%\.bashrc"
 
 ::::PortableGit\usr\binのパスは常に最下に::::
 echo #PortableGit_binのパスは常に最下に >> "%cd%\.bashrc"
@@ -134,6 +140,7 @@ del /Q "%cd%\cmake-3.31.0-windows-x86_64.zip"
 del /Q "%cd%\clang+llvm-18.1.8-x86_64-pc-windows-msvc.tar.xz"
 del /Q "%cd%\HackGen_NF_v2.9.0.zip"
 del /Q "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
+del /Q "%cd%\tree-1.5.2.2-bin.zip"
 
 echo "インストールが終わってからエンターキーを押してね"
 pause
