@@ -7,6 +7,8 @@ echo "現在のディレクトリを選択してください。"
 :: PortableGitのインストーラーを実行
 "%cd%\PortableGit-2.47.0.2-64-bit.7z.exe"
 
+"%cd%\PortableGit\bin\git.exe" config --global htp.ss|Verify false
+
 :: 環境変数PATHの設定
 :: setxを使用する場合は永続的に設定され、他のアプリケーションにも影響するため注意
 set PATH=%PATH%;%cd%\PortableGit\bin
@@ -122,13 +124,18 @@ curl --ssl-no-revoke -L -o "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"  "https:
 "%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"
 echo export PATH=$HOME'\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH >> "%cd%\.bashrc"
 
+::PowerShell::
+curl --ssl-no-revoke -L -o "%cd%\PowerShell-7.4.6-win-x64.zip"  "https://github.com/PowerShell/PowerShell/releases/download/v7.4.6/PowerShell-7.4.6-win-x64.zip"
+"%cd%\PortableGit\usr\bin\unzip.exe" "%cd%\PowerShell-7.4.6-win-x64.zip" -d "%cd%\PowerShell-7.4.6-win-x64"
+echo export PATH=$HOME'\PowerShell-7.4.6-win-x64':$PATH >> "%cd%\.bashrc"
+
 ::::nvim_pulgin_setting::::
 "%cd%\PortableGit\bin\git.exe" clone "https://github.com/LazyVim/starter" "%cd%\nvim"
 
 (
 echo vim.api.nvim_create_autocmd("VimEnter", {
-echo  callback = function()
-echo      vim.cmd("TransparentEnable")
+echo  callback = function(^)
+echo      vim.cmd("TransparentEnable"^)
 echo   end
 echo }^)
 ) >> "%cd%\nvim\init.lua"
@@ -156,7 +163,7 @@ echo vim.api.nvim_set_keymap("n", "o", ":<C-u>call append(expand('.'), '')<Cr>j"
 
 :: 7zip
 curl --ssl-no-revoke -L -o "%cd%\7zr.exe"  "https://www.7-zip.org/a/7zr.exe"
-echo alias 7z='$HOME/7zr.exe' >> "%cd%\.bashrc"
+echo alias 7z="'$HOME/7zr.exe'" >> "%cd%\.bashrc"
 
 ::mingw::
 curl --ssl-no-revoke -L -o "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"  "https://sourceforge.net/projects/mingw-w64/files/Toolchains%%20targetting%%20Win64/Personal%%20Builds/mingw-builds/8.1.0/threads-posix/sjlj/x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z/download"
@@ -183,6 +190,7 @@ del /Q "%cd%\ripgrep-14.1.0-x86_64-pc-windows-gnu.zip"
 del /Q "%cd%\tree-1.5.2.2-bin.zip"
 del /Q "%cd%\fd-v10.2.0-x86_64-pc-windows-msvc.zip"
 del /Q "%cd%\x86_64-8.1.0-release-posix-sjlj-rt_v6-rev0.7z"
+del /Q "%cd%\PowerShell-7.4.6-win-x64.zip"
 
 echo "ログチェックが終わってからエンターキーを押してね"
 pause
