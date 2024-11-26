@@ -202,7 +202,7 @@ echo echo source "$HOME\.aliasrc"
 echo echo source "$HOME\.gitbashrc"
 echo ^) ^> "%%cd%%\PortableGit\etc\bash.bashrc"
 echo set PATH=%%PATH%%;%%cd%%\PortableGit\bin
-echo for /f "tokens=2,*" %%%%a in ('reg query "HKCU\Environment" /v Path 2^>nul'^) do set oldpath=%%%%b
+echo for /f "tokens=2,*" %%%%a in ('reg query "HKCU\Environment" /v Path 2^^^>nul'^) do set oldpath=%%%%b
 echo set newpath=%%cd%%\PortableGit\bin;
 echo setx PATH "%%newpath%%%%oldpath%%"
 echo exit
