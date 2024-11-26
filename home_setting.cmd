@@ -195,16 +195,16 @@ del /Q "%cd%\PowerShell-7.4.6-win-x64.zip"
 
 (
 echo (
-echo echo export HOME='%cd%'
+echo echo export HOME='%%cd%%'
 echo echo source "$HOME\.bashrc"
 echo echo source "$HOME\.pathrc"
 echo echo source "$HOME\.aliasrc"
 echo echo source "$HOME\.gitbashrc"
-echo ) > "%cd%\PortableGit\etc\bash.bashrc"
-echo set PATH=%PATH%;%cd%\PortableGit\bin
+echo ^) > "%%cd%%\PortableGit\etc\bash.bashrc"
+echo set PATH=%%PATH%%;%%cd%%\PortableGit\bin
 echo for /f "tokens=2,*" %%a in ('reg query "HKCU\Environment" /v Path 2^>nul'^) do set oldpath=%%b
-echo set newpath=%cd%\PortableGit\bin;
-echo setx PATH "%newpath%%oldpath%"
+echo set newpath=%%cd%%\PortableGit\bin;
+echo setx PATH "%%newpath%%%%oldpath%%"
 echo exit
 ) > "%cd%\movingd.cmd"
 
