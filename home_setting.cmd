@@ -10,7 +10,7 @@ echo "現在のディレクトリを選択してください。"
 :: 環境変数PATHの設定
 set PATH=%PATH%;%cd%\PortableGit\bin
 for /f "tokens=2,*" %%a in ('reg query "HKCU\Environment" /v Path 2^>nul') do set oldpath=%%b
-set newpath=;%cd%\PortableGit\bin
+set newpath=%cd%\PortableGit\bin;
 setx PATH "%newpath%%oldpath%"
 
 :: 必要な設定ファイルを作成
@@ -202,7 +202,7 @@ echo echo source "$HOME\.gitbashrc"
 echo ) > "%cd%\PortableGit\etc\bash.bashrc"
 echo set PATH=%PATH%;%cd%\PortableGit\bin
 echo for /f "tokens=2,*" %%a in ('reg query "HKCU\Environment" /v Path 2^>nul'^) do set oldpath=%%b
-echo set newpath=;%cd%\PortableGit\bin
+echo set newpath=%cd%\PortableGit\bin;
 echo setx PATH "%newpath%%oldpath%"
 echo exit
 ) > "%cd%\movingd.cmd"
