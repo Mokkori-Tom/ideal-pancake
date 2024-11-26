@@ -30,6 +30,7 @@ type nul > "%cd%\.bashrc"
 type nul > "%cd%\.pathrc"
 type nul > "%cd%\.aliasrc"
 type nul > "%cd%\.gitbashrc"
+type nul > "%cd%\movingd.cmd"
 
 (
 echo export HOME='%cd%'
