@@ -11,7 +11,7 @@ echo "現在のディレクトリを選択してください。"
 set PATH=%PATH%;%cd%\PortableGit\bin
 for /f "tokens=2,*" %%a in ('reg query "HKCU\Environment" /v Path 2^>nul') do set oldpath=%%b
 set newpath=;%cd%\PortableGit\bin
-setx PATH "%oldpath%%newpath%"
+setx PATH "%newpath%%oldpath%"
 
 :: 必要な設定ファイルを作成
 move "%cd%\PortableGit\etc\bash.bashrc" "%cd%\"
