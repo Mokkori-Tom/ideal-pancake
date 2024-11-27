@@ -57,6 +57,7 @@ echo export XDG_DATA_HOME=$HOME'\.local\share'
 echo export XDG_CACHE_HOME=$HOME'\.local\cache'
 echo export XDG_STATE_HOME=$HOME'\.local\state'
 echo export LOCALAPPDATA=$HOME'\localappdata'
+echo export GOPATH=$HOME'\go'
 echo export PATH=$HOME'\nvim-win64\bin':$PATH
 echo export PATH=$HOME'\python-313':$PATH
 echo export PATH=$HOME'\python-313\Scripts':$PATH
