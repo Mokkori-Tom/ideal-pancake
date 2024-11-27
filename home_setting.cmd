@@ -76,6 +76,7 @@ echo export PATH=$HOME'\go\bin':$PATH
 echo alias ll='ls -la'
 echo alias edge='"C:/Program Files (x86^)/Microsoft/Edge/Application/msedge.exe"'
 echo alias exp='"C:\Windows\explorer.exe"'
+echo alias schtasks="'C:\Windows\System32\schtasks.exe'"
 echo alias 7z="'$HOME/7zr.exe'"
 ) > "%cd%\.aliasrc"
 
