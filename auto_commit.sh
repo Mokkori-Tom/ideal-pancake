@@ -1,6 +1,6 @@
 #project_root
 #!/bin/bash
-
+git config --global core.autocrlf false
 # 変更箇所をステージングする
 git add .
 
