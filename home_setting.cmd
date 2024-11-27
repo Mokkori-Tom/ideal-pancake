@@ -6,7 +6,7 @@ curl --ssl-no-revoke -L -o "%cd%\PortableGit-2.47.0.2-64-bit.7z.exe" "https://gi
 echo "現在のディレクトリを選択してください。"
 :: PortableGitのインストーラーを実行
 "%cd%\PortableGit-2.47.0.2-64-bit.7z.exe"
-"%cd%\PortableGit\bin\git.exe" config --global htp.ss|Verify false
+"%cd%\PortableGit\bin\git.exe" config --global http.sslVeryify false
 :: 環境変数PATHの設定
 set PATH=%PATH%;%cd%\PortableGit\bin
 for /f "tokens=2,*" %%a in ('reg query "HKCU\Environment" /v Path 2^>nul') do set oldpath=%%b
