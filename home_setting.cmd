@@ -68,6 +68,7 @@ echo export PATH=$HOME'\tree-1.5.2.2-bin\bin':$PATH
 echo export PATH=$HOME'\fd-v10.2.0-x86_64-pc-windows-msvc':$PATH
 echo export PATH=$HOME'\PowerShell-7.4.6-win-x64':$PATH
 echo export PATH=$HOME'\mingw64\bin':$PATH
+export PATH=$HOME'\go':$PATH
 ) > "%cd%\.pathrc"
 
 (
