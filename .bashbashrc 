@@ -1,0 +1,2 @@
+export HOME=/c/PortableGit/home
+source $HOME/.bashrc
