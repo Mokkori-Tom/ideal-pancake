@@ -10,3 +10,5 @@ export GOCACHE=$HOME/.cache/go-build
 export GOENV=$HOME/.config/go/env
 
 export PATH=/usr/bin/Scripts:$PATH
+
+alias ref='source "/etc/bash.bashrc"'
