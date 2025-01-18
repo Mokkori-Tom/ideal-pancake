@@ -12,3 +12,4 @@ export GOENV=$HOME/.config/go/env
 export PATH=/usr/bin/Scripts:$PATH
 
 alias ref='source "/etc/bash.bashrc"'
+
