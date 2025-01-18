@@ -56,14 +56,14 @@
   (evil-mode 1)
   (evil-define-key 'normal 'global (kbd "C-p") 'previous-line)
   (evil-define-key 'normal 'global (kbd "C-n") 'next-line)
-  
+
   ;; 行を挿入する際に入力モードに入らないようにする関数
   (defun my/evil-open-below-no-insert ()
     "Insert a new line below without entering insert mode."
     (interactive)
     (evil-open-below 1)
     (evil-normal-state))
-  
+
   (define-key evil-normal-state-map (kbd "o") 'my/evil-open-below-no-insert)
 
   (defun my/evil-open-above-no-insert ()
@@ -71,18 +71,32 @@
     (interactive)
     (evil-open-above 1)
     (evil-normal-state))
-  
+
   (define-key evil-normal-state-map (kbd "O") 'my/evil-open-above-no-insert))
 
 ;; eglotの設定
 (use-package eglot
   :config
   (add-hook 'go-mode-hook 'eglot-ensure)  ;; Goモードでeglotを有効にする
-
   ;; 他の言語モードでもeglotを有効にする場合は、以下のように追加
   ;; (add-hook 'python-mode-hook 'eglot-ensure)
   ;; (add-hook 'javascript-mode-hook 'eglot-ensure)
 )
+
+;; company-modeの設定
+(use-package company
+  :config
+  (global-company-mode 1)  ;; Company Modeをグローバルに有効化
+  (setq company-idle-delay 0.2)  ;; 補完候補が表示されるまでの遅延時間（秒）
+  (setq company-minimum-prefix-length 1)  ;; 補完を開始するための最小文字数
+  (define-key company-active-map (kbd "C-n") 'company-select-next)  ;; 次の候補を選択
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)  ;; 前の候補を選択
+  (add-to-list 'company-backends 'company-capf))  ;; company-modeにcapfバックエンドを追加
+
+;; company-modeとeglotの統合を確認するためのフック
+(add-hook 'eglot-managed-mode-hook
+          (lambda ()
+            (setq-local company-backends (append '(company-capf) company-backends))))
 
 ;; eshell設定
 (use-package eshell
@@ -110,7 +124,7 @@
   (setq eshell-highlight-prompt nil)
 
   ;; エイリアスの設定
-  (setq eshell-command-aliases-list '(("ll" "ls -l") ("gs" "git status") ("e" "find-file \\$1"))))
+  (setq eshell-command-aliases-list '(("ll" "ls -l") ("gs" "git status") ("e" "find-file \\\$1"))))
 
 ;; Eshellのカスタム関数
 (defun eshell/go-to-project ()
