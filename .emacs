@@ -86,16 +86,24 @@
 ;; company-modeの設定
 (use-package company
   :config
-  (global-company-mode 1)  ;; Company Modeをグローバルに有効化
-  (setq company-idle-delay 0.2)  ;; 補完候補が表示されるまでの遅延時間（秒）
-  (setq company-minimum-prefix-length 1)  ;; 補完を開始するための最小文字数
-
-  ;; TABキーで次の候補を選択
-  (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-  ;; Shift + TABで前の候補を選択
-  (define-key company-active-map (kbd "<backtab>") 'company-select-previous)
-
-  (add-to-list 'company-backends 'company-capf))  ;; company-modeにcapfバックエンドを追加
+  ;; Company Modeをグローバルに有効化
+  (global-company-mode 1)
+  ;; 補完候補が表示されるまでの遅延時間(秒)
+  (setq company-idle-delay 0)
+  ;; 補完を開始するための最小文字数
+  (setq company-minimum-prefix-length 1)
+  ;; 1個目を自動的に補完
+  (setq company-auto-expand t)
+  ;; ソート順
+  (setq company-transformers '(company-sort-by-backend-importance))
+  ;; 候補の最後の次は先頭に戻る
+  (setq company-selection-wrap-around t)
+  ;; キーバインディングの設定
+  (define-key company-active-map (kbd "M-j") 'company-select-next)
+  (define-key company-active-map (kbd "M-k") 'company-select-previous)
+  (define-key company-active-map [?\t] 'company-complete) ;; タブキーで補完を選択
+  ;; company-modeにcapfバックエンドを追加
+  (add-to-list 'company-backends 'company-capf))
 
 ;; company-modeとeglotの統合を確認するためのフック
 (add-hook 'eglot-managed-mode-hook
