@@ -117,12 +117,6 @@
   (interactive)
   (eshell/cd "/path/to/your/project"))  ;; プロジェクトディレクトリに移動
 
-;; 環境変数の設定
-(when (file-exists-p "~/shellenv.el")
-  (load-file (expand-file-name "~/shellenv.el"))
-  (dolist (path (reverse (split-string (getenv "PATH") ":")))
-    (add-to-list 'exec-path path)))
-
 ;; org-mode設定
 (use-package org
   :config
