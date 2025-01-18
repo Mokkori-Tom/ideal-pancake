@@ -91,6 +91,8 @@
   (setq company-minimum-prefix-length 1)  ;; 補完を開始するための最小文字数
   (define-key company-active-map (kbd "C-n") 'company-select-next)  ;; 次の候補を選択
   (define-key company-active-map (kbd "C-p") 'company-select-previous)  ;; 前の候補を選択
+  (define-key company-active-map (kbd "TAB") 'company-complete)  ;; TABキーで補完を選択
+  (define-key company-active-map (kbd "<tab>") 'company-complete)  ;; Shift + TABでも補完を選択
   (add-to-list 'company-backends 'company-capf))  ;; company-modeにcapfバックエンドを追加
 
 ;; company-modeとeglotの統合を確認するためのフック
