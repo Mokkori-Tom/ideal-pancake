@@ -32,39 +32,44 @@ This function should only modify configuration layer settings."
 
    ;; List of configuration layers to load.
    dotspacemacs-configuration-layers
-   '(go
+   '(
      ;; ----------------------------------------------------------------
      ;; Example of useful layers you may want to use right away.
      ;; Uncomment some layer names and press `SPC f e R' (Vim style) or
      ;; `M-m f e R' (Emacs style) to install them.
      ;; ----------------------------------------------------------------
-     auto-completion
+     (auto-completion :variables
+                      auto-completion-enable-sort-by-usage t
+                      auto-completion-enable-snippets-in-popup t)
      better-defaults
      emacs-lisp
      ;;git
      helm
-     lsp
      markdown
      multiple-cursors
-     org
-     python
-     (auto-completion :variable
-                      auto-completion-enable-snippets-in-popup t)
+     (org :variables
+          org-todo-dependencies-strategy 'native-auto)
+     (lsp :variables
+          lsp-navigation 'peek)  ;; 必要に応じて他の設定も追加
      (shell :variables
             shell-default-height 30
             shell-default-position 'bottom)
+     (ruby :variables
+           ruby-test-runner 'rspec
+           ruby-backend 'lsp)
      (python :variables
-             python-backend 'lsp
-             python-formatter 'yapf
-             python-format-on-save t
+             python-test-runner 'pytest
+             python-enable-yapf-format-on-save t
              python-sort-imports-on-save t
-             python-test-runner 'pytest)
+             python-backend 'lsp
+             python-lsp-server 'pylsp)
      (go :variables
          go-backend 'lsp
+         lsp-go-use-gopls t
          go-format-before-save t)
-     ;; spell-checking
-     ;; syntax-checking
-     ;; version-control
+     spell-checking
+     syntax-checking
+     version-control
      treemacs)
 
 
@@ -244,8 +249,9 @@ It should only modify the values of Spacemacs settings."
    ;; package can be defined with `:package', or a theme can be defined with
    ;; `:location' to download the theme package, refer the themes section in
    ;; DOCUMENTATION.org for the full theme specifications.
-   dotspacemacs-themes '(spacemacs-dark
-                         spacemacs-light)
+   dotspacemacs-themes '(spacemacs-light
+                         spacemacs-dark
+                         solarized-light)
 
    ;; Set the theme for the Spaceline. Supported themes are `spacemacs',
    ;; `all-the-icons', `custom', `doom', `vim-powerline' and `vanilla'. The
@@ -266,7 +272,7 @@ It should only modify the values of Spacemacs settings."
    ;; a non-negative integer (pixel size), or a floating-point (point size).
    ;; Point size is recommended, because it's device independent. (default 10.0)
    dotspacemacs-default-font '("HackGen Console NF Regular" ;;Cascadia Code ;;HackGen35 Console NF Regular ;;Source Code Pro ExtraLight ;;0xProto Nerd Font
-                               :size 20.0
+                               :size 15.0
                                :weight normal
                                :width normal)
 
@@ -449,7 +455,7 @@ It should only modify the values of Spacemacs settings."
    ;;   :size-limit-kb 1000)
    ;; When used in a plist, `visual' takes precedence over `relative'.
    ;; (default nil)
-   dotspacemacs-line-numbers nil
+   dotspacemacs-line-numbers 'relative
 
    ;; Code folding method. Possible values are `evil', `origami' and `vimish'.
    ;; (default 'evil)
@@ -602,43 +608,78 @@ dump."
 
 
 (defun dotspacemacs/user-config ()
-  (setq explicit-shell-file-name
-        "~/PortableGit/bin/bash.exe")
-  (setq python-shell--interpreter
-        "~/PortableGit/usr/bin/python.exe")
-  (setq flycheck-python-flake8-executable
-        "~/PortableGit/usr/bin/python.exe")
-  (setq flycheck-python-pylint-executable
-        "~/PortableGit/usr/bin/python.exe")
+  "Configuration for user code.
+This function is called immediately after `dotspacemacs/init', before layer configuration executes."
+  ;; Pythonシェルのプロンプト設定
+  (setq python-shell-prompt-regexp ">>> \\|\\.\\.\\. ")
+  (setq python-shell-prompt-block-regexp ">>> \\|\\.\\.\\. ")
+  (setq python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: ")
+  (setq python-shell-interpreter "python") ; 使用するPythonインタプリタを指定
+  (setq python-shell-interpreter-args "-i") ; インタラクティブモードで起動
+
+  (setq evil-want-keybinding nil)  ; evil-want-keybindingをnilに設定
+  (require 'evil)                  ; evilを読み込む
+
+  (add-hook 'ruby-mode-hook
+            (lambda ()
+              (lsp)
+              (setq tab-width 4)))
   (add-hook 'python-mode-hook
             (lambda ()
-              (flycheck-mode 1)
-              (jedi:setup)
-              (setq jedi:complete-on-dot t)))
+              (lsp)
+              (setq tab-width 4)))
   (add-hook 'go-mode-hook
             (lambda ()
               (lsp)
               (setq tab-width 4)))
+
   (setq locale-coding-system 'utf-8)
   (set-language-environment "Japanese")
   (prefer-coding-system 'utf-8)
+
   (defun my/evil-open-below-no-insert()
-    "insert a new line below without entering insert mode"
+    "Insert a new line below without entering insert mode, compatible with Org mode."
     (interactive)
-    (evil-open-below 1)
-    (evil-normal-state))
+    (if (derived-mode-p 'org-mode)
+        (progn
+          (org-insert-heading-respect-content)  ;; Insert a new heading if in Org mode
+          (evil-normal-state))
+      (evil-open-below 1)
+      (evil-normal-state)))
 
   (define-key evil-normal-state-map
               (kbd "o") 'my/evil-open-below-no-insert)
 
   (defun my/evil-open-above-no-insert()
-    "insert a new line above without entering insert mode"
+    "Insert a new line above without entering insert mode, compatible with Org mode."
     (interactive)
-    (evil-open-above 1)
-    (evil-normal-state))
+    (if (derived-mode-p 'org-mode)
+        (progn
+          (org-insert-heading-respect-content)  ;; Insert a new heading if in Org mode
+          (evil-normal-state))
+      (evil-open-above 1)
+      (evil-normal-state)))
 
   (define-key evil-normal-state-map
               (kbd "O") 'my/evil-open-above-no-insert)
+
+  ;; (defun my/evil-open-below-no-insert()
+  ;;   "insert a new line below without entering insert mode"
+  ;;   (interactive)
+  ;;   (evil-open-below 1)
+  ;;   (evil-normal-state))
+
+  ;; (define-key evil-normal-state-map
+  ;;             (kbd "o") 'my/evil-open-below-no-insert)
+
+  ;; (defun my/evil-open-above-no-insert()
+  ;;   "insert a new line above without entering insert mode"
+  ;;   (interactive)
+  ;;   (evil-open-above 1)
+  ;;   (evil-normal-state))
+
+  ;; (define-key evil-normal-state-map
+  ;;             (kbd "O") 'my/evil-open-above-no-insert)
 
   "Configuration for user code:
 This function is called at the very end of Spacemacs startup, after layer
@@ -660,7 +701,7 @@ This function is called at the very end of Spacemacs initialization."
    ;; Your init file should contain only one such instance.
    ;; If there is more than one, they won't work right.
    '(package-selected-packages
-     '(eat edit-indirect esh-help eshell-prompt-extras eshell-z evil-org gh-md gnuplot helm-org-rifle htmlize markdown-toc multi-term mwim org org-cliplink org-contrib org-download org-mime org-pomodoro alert log4e gntp org-present org-projectile org-project-capture org-category-capture org-rich-yank shell-pop terminal-here unfill company-go dap-mode lsp-docker lsp-treemacs bui yaml lsp-mode markdown-mode flycheck-golangci-lint flycheck ggtags go-eldoc go-fill-struct go-gen-test go-guru go-impl go-rename go-tag go-mode godoctor auto-yasnippet helm-c-yasnippet helm-company company yasnippet-snippets yasnippet ws-butler writeroom-mode winum which-key wgrep vundo volatile-highlights vim-powerline vi-tilde-fringe uuidgen undo-fu-session undo-fu treemacs-projectile treemacs-persp treemacs-icons-dired treemacs-evil toc-org term-cursor symon symbol-overlay string-inflection string-edit-at-point spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline space-doc restart-emacs request rainbow-delimiters quickrun popwin pcre2el password-generator paradox overseer org-superstar open-junk-file nameless multi-line macrostep lorem-ipsum link-hint inspector info+ indent-guide hybrid-mode hungry-delete holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org helm-mode-manager helm-make helm-descbinds helm-comint helm-ag google-translate golden-ratio flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu emr elisp-slime-nav elisp-demos elisp-def editorconfig dumb-jump drag-stuff dotenv-mode disable-mouse dired-quick-sort diminish devdocs define-word column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile all-the-icons aggressive-indent ace-link ace-jump-helm-line)))
+     '(add-node-modules-path bundler chruby enh-ruby-mode minitest prettier-js rake rbenv robe inf-ruby rspec-mode rubocop rubocopfmt ruby-hash-syntax ruby-refactor ruby-test-mode ruby-tools rvm seeing-is-believing eat edit-indirect esh-help eshell-prompt-extras eshell-z evil-org gh-md gnuplot helm-org-rifle htmlize markdown-toc multi-term mwim org org-cliplink org-contrib org-download org-mime org-pomodoro alert log4e gntp org-present org-projectile org-project-capture org-category-capture org-rich-yank shell-pop terminal-here unfill company-go dap-mode lsp-docker lsp-treemacs bui yaml lsp-mode markdown-mode flycheck-golangci-lint flycheck ggtags go-eldoc go-fill-struct go-gen-test go-guru go-impl go-rename go-tag go-mode godoctor auto-yasnippet helm-c-yasnippet helm-company company yasnippet-snippets yasnippet ws-butler writeroom-mode winum which-key wgrep vundo volatile-highlights vim-powerline vi-tilde-fringe uuidgen undo-fu-session undo-fu treemacs-projectile treemacs-persp treemacs-icons-dired treemacs-evil toc-org term-cursor symon symbol-overlay string-inflection string-edit-at-point spacemacs-whitespace-cleanup spacemacs-purpose-popwin spaceline space-doc restart-emacs request rainbow-delimiters quickrun popwin pcre2el password-generator paradox overseer org-superstar open-junk-file nameless multi-line macrostep lorem-ipsum link-hint inspector info+ indent-guide hybrid-mode hungry-delete holy-mode hl-todo highlight-parentheses highlight-numbers highlight-indentation hide-comnt helm-xref helm-themes helm-swoop helm-purpose helm-projectile helm-org helm-mode-manager helm-make helm-descbinds helm-comint helm-ag google-translate golden-ratio flx-ido fancy-battery eyebrowse expand-region evil-visualstar evil-visual-mark-mode evil-unimpaired evil-tutor evil-textobj-line evil-surround evil-numbers evil-nerd-commenter evil-mc evil-matchit evil-lisp-state evil-lion evil-indent-plus evil-iedit-state evil-goggles evil-exchange evil-evilified-state evil-escape evil-easymotion evil-collection evil-cleverparens evil-args evil-anzu eval-sexp-fu emr elisp-slime-nav elisp-demos elisp-def editorconfig dumb-jump drag-stuff dotenv-mode disable-mouse dired-quick-sort diminish devdocs define-word column-enforce-mode clean-aindent-mode centered-cursor-mode auto-highlight-symbol auto-compile all-the-icons aggressive-indent ace-link ace-jump-helm-line)))
   (custom-set-faces
    ;; custom-set-faces was added by Custom.
    ;; If you edit it by hand, you could mess it up, so be careful.
