@@ -8,8 +8,7 @@ export XDG_CONFIG_HOME=~/.config
 export XDG_CONFIG_DIRS=~/etc/xdg
 export APPDATA=~/.config
 
-export GOPATH=/usr
-export GOROOT=$GOPATH
+export GOROOT=~/PortableGit/usr
 export GOCACHE=~/.cache/go-build
 export GOENV=~/.config/go/env
 
