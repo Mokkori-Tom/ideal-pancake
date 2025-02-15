@@ -12,6 +12,8 @@ select = "underline"
 [editor.file-picker]
 hidden = false
 
+# ⤵source https://github.com/LGUG2Z/helix-vim
+
 [keys.normal]
 # Quick iteration on config changes
 C-o = ":config-open"
