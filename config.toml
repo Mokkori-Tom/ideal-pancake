@@ -1,4 +1,4 @@
-theme = "github_light_high_contrast"
+theme = "Base16_Transparent"
 
 [editor]
 line-number = "relative"
