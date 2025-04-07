@@ -11,8 +11,8 @@ export XDG_CONFIG_DIRS=~/etc/xdg
 export APPDATA=~/.config
 
 export GOROOT=~/go/
-export GOCACHE=/.cache/go-build
-export GOENV=/.config/go/env
+export GOCACHE=~/.cache/go-build
+export GOENV=~/.config/go/env
 
 export PATH=~/python/:$PATH
 export PATH=~/python/Scripts:$PATH
