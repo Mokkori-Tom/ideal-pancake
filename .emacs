@@ -20,3 +20,5 @@
 (context-menu-mode 1)
 ;; Window Tab Line
 (global-tab-line-mode 1)
+
+(setq inferior-lisp-program "sbcl")
