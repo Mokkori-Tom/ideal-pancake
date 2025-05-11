@@ -42,7 +42,7 @@ export XDG_DATA_HOME=~/.local/share
 export XDG_CACHE_HOME=~/.cache
 export XDG_STATE_HOME=~/.local/state
 export XDG_CONFIG_HOME=~/.config
-export XDG_CONFIG_DIRS=/etc/xdg
+export XDG_CONFIG_DIRS=~/PortableGit/etc/xdg
 export APPDATA=~/.config
 
 # リソース用PATHの追加
@@ -53,8 +53,17 @@ export PATH=/home/root/emacs/bin:$PATH
 # export PATH=/home/root/:$PATH  # 必要に応じて有効化
 
 # ユーザー名の入力と切り替え処理
+echo "Available users:"
+# ユーザー名の候補を表示
+for user in /home/*/; do
+    echo "$(basename $user)"
+done
+
 while true; do
-    read -p "Please enter the username: " username
+    read -p "Please enter the username (or type 'exit' to quit): " username
+    if [ "$username" = "exit" ]; then
+        exit 0
+    fi
     export HOME="/home/$username"
     if [ -d "$HOME" ]; then
         break
@@ -68,6 +77,11 @@ cd "$HOME"
 echo "Environment variables have been set and moved to $HOME."
 
 echo "Welcome, $username!"
+
+# ユーザーの .bashrc を自動で読み込む
+if [ -f "$HOME/.bashrc" ]; then
+    source "$HOME/.bashrc"
+fi
   </code></pre>
 
   <p>この構成により、PortableGit起動時に共通リソースを先に読み込み、動的にユーザー切り替えが可能になります。</p>
