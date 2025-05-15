@@ -26,3 +26,5 @@ echo '(ql:quickload :swank)' >> ~/.sbclrc
 # emacs-slime-update
 M-x package-refresh-contents RET
 M-x package-install RET slime RET
+
+# うはっ！君も仲間だ！！
