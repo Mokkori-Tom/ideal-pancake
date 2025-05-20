@@ -22,6 +22,7 @@ localhost RET
 # shell
 echo '(load "~/quicklisp/setup.lisp")' >> ~/.sbclrc
 echo '(ql:quickload :swank)' >> ~/.sbclrc
+echo '(swank:create-server :port 4005 :dont-close t)' >> ~/.sbclrc
 
 # emacs-slime-update
 M-x package-refresh-contents RET
