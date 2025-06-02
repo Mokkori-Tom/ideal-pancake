@@ -1,30 +1,94 @@
-# https://repo.msys2.org/distrib/x86_64/(から拾ってくる)
-# pacman -Syu
-# pacman -S mingw-w64-x86_64-qemu
-# mkdir mint/
-# cd mint/
-# qemu-img create -f qcow2 mint.img 40G
-# https://www.linuxmint.com/edition.php?id=320(から拾ってくる)
+QEMU起動オプションの日本語コメント付きまとめ
+ついでに各オプションの意味・よくある罠も補足！
+
+---
 
 qemu-system-x86_64.exe \
-　# RAM割り当てオプション
-　# -m 4096 → 4GB割り当て
-　# -m 8192 → 8GB割り当て
-　# -m 16384 → 16GB割り当て
-　# -m 32768 → 32GB割り当て
+  # RAM割り当て（MB単位。16GBなら -m 16384）
   -m 16384 \
+  # インストール時のみ必要なISO指定（linuxmint-22.1-xfce-64bit.iso等）
   -cdrom ./linuxmint-22.1-xfce-64bit.iso \
+  # 仮想HDDの指定（ここにMint本体が入る）
   -hda mint.img \
+  # 起動デバイス優先順位。d=DVD/ISO優先、インストール後は削除推奨
   -boot d \
+  # CPUコア数（物理コア数の半分～同数推奨、-smp 6なら6コア割り当て）
+  -smp 6 \
+  # ネットワーク仮想NIC＆SSH用ポート転送（ホスト2222→ゲスト22）
+  -net nic -net user,hostfwd=tcp::2222-:22 \
+  # 仮想グラフィックデバイス（高速化/互換重視ならstd/qxlも可）
+  -vga virtio \
+  # 表示ウィンドウ(SDL。GTKでも可)
+  -display sdl \
+  # タッチパネル対応＆マウスズレ防止
+  -usb -device usb-tablet
+  # WindowsではKVM加速は無効（-enable-kvmは入れないこと！）
+  # -enable-kvm
+
+
+---
+
+【運用TIPS】
+
+ISOイメージ指定＆-boot dはインストール時のみ
+　→ インストール完了後は両方外してHDD（mint.img）ブートに切り替える！
+
+RAM盛り放題・CPU盛り放題でも、QEMU on WindowsはCPU遅延に注意
+
+ネットワーク転送（hostfwd）はWinSCP/SCPファイル転送やSSHログイン用の生命線
+
+
+
+---
+
+【インストール後の最終コマンド例】
+
+qemu-system-x86_64.exe \
+  -m 16384 \
+  -hda mint.img \
   -smp 6 \
   -net nic -net user,hostfwd=tcp::2222-:22 \
   -vga virtio \
   -display sdl \
-  -usb -device usb-tablet \
-　# Windowsホストで-enable-kvmは→使えません！（Linux専用）
-  # -enable-kvm
+  -usb -device usb-tablet
 
-# 起動した後はインストールオプションにしたがう
-# 完了まで1時間くらいかかった  
-# インストール手順で「最後に必ずMintをシャットダウン→ISOイメージを外してから再起動」
-# -boot dを削除すると、HDD（mint.img）から起動を試みる
+
+---
+
+【ありがちなトラブル例】
+
+ISO付けたまま再起動→「またインストーラが立ち上がる」
+　→ ISO外して、-boot dも消す！
+
+No bootable device／boot failed
+　→ HDDが空っぽ（インストール手順のどこかで止まっている、再インストールを検討）
+
+-enable-kvm使えない（Windows）
+　→ Linux専用なので外す！
+
+
+
+---
+
+起動・インストールの流れ
+
+1. ISO有り・-boot d→Mintインストーラを起動
+
+
+2. 仮想HDD（mint.img）へMintをフルインストール
+
+
+3. インストーラで「シャットダウン」を選択
+
+
+4. QEMU起動オプションから**-cdromと-boot dを削除**
+
+
+5. mint.imgからMintが直接ブートされるのを確認！
+
+
+
+
+---
+
+コマンド・コメントをそのまま自分用スクリプトやメモに流用OK！
