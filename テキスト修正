@@ -1,10 +1,10 @@
-# https://repo.msys2.org/distrib/x86_64/
+# https://repo.msys2.org/distrib/x86_64/(から拾ってくる)
 # pacman -Syu
 # pacman -S mingw-w64-x86_64-qemu
 # mkdir mint/
 # cd mint/
 # qemu-img create -f qcow2 mint.img 40G
-# https://www.linuxmint.com/edition.php?id=320
+# https://www.linuxmint.com/edition.php?id=320(から拾ってくる)
 
 qemu-system-x86_64.exe \
 　# RAM割り当てオプション
@@ -23,6 +23,8 @@ qemu-system-x86_64.exe \
   -usb -device usb-tablet \
 　# Windowsホストで-enable-kvmは→使えません！（Linux専用）
   # -enable-kvm
-  
+
+# 起動した後はインストールオプションにしたがう
+# 完了まで1時間くらいかかった  
 # インストール手順で「最後に必ずMintをシャットダウン→ISOイメージを外してから再起動」
 # -boot dを削除すると、HDD（mint.img）から起動を試みる
