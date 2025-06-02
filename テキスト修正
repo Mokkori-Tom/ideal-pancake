@@ -66,11 +66,7 @@ No bootable device／boot failed
 -enable-kvm使えない（Windows）
 　→ Linux専用なので外す！
 
-
-
 ---
-
-起動・インストールの流れ
 
 1. ISO有り・-boot d→Mintインストーラを起動
 
@@ -87,8 +83,45 @@ No bootable device／boot failed
 5. mint.imgからMintが直接ブートされるのを確認！
 
 
-
-
 ---
 
 コマンド・コメントをそのまま自分用スクリプトやメモに流用OK！
+
+---
+起動オプションの説明とか
+
+https://repo.msys2.org/distrib/x86_64/(から拾ってくる)
+pacman -Syu
+pacman -S mingw-w64-x86_64-qemu
+mkdir mint/
+cd mint/
+qemu-img create -f qcow2 mint.img 40G
+https://www.linuxmint.com/edition.php?id=320(から拾ってくる)
+qemu-system-x86_64.exe 
+　# RAM割り当てオプション 　
+# -m 4096 → 4GB割り当て 　
+# -m 8192 → 8GB割り当て 　
+# -m 16384 → 16GB割り当て 　
+# -m 32768 → 32GB割り当て 
+
+-m 16384 
+-cdrom ./linuxmint-22.1-xfce-64bit.iso 
+-hda mint.img 
+-boot d 
+-smp 6 
+-net nic -net user,hostfwd=tcp::2222-:22 
+-vga virtio 
+-display sdl 
+-usb -device usb-tablet 
+　# Windowsホストで-enable-kvmは→使えません！（Linux専用）
+
+-enable-kvm
+
+起動した後はインストールオプションにしたがう
+
+完了まで1時間くらいかかった
+
+インストール手順で「最後に必ずMintをシャットダウン→ISOイメージを外してから再起動」
+
+-boot dを削除すると、HDD（mint.img）から起動を試みる
+
