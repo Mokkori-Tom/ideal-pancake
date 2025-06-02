@@ -1,4 +1,24 @@
-1.時系列処理,1-2.分岐
-2.
-3.
-〜からプロンプトを作成 ニュアンスに沿ってプロンプトを修正して〜生成してください
+# https://repo.msys2.org/distrib/x86_64/
+# pacman -Syu
+# pacman -S mingw-w64-x86_64-qemu
+# cd mint/
+# qemu-img create -f qcow2 mint.img 40G
+# https://www.linuxmint.com/edition.php?id=320
+
+qemu-system-x86_64.exe \
+  -m 16384 \
+  -cdrom ./linuxmint-22.1-xfce-64bit.iso \
+  -hda mint.img \
+  -boot d \
+  -smp 6 \
+  -net nic -net user,hostfwd=tcp::2222-:22 \
+  -vga virtio \
+  -display sdl \
+  -usb -device usb-tablet
+
+# -m 4096 → 4GB割り当て
+# -m 8192 → 8GB割り当て
+# -m 16384 → 16GB割り当て
+# -m 32768 → 32GB割り当て
+
+# インストール手順で「最後に必ずMintをシャットダウン→ISOイメージを外してから再起動」
