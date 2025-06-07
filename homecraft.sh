@@ -88,7 +88,7 @@ else
     echo "$PARENTHOME" > "$ABSVHOME/.virtualhome"
   fi
 
-  # minimal .bashrc (guarded: force or create-only)
+  # .bashrc (guarded: force or create-only)
   if [ "$ACTION" = "force" ] || [ ! -f "$ABSVHOME/.bashrc" ]; then
 cat > "$ABSVHOME/.bashrc" <<'EOF'
 export HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -108,6 +108,10 @@ PROMPT_COMMAND='
   HOME_NAME=$(basename "$HOME")
   PS1="\[\e[33m\][Depth:\$HOME_DEPTH]\[\e[0m\]\[\e[32m\][\$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]`date +%Y%m%d_%H:%M`\[\e[0m\] \w]\n\$ "
 '
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
 export HISTFILE="$HOME/.bash_history"
@@ -120,9 +124,9 @@ trap 'history -a' EXIT
 EOF
   fi
 
-  # minimal .vimrc
-mkdir -p "$ABSVHOME/nvim" 
-cat > "$ABSVHOME/nvim/init.lua" <<"EOF"
+  # neovim config (per-profile)
+  mkdir -p "$ABSVHOME/.config/nvim"
+  cat > "$ABSVHOME/.config/nvim/init.lua" <<"EOF"
 -- Bootstrap lazy.nvim ~/.config/nvim/init.lua
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
@@ -314,7 +318,7 @@ set completion-ignore-case on
 "\e[B": history-search-forward
 EOF
 
-  # minimal .zshrc (guarded: force or create-only)
+  # .zshrc (guarded: force or create-only)
   if [ "$ZSH_MODE" = 1 ]; then
     if [ "$ACTION" = "force" ] || [ ! -f "$ABSVHOME/.zshrc" ]; then
 cat > "$ABSVHOME/.zshrc" <<'EOF'
@@ -334,6 +338,11 @@ precmd() {
   export HOME_NAME=$(basename "$HOME")
   PROMPT="%F{yellow}[Depth:$HOME_DEPTH]%f%F{green}[$HOME_NAME]%f[%n@%m %F{cyan}%D{%Y%m%d_%H:%M}%f %~]\n%# "
 }
+
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_CACHE_HOME="$HOME/.cache"
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
 export HISTFILE="$HOME/.zsh_history"
