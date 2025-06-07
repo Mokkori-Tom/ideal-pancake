@@ -106,7 +106,7 @@ get_home_depth() {
 PROMPT_COMMAND='
   HOME_DEPTH=$(get_home_depth)
   HOME_NAME=$(basename "$HOME")
-  PS1="\[\e[33m\][Depth:\$HOME_DEPTH]\[\e[0m\]\[\e[32m\][\$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]`date +%Y%m%d_%H:%M`\[\e[0m\] \W]\n\$ "
+  PS1="\[\e[33m\][Depth:\$HOME_DEPTH]\[\e[0m\]\[\e[32m\][\$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]`date +%Y%m%d_%H:%M`\[\e[0m\] \w]\n\$ "
 '
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
@@ -121,10 +121,135 @@ EOF
   fi
 
   # minimal .vimrc
-cat > "$ABSVHOME/.vimrc" <<"EOF"
-set number
-set tabstop=4
-syntax on
+mkdir -p "$ABSVHOME/nvim" 
+cat > "$ABSVHOME/nvim/init.lua" <<"EOF"
+-- Bootstrap lazy.nvim ~/.config/nvim/init.lua
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  if vim.v.shell_error ~= 0 then
+    vim.api.nvim_echo({
+      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+      { out, "WarningMsg" },
+      { "\nPress any key to exit..." },
+    }, true, {})
+    vim.fn.getchar()
+    os.exit(1)
+  end
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- leader キー設定
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
+-- 基本的なエディタ設定
+vim.opt.number = true             -- 行番号を表示
+vim.opt.relativenumber = true     -- 相対行番号を表示
+vim.opt.expandtab = true          -- タブをスペースに変換
+vim.opt.shiftwidth = 2            -- インデントの幅
+vim.opt.tabstop = 2               -- タブ幅
+vim.opt.smartindent = true        -- スマートインデント
+vim.opt.wrap = true               -- 行の折り返しをしない
+vim.opt.linebreak = true          -- 単語の途中で折り返さない
+vim.opt.showbreak = '↪ '          -- 折り返し行の先頭に表示（お好みで）
+vim.opt.cursorline = true         -- カーソル行の強調
+vim.opt.termguicolors = true      -- 24bitカラー
+vim.opt.clipboard = "unnamedplus" -- クリップボード連携
+vim.opt.signcolumn = "yes"        -- サインカラム常に表示
+vim.opt.undofile = true           -- アンドゥファイルを有効化
+
+-- lazy.nvimプラグイン設定
+require("lazy").setup({
+  spec = {
+    -- 基本プラグイン
+    { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
+    { "nvim-lualine/lualine.nvim" },
+    { "folke/tokyonight.nvim" },
+    { "mbbill/undotree", cmd = "UndotreeToggle" },
+    {
+      "Pocco81/auto-save.nvim",
+      config = function()
+        require("auto-save").setup({})
+      end,
+      event = { "InsertLeave", "TextChanged" },
+    },
+    { "tpope/vim-fugitive" },
+    { "lewis6991/gitsigns.nvim" },
+    { "kdheepak/lazygit.nvim" },
+    { "sindrets/diffview.nvim" },
+
+    -- LSP＆補完
+    { "neovim/nvim-lspconfig" },
+    { "hrsh7th/nvim-cmp" },
+    { "hrsh7th/cmp-nvim-lsp" },
+    { "hrsh7th/cmp-buffer" },
+    { "hrsh7th/cmp-path" },
+    { "hrsh7th/cmp-cmdline" },
+    { "L3MON4D3/LuaSnip" },
+    { "saadparwaiz1/cmp_luasnip" },
+    { "onsails/lspkind-nvim" },
+    { "ray-x/lsp_signature.nvim" },
+
+    -- チートシート
+    {
+      "sudormrfbin/cheatsheet.nvim",
+      dependencies = {
+        { "nvim-telescope/telescope.nvim" },
+        { "nvim-lua/popup.nvim" },
+        { "nvim-lua/plenary.nvim" },
+      },
+      cmd = { "Cheatsheet" },
+    },
+    -- ANSIカラー対応カラースキーム（任意）
+    --{ "2nthony/vim-ansi-colors" },
+  },
+  install = { colorscheme = { "ansi", "tokyonight", "habamax" } },  -- 優先順で適用
+  checker = { enabled = true },
+})
+
+-- colorschemeの適用（優先順位に従い自動適用されるので明示的には不要ですが、好みで指定可能）
+vim.cmd.colorscheme("vim")
+
+-- lualineのセットアップ
+require("lualine").setup {}
+
+-- gitsigns.nvimセットアップ
+require("gitsigns").setup()
+
+-- nvim-cmp, LuaSnip, lspkindの初期設定
+local cmp = require("cmp")
+cmp.setup({
+  snippet = {
+    expand = function(args)
+      require("luasnip").lsp_expand(args.body)
+    end,
+  },
+  mapping = cmp.mapping.preset.insert({
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+    ["<Tab>"] = cmp.mapping.select_next_item(),
+    ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+  }),
+  sources = cmp.config.sources({
+    { name = "nvim_lsp" },
+    { name = "luasnip" },
+    { name = "buffer" },
+    { name = "path" },
+  }),
+  formatting = {
+    format = require("lspkind").cmp_format({ with_text = true, maxwidth = 50 })
+  },
+})
+
+-- LSPサーバのセットアップ（Python, TypeScript）
+local lspconfig = require("lspconfig")
+lspconfig.pylsp.setup({})
+lspconfig.ts_ls.setup({})
+
+-- 引数情報の表示
+require("lsp_signature").setup({})
 EOF
 
   # minimal .gitconfig
@@ -134,6 +259,52 @@ cat > "$ABSVHOME/.gitconfig" <<"EOF"
     email = example@example.com
 [core]
     editor = vim
+EOF
+
+  # wezterm.lua 
+cat > "$ABSVHOME/wezterm.lua" <<"EOF"
+local wezterm = require 'wezterm'
+
+local config = wezterm.config_builder()
+
+-- 基本設定
+config.automatically_reload_config = true
+config.window_close_confirmation = "NeverPrompt"
+config.default_cursor_style = "BlinkingBar"
+
+-- フォント設定
+config.font = wezterm.font("HackGen Console NF")
+config.font_size = 13.0
+
+-- ウィンドウ設定
+config.window_decorations = "RESIZE"
+config.window_background_opacity = 0.7  -- 70%の透明度
+
+-- カラー設定
+config.colors = {
+  foreground = '#ffffff',  -- 前景色
+  background = '#1e1e1e',  -- 背景色
+  cursor_bg = '#ffcc00',   -- カーソルの背景色
+  cursor_fg = '#000000',   -- カーソルの前景色
+  cursor_border = '#ffcc00', -- カーソルの境界色
+  selection_fg = '#ffffff', -- 選択時の前景色
+  selection_bg = '#007acc', -- 選択時の背景色
+  ansi = { '#000000', '#ff5555', '#50fa7b', '#f1fa8c', '#bd93f9', '#ff79c6', '#8be9fd', '#ffffff' },
+  brights = { '#4d4d4d', '#ff6e6e', '#69ff94', '#ffffa5', '#d6acff', '#ff92df', '#a4ffff', '#ffffff' },
+}
+
+-- タブバー設定
+config.tab_bar_at_bottom = true  -- タブバーを下に表示
+config.show_new_tab_button_in_tab_bar = false  -- 新しいタブボタンを非表示
+
+-- デフォルトシェルの設定
+config.default_prog = { "path\\your\\bash.exe" }  -- ここを変更して他のシェルを指定できます
+
+-- WebGPU設定
+config.front_end = "WebGpu"
+config.webgpu_power_preference = "HighPerformance"
+
+return config
 EOF
 
   # minimal .inputrc
@@ -147,7 +318,7 @@ EOF
   if [ "$ZSH_MODE" = 1 ]; then
     if [ "$ACTION" = "force" ] || [ ! -f "$ABSVHOME/.zshrc" ]; then
 cat > "$ABSVHOME/.zshrc" <<'EOF'
-export HOME="$(cd "$(dirname "$0")" && pwd)"
+# cd into the virtual HOME
 cd "$HOME"
 get_home_depth() {
   local d="$HOME"
@@ -161,7 +332,7 @@ get_home_depth() {
 precmd() {
   export HOME_DEPTH=$(get_home_depth)
   export HOME_NAME=$(basename "$HOME")
-  PROMPT="%F{yellow}[Depth:$HOME_DEPTH]%f%F{green}[$HOME_NAME]%f[%n@%m %F{cyan}%D{%Y-%m-%d_%H:%M}%f %~]\n%# "
+  PROMPT="%F{yellow}[Depth:$HOME_DEPTH]%f%F{green}[$HOME_NAME]%f[%n@%m %F{cyan}%D{%Y%m%d_%H:%M}%f %~]\n%# "
 }
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
@@ -172,19 +343,20 @@ setopt SHARE_HISTORY
 setopt HIST_IGNORE_ALL_DUPS
 [ -f "$HISTFILE" ] && fc -R "$HISTFILE"
 autoload -Uz add-zsh-hook
-add-zsh-hook zshexit 'fc -A'
+# add-zsh-hook zshexit 'fc -A'
 EOF
     fi
   fi
 
 fi
 
-# finalize
 ABSVHOME="$(cd "$VHOME" && pwd)"
 
 echo -e "\033[32mVirtual HOME: $VHOME is ready.\033[0m"
 
 if [ "$ZSH_MODE" = 1 ]; then
+  # まず仮想HOMEに移動してから zsh を起動
+  cd "$ABSVHOME"
   env HOME="$ABSVHOME" zsh
 else
   RCFILE="$ABSVHOME/.bashrc"
