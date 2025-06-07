@@ -1,9 +1,6 @@
 #!/bin/bash
 set -e
 
-# Homecraft: Create, manage, and launch sandboxed virtual HOME directories for Bash/zsh.
-# Inspired by UNIX spirit and power-user workflow.
-
 usage() {
   cat <<EOF
 homecraft - Virtual HOME environment generator and launcher
@@ -26,12 +23,6 @@ Examples:
   homecraft testenv pytemplate --date -d /tmp/workenv
   homecraft "test-__DATE__"
   homecraft myzsh zshtemplate -zsh
-
-Tips:
-- You can store reusable templates under ../envtemplates/
-- Use for n in {1..3}; do homecraft test\$n; done for batch creation
-- Bash/zsh history is inherited for seamless workflow
-- Edit this script to add more default dotfiles or custom setup as you wish!
 EOF
   exit 1
 }
@@ -67,16 +58,17 @@ fi
 
 TEMPLATE="$2"
 if [ -n "$TEMPLATE" ]; then
-  [[ "$TEMPLATE" = /* ]] && TEMPLATE_PATH="$TEMPLATE" || TEMPLATE_PATH="$(dirname "$VHOME")/../envtemplates/$TEMPLATE"
+  if [[ "$TEMPLATE" = /* ]]; then
+    TEMPLATE_PATH="$TEMPLATE"
+  else
+    TEMPLATE_PATH="$(dirname "$VHOME")/../envtemplates/$TEMPLATE"
+  fi
 fi
 
 if [ -d "$VHOME" ]; then
   case "$ACTION" in
-    force)
-      rm -rf "$VHOME"
-      ;;
-    reuse)
-      ;;
+    force) rm -rf "$VHOME" ;;
+    reuse) ;;
     *)
       echo -e "\033[33m$VHOME already exists. Use -f (force) or -r (reuse).\033[0m"
       exit 2
@@ -90,37 +82,53 @@ else
   mkdir -p "$VHOME"
   ABSVHOME="$(cd "$VHOME" && pwd)"
 
-  # Inherit shell history (bash/zsh) for seamless workflow
-  [ -f "$HOME/.bash_history" ] && cp "$HOME/.bash_history" "$ABSVHOME/.bash_history"
+  # record parent virtual-home
+  PARENTHOME="${HOME:-}"
+  if [ -n "$PARENTHOME" ] && [ "$PARENTHOME" != "$ABSVHOME" ]; then
+    echo "$PARENTHOME" > "$ABSVHOME/.virtualhome"
+  fi
 
-  # Minimal .bashrc
-  cat > "$ABSVHOME/.bashrc" <<EOF
-export HOME="$ABSVHOME"
-cd "\$HOME"
-echo -e "\033[36m==== Virtual HOME: \$HOME (bash) ====\033[0m"
-PROMPT_COMMAND='PS1="[\u@\h \$(date "+%Y-%m-%d_%H:%M") \w]\\$ "'
+  # minimal .bashrc (guarded: force or create-only)
+  if [ "$ACTION" = "force" ] || [ ! -f "$ABSVHOME/.bashrc" ]; then
+cat > "$ABSVHOME/.bashrc" <<'EOF'
+export HOME="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$HOME"
+
+get_home_depth() {
+  local d="$HOME"
+  local depth=1
+  while [ -f "$d/.virtualhome" ]; do
+    depth=$((depth + 1))
+    d="$(cat "$d/.virtualhome")"
+  done
+  echo $depth
+}
+PROMPT_COMMAND='
+  HOME_DEPTH=$(get_home_depth)
+  HOME_NAME=$(basename "$HOME")
+  PS1="\[\e[33m\][Depth:\$HOME_DEPTH]\[\e[0m\]\[\e[32m\][\$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]`date +%Y%m%d_%H:%M`\[\e[0m\] \W]\n\$ "
+'
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
-export HISTFILE="\$HOME/.bash_history"
+export HISTFILE="$HOME/.bash_history"
 export HISTSIZE=10000
 export HISTCONTROL=ignoredups:erasedups
 export HISTIGNORE="ls:bg:fg:history:pwd"
 shopt -s histappend
-# ログイン時に履歴を読み込む
 [ -f "$HISTFILE" ] && history -r
-# シェル終了時に履歴を保存
 trap 'history -a' EXIT
 EOF
+  fi
 
-  # Minimal .vimrc
-  cat > "$ABSVHOME/.vimrc" <<"EOF"
+  # minimal .vimrc
+cat > "$ABSVHOME/.vimrc" <<"EOF"
 set number
 set tabstop=4
 syntax on
 EOF
 
-  # Minimal .gitconfig
-  cat > "$ABSVHOME/.gitconfig" <<"EOF"
+  # minimal .gitconfig
+cat > "$ABSVHOME/.gitconfig" <<"EOF"
 [user]
     name = Virtual User
     email = example@example.com
@@ -128,44 +136,56 @@ EOF
     editor = vim
 EOF
 
-  # Minimal .inputrc
-  cat > "$ABSVHOME/.inputrc" <<"EOF"
+  # minimal .inputrc
+cat > "$ABSVHOME/.inputrc" <<"EOF"
 set completion-ignore-case on
 "\e[A": history-search-backward
 "\e[B": history-search-forward
 EOF
 
-  # .zshrc auto-gen (if -zsh and no template)
+  # minimal .zshrc (guarded: force or create-only)
   if [ "$ZSH_MODE" = 1 ]; then
-    [ -f "$HOME/.zsh_history" ] && cp "$HOME/.zsh_history" "$ABSVHOME/.zsh_history"
-    cat > "$ABSVHOME/.zshrc" <<EOF
-export HOME="$ABSVHOME"
-cd "\$HOME"
-echo -e "\033[36m==== Virtual HOME: \$HOME (zsh) ====\033[0m"
-PROMPT='%n@%m %~ %# '
+    if [ "$ACTION" = "force" ] || [ ! -f "$ABSVHOME/.zshrc" ]; then
+cat > "$ABSVHOME/.zshrc" <<'EOF'
+export HOME="$(cd "$(dirname "$0")" && pwd)"
+cd "$HOME"
+get_home_depth() {
+  local d="$HOME"
+  local depth=1
+  while [[ -f "$d/.virtualhome" ]]; do
+    depth=$((depth + 1))
+    d=$(cat "$d/.virtualhome")
+  done
+  echo $depth
+}
+precmd() {
+  export HOME_DEPTH=$(get_home_depth)
+  export HOME_NAME=$(basename "$HOME")
+  PROMPT="%F{yellow}[Depth:$HOME_DEPTH]%f%F{green}[$HOME_NAME]%f[%n@%m %F{cyan}%D{%Y-%m-%d_%H:%M}%f %~]\n%# "
+}
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
-export HISTFILE="\$HOME/.zsh_history"
+export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 setopt HIST_IGNORE_ALL_DUPS
-# 読み込み
 [ -f "$HISTFILE" ] && fc -R "$HISTFILE"
-# trapは不要。zshは自動で保存する（ただし明示するなら）
 autoload -Uz add-zsh-hook
 add-zsh-hook zshexit 'fc -A'
 EOF
+    fi
   fi
 
 fi
 
+# finalize
 ABSVHOME="$(cd "$VHOME" && pwd)"
 
 echo -e "\033[32mVirtual HOME: $VHOME is ready.\033[0m"
 
 if [ "$ZSH_MODE" = 1 ]; then
-  env HOME="$ABSVHOME" zsh --rcs
+  env HOME="$ABSVHOME" zsh
 else
   RCFILE="$ABSVHOME/.bashrc"
   env HOME="$ABSVHOME" bash --noprofile --rcfile "$RCFILE"
