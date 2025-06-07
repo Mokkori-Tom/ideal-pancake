@@ -95,13 +95,21 @@ else
 
   # Minimal .bashrc
   cat > "$ABSVHOME/.bashrc" <<EOF
-echo -e "\033[36m==== Virtual HOME: \$HOME (bash) ====\033[0m"
 export HOME="$ABSVHOME"
 cd "\$HOME"
+echo -e "\033[36m==== Virtual HOME: \$HOME (bash) ====\033[0m"
 PROMPT_COMMAND='PS1="[\u@\h \$(date "+%Y-%m-%d_%H:%M") \w]\\$ "'
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
 export HISTFILE="\$HOME/.bash_history"
+export HISTSIZE=10000
+export HISTCONTROL=ignoredups:erasedups
+export HISTIGNORE="ls:bg:fg:history:pwd"
+shopt -s histappend
+# ログイン時に履歴を読み込む
+[ -f "$HISTFILE" ] && history -r
+# シェル終了時に履歴を保存
+trap 'history -a' EXIT
 EOF
 
   # Minimal .vimrc
@@ -131,13 +139,22 @@ EOF
   if [ "$ZSH_MODE" = 1 ]; then
     [ -f "$HOME/.zsh_history" ] && cp "$HOME/.zsh_history" "$ABSVHOME/.zsh_history"
     cat > "$ABSVHOME/.zshrc" <<EOF
-echo -e "\033[36m==== Virtual HOME: \$HOME (zsh) ====\033[0m"
 export HOME="$ABSVHOME"
 cd "\$HOME"
+echo -e "\033[36m==== Virtual HOME: \$HOME (zsh) ====\033[0m"
 PROMPT='%n@%m %~ %# '
 alias ll='ls -la --color=auto'
 export LANG=en_US.UTF-8
 export HISTFILE="\$HOME/.zsh_history"
+export HISTSIZE=10000
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_ALL_DUPS
+# 読み込み
+[ -f "$HISTFILE" ] && fc -R "$HISTFILE"
+# trapは不要。zshは自動で保存する（ただし明示するなら）
+autoload -Uz add-zsh-hook
+add-zsh-hook zshexit 'fc -A'
 EOF
   fi
 
