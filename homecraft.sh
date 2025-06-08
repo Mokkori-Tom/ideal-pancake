@@ -76,6 +76,18 @@ if [ -d "$VHOME" ]; then
   esac
 fi
 
+ # If we're reusing, skip all the “populate” steps:
+if [ "$ACTION" = "reuse" ]; then
+  echo -e "\033[32mReusing existing virtual HOME: $VHOME\033[0m"
+  ABSVHOME="$(cd "$VHOME" && pwd)"
+  if [ "$ZSH_MODE" = 1 ]; then
+    cd "$ABSVHOME"
+    exec env HOME="$ABSVHOME" zsh
+  else
+    exec env HOME="$ABSVHOME" bash --noprofile --rcfile "$ABSVHOME/.bashrc"
+  fi
+fi
+
 if [ -n "$TEMPLATE_PATH" ]; then
   cp -a "$TEMPLATE_PATH" "$VHOME"
 else
