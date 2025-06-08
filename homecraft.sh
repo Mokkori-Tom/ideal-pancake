@@ -322,7 +322,7 @@ config.default_prog = { "bash.exe" }
 config.front_end = "OpenGL"
 config.webgpu_power_preference = "HighPerformance"
 
--- 🔑 ペイン分割キー設定
+-- ペイン分割キー設定
 config.keys = {
   -- 垂直分割（上下）
   {
