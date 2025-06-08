@@ -162,6 +162,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 -- 基本的なエディタ設定
+vim.opt.clipboard:append("unnamedplus") --クリップボード同期
 vim.opt.number = true             -- 行番号を表示
 vim.opt.relativenumber = true     -- 相対行番号を表示
 vim.opt.expandtab = true          -- タブをスペースに変換
