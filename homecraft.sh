@@ -316,7 +316,7 @@ config.tab_bar_at_bottom = true
 config.show_new_tab_button_in_tab_bar = false
 
 -- デフォルトシェル
-config.default_prog = { "bash.exe" }
+config.default_prog = { "bash" }
 
 -- GPU描画
 config.front_end = "OpenGL"
