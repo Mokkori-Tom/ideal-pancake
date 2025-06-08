@@ -115,11 +115,17 @@ get_home_depth() {
   done
   echo $depth
 }
+
 PROMPT_COMMAND='
   HOME_DEPTH=$(get_home_depth)
   HOME_NAME=$(basename "$HOME")
-  PS1="\[\e[33m\][Depth:\$HOME_DEPTH]\[\e[0m\]\[\e[32m\][\$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]`date +%Y%m%d_%H:%M`\[\e[0m\] \w]\n\$ "
+  VENV=""
+  if [ -n "$VIRTUAL_ENV" ]; then
+    VENV="\[\e[35m\]("$(basename "$VIRTUAL_ENV")")\[\e[0m\]"
+  fi
+  PS1="$VENV\[\e[33m\][Depth:$HOME_DEPTH]\[\e[0m\]\[\e[32m\][$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]$(date +%Y%m%d_%H:%M)\[\e[0m\] \w]\n\$ "
 '
+
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_STATE_HOME="$HOME/.local/state"
@@ -387,7 +393,11 @@ get_home_depth() {
 precmd() {
   export HOME_DEPTH=$(get_home_depth)
   export HOME_NAME=$(basename "$HOME")
-  PROMPT="%F{yellow}[Depth:$HOME_DEPTH]%f%F{green}[$HOME_NAME]%f[%n@%m %F{cyan}%D{%Y%m%d_%H:%M}%f %~]\n%# "
+  local VENV=""
+  if [[ -n "$VIRTUAL_ENV" ]]; then
+    VENV="%F{magenta}($(basename $VIRTUAL_ENV))%f"
+  fi
+  PROMPT="$VENV%F{yellow}[Depth:$HOME_DEPTH]%f%F{green}[$HOME_NAME]%f[%n@%m %F{cyan}%D{%Y%m%d_%H:%M}%f %~]\n%# "
 }
 
 export XDG_CONFIG_HOME="$HOME/.config"
