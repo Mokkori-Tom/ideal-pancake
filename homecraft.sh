@@ -220,12 +220,39 @@ require("lazy").setup({
     {
       "sudormrfbin/cheatsheet.nvim",
       dependencies = {
-        { "nvim-telescope/telescope.nvim" },
-        { "nvim-lua/popup.nvim" },
-        { "nvim-lua/plenary.nvim" },
+        "nvim-telescope/telescope.nvim",
+        "nvim-lua/popup.nvim",
+        "nvim-lua/plenary.nvim",
       },
       cmd = { "Cheatsheet" },
     },
+
+    -- which-key
+    {
+      "folke/which-key.nvim",
+      config = function()
+        require("which-key").setup({})
+      end,
+      event = "VeryLazy",
+    },
+    -- leap
+    {
+      "ggandor/leap.nvim",
+      config = function()
+        require("leap").add_default_mappings()
+      end,
+      event = "BufReadPost",
+    },
+    -- telescope
+    {
+      "nvim-telescope/telescope.nvim",
+      dependencies = { "nvim-lua/plenary.nvim", "nvim-lua/popup.nvim" },
+      cmd = "Telescope",
+      config = function()
+        require("telescope").setup({})
+      end,
+    },
+
     -- ANSIカラー対応カラースキーム（任意）
     --{ "2nthony/vim-ansi-colors" },
   },
@@ -274,6 +301,15 @@ lspconfig.ts_ls.setup({})
 
 -- 引数情報の表示
 require("lsp_signature").setup({})
+
+-- ファイル検索
+vim.keymap.set('n', '<Leader>ff', '<cmd>Telescope find_files<CR>', { desc = 'ファイル検索' })
+-- Grep検索
+vim.keymap.set('n', '<Leader>fg', '<cmd>Telescope live_grep<CR>', { desc = 'Grep検索' })
+-- バッファ一覧
+vim.keymap.set('n', '<Leader>fb', '<cmd>Telescope buffers<CR>', { desc = 'バッファ一覧' })
+-- ヘルプ検索
+vim.keymap.set('n', '<Leader>fh', '<cmd>Telescope help_tags<CR>', { desc = 'ヘルプ検索' })
 EOF
 
   # minimal .gitconfig
