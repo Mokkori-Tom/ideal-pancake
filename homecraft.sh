@@ -252,16 +252,42 @@ require("lazy").setup({
         require("telescope").setup({})
       end,
     },
+   {
+      "aliqyan-21/darkvoid.nvim",
+      priority = 1000,
+      config = function()
+        vim.cmd.colorscheme("darkvoid")
+        -- 背景透過
+        for _, group in ipairs({ "Normal", "NormalNC", "SignColumn", "StatusLine", "VertSplit" }) do
+          vim.api.nvim_set_hl(0, group, { bg = "none" })
+        end
+          vim.api.nvim_set_hl(0, "Comment", { fg = "#64b5f6", italic = true })     -- コメントに青み＋斜体
+          vim.api.nvim_set_hl(0, "Keyword", { fg = "#d3869b", bold = true })      -- キーワードを紫系＋太字
+          vim.api.nvim_set_hl(0, "Identifier", { fg = "#ffd700" })                -- 変数名を金色
+          vim.api.nvim_set_hl(0, "String", { fg = "#8ec07c" })                    -- 文字列をグリーン
+          vim.api.nvim_set_hl(0, "Function", { fg = "#fabd2f", bold = true })     -- 関数名をオレンジ
+          vim.api.nvim_set_hl(0, "Type", { fg = "#b8bb26", bold = true })         -- 型名に黄緑
+          vim.api.nvim_set_hl(0, "LineNr", { fg = "#a0a0a0", bold = true })    -- やや明るいグレー
+          vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ffd700", bold = true })  -- カーソル行の番号を金色
+          -- Tree-sitter (nvim 0.8+)
+          vim.api.nvim_set_hl(0, "@comment",    { fg = "#64b5f6", italic = true })
+          vim.api.nvim_set_hl(0, "@keyword",    { fg = "#d3869b", bold = true })
+          vim.api.nvim_set_hl(0, "@string",     { fg = "#8ec07c" })
+          vim.api.nvim_set_hl(0, "@function",   { fg = "#fabd2f", bold = true })
+          vim.api.nvim_set_hl(0, "@type",       { fg = "#b8bb26", bold = true })
+          vim.api.nvim_set_hl(0, "@variable",   { fg = "#ffd700" })
 
+      end,
+     },
     -- ANSIカラー対応カラースキーム（任意）
     --{ "2nthony/vim-ansi-colors" },
   },
-  install = { colorscheme = { "ansi", "tokyonight", "habamax" } },  -- 優先順で適用
+  install = { colorscheme = { "darkvoid", "tokyonight", "habamax" } },  -- 優先順で適用
   checker = { enabled = true },
 })
 
 -- colorschemeの適用（優先順位に従い自動適用されるので明示的には不要ですが、好みで指定可能）
-vim.cmd.colorscheme("vim")
+-- vim.cmd.colorscheme("darkvoid")
 
 -- lualineのセットアップ
 require("lualine").setup {}
