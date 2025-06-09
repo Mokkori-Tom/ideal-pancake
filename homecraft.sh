@@ -167,6 +167,20 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- 選択範囲のインデントを「基準行」と同じ幅に揃える（例: カーソル行のインデント幅を取得し、他行へ適用）
+vim.keymap.set('v', '<leader>=', function()
+  -- カーソル行のインデント幅取得
+  local line = vim.fn.line('.')
+  local indent = vim.fn.indent(line)
+  -- 選択範囲
+  local start_line = vim.fn.line("'<")
+  local end_line = vim.fn.line("'>")
+  -- 各行のインデントを揃える
+  for l = start_line, end_line do
+    vim.fn.setline(l, string.rep(' ', indent) .. vim.fn.matchstr(vim.fn.getline(l), [[^\s*\zs.*]]))
+  end
+end, { noremap = true, silent = true, desc = "選択範囲のインデントをカーソル行に揃える" })
+
 -- 基本的なエディタ設定
 vim.opt.clipboard:append("unnamedplus") --クリップボード同期
 vim.opt.number = true             -- 行番号を表示
@@ -269,6 +283,7 @@ require("lazy").setup({
           vim.api.nvim_set_hl(0, "Type", { fg = "#b8bb26", bold = true })         -- 型名に黄緑
           vim.api.nvim_set_hl(0, "LineNr", { fg = "#a0a0a0", bold = true })    -- やや明るいグレー
           vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ffd700", bold = true })  -- カーソル行の番号を金色
+          vim.api.nvim_set_hl(0, "Visual", { bg = "#44475a" })  -- ドラキュラ風薄い紫
           -- Tree-sitter (nvim 0.8+)
           vim.api.nvim_set_hl(0, "@comment",    { fg = "#64b5f6", italic = true })
           vim.api.nvim_set_hl(0, "@keyword",    { fg = "#d3869b", bold = true })
