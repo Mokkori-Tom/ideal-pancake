@@ -267,13 +267,25 @@ require("lazy").setup({
         require("telescope").setup({})
       end,
     },
+    {
+      "nvim-pack/nvim-spectre",
+      dependencies = { "nvim-lua/plenary.nvim" },
+      cmd = "Spectre",
+      config = function()
+        require("spectre").setup()
+      end,
+   },
    {
       "aliqyan-21/darkvoid.nvim",
       priority = 1000,
       config = function()
         vim.cmd.colorscheme("darkvoid")
         -- 背景透過
-        for _, group in ipairs({ "Normal", "NormalNC", "SignColumn", "StatusLine", "VertSplit" }) do
+        for _, group in ipairs({
+  "Normal", "NormalNC", "SignColumn", "StatusLine", "StatusLineNC",
+  "VertSplit", "WinSeparator", "EndOfBuffer", "MsgArea", "MsgSeparator",
+  "NormalFloat", "FloatBorder", "LineNr", "Folded", "CursorLine", "CursorLineNr"
+}) do
           vim.api.nvim_set_hl(0, group, { bg = "none" })
         end
           vim.api.nvim_set_hl(0, "Comment", { fg = "#64b5f6", italic = true })     -- コメントに青み＋斜体
@@ -352,6 +364,9 @@ vim.keymap.set('n', '<Leader>fg', '<cmd>Telescope live_grep<CR>', { desc = 'Grep
 vim.keymap.set('n', '<Leader>fb', '<cmd>Telescope buffers<CR>', { desc = 'バッファ一覧' })
 -- ヘルプ検索
 vim.keymap.set('n', '<Leader>fh', '<cmd>Telescope help_tags<CR>', { desc = 'ヘルプ検索' })
+-- 置き換え
+vim.keymap.set('n', '<Leader>sr', '<cmd>lua require("spectre").open()<CR>', { desc = 'プロジェクト全体で検索＆置換' })
+vim.keymap.set('v', '<Leader>sr', '<esc><cmd>lua require("spectre").open_visual({select_word=true})<CR>', { desc = '選択範囲で検索＆置換' })
 EOF
 
   # minimal .gitconfig
