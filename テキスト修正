@@ -1,127 +1,392 @@
-QEMU起動オプションの日本語コメント付きまとめ
-ついでに各オプションの意味・よくある罠も補足！
-
----
-
-qemu-system-x86_64.exe \
-  # RAM割り当て（MB単位。16GBなら -m 16384）
-  -m 16384 \
-  # インストール時のみ必要なISO指定（linuxmint-22.1-xfce-64bit.iso等）
-  -cdrom ./linuxmint-22.1-xfce-64bit.iso \
-  # 仮想HDDの指定（ここにMint本体が入る）
-  -hda mint.img \
-  # 起動デバイス優先順位。d=DVD/ISO優先、インストール後は削除推奨
+qemu-system-x86_64 \
+  -m 8192 \
+  -cdrom ./alpine-standard-3.22.0-x86_64.iso \
+  -hda ./alpine.img \
   -boot d \
-  # CPUコア数（物理コア数の半分～同数推奨、-smp 6なら6コア割り当て）
-  -smp 6 \
-  # ネットワーク仮想NIC＆SSH用ポート転送（ホスト2222→ゲスト22）
-  -net nic -net user,hostfwd=tcp::2222-:22 \
-  # 仮想グラフィックデバイス（高速化/互換重視ならstd/qxlも可）
-  -vga virtio \
-  # 表示ウィンドウ(SDL。GTKでも可)
-  -display sdl \
-  # タッチパネル対応＆マウスズレ防止
-  -usb -device usb-tablet
-  # WindowsではKVM加速は無効（-enable-kvmは入れないこと！）
-  # -enable-kvm
-
-
----
-
-【運用TIPS】
-
-ISOイメージ指定＆-boot dはインストール時のみ
-　→ インストール完了後は両方外してHDD（mint.img）ブートに切り替える！
-
-RAM盛り放題・CPU盛り放題でも、QEMU on WindowsはCPU遅延に注意
-
-ネットワーク転送（hostfwd）はWinSCP/SCPファイル転送やSSHログイン用の生命線
-
-
-
----
-
-【インストール後の最終コマンド例】
-
-qemu-system-x86_64.exe \
-  -m 16384 \
-  -hda mint.img \
   -smp 6 \
   -net nic -net user,hostfwd=tcp::2222-:22 \
   -vga virtio \
-  -display sdl \
+  -display gtk \
   -usb -device usb-tablet
-
-
 ---
-
-【ありがちなトラブル例】
-
-ISO付けたまま再起動→「またインストーラが立ち上がる」
-　→ ISO外して、-boot dも消す！
-
-No bootable device／boot failed
-　→ HDDが空っぽ（インストール手順のどこかで止まっている、再インストールを検討）
-
--enable-kvm使えない（Windows）
-　→ Linux専用なので外す！
-
+# run.sh などで見切れる対策
+-display gtk \
+-vga std \
 ---
-
-1. ISO有り・-boot d→Mintインストーラを起動
-
-
-2. 仮想HDD（mint.img）へMintをフルインストール
-
-
-3. インストーラで「シャットダウン」を選択
-
-
-4. QEMU起動オプションから**-cdromと-boot dを削除**
-
-
-5. mint.imgからMintが直接ブートされるのを確認！
-
-
+初期ログイン
+root
 ---
-
-コマンド・コメントをそのまま自分用スクリプトやメモに流用OK！
-
+apk update
+apk add neovim git bash curl openssh
+rc-service sshd start
+rc-update add sshd
 ---
-起動オプションの説明とか
+Available interfaces are: eth0.
+Which one do you want to initialize? (or '?' for help)
 
-https://repo.msys2.org/distrib/x86_64/(から拾ってくる)
-pacman -Syu
-pacman -S mingw-w64-x86_64-qemu
-mkdir mint/
-cd mint/
-qemu-img create -f qcow2 mint.img 40G
-https://www.linuxmint.com/edition.php?id=320(から拾ってくる)
-qemu-system-x86_64.exe 
+✅ 対処（というか、そのままEnter！）
+そのプロンプトでは：
+eth0
+と打つか、そのままEnterすればOK！
+---
+Ip address for eth0?
+
+つまり → 何も打たずにそのまま Enter！
+Ip address for eth0? [press Enter]
+これで DHCP による自動割り当てが走る！
+QEMU の -net user を使っていれば、内部でDHCPサーバが動いてるから、
+特別なことしなくても OK！
+---
+HTTP/FTP proxy URL?
+
+回答（通常環境なら）：
+[Enter] ← なにも入力しない！
+🔍 なぜ？
+QEMUの -net user モードでは、ホストのネット接続がそのまま使われる
+社内プロキシや、特殊なネット環境でない限り、設定不要
+ここで何か変なURLを入れると、パッケージ取得が失敗することがある
+参考：どういうときに入力する？
+必要な状況	入力例
+社内LANでプロキシを通さないと外に出れない	http://proxy.example.com:8080
+トンネリング経由（SSH socksなど）	socks5://localhost:1080
+→ でも今回は 必要ない！
+---
+Which NTP client to run? (busybox, openntpd, chrony, none)
+
+つまり：
+> 「時刻同期するには、どのソフトを使いたい？」
+という選択。
+🏆 結論：迷ったら chrony 一択！
+✅ 推奨回答：
+chrony
+🧠 各選択肢の違い：
+選択肢	特徴
+chrony	⏱ 高精度・軽量・モダン。おすすめ！
+openntpd	🧓 昔ながら。セキュリティ重視系
+busybox	🚲 超ミニマル。超軽量・低機能
+none	❌ 同期しない（オフライン専用向け）
+---
+Which mirror do you want to use? (or '?' for list)
+
+回答：
+1
+「firstなミラー」＝ 一番上のミラー番号、つまり 1！
+通常は地理的に近い or メンテが良好なミラーが先頭に来る
+Alpineはミラー選定がしっかりしてるから、1で安定して問題ナッシング！
+💡 ちなみに：
+? を押すと一覧が出る
+どれを選んでも /etc/apk/repositories に記録されるので、あとから編集も可
+✅ なので、今は迷わず：
+Which mirror do you want to use? 1 ⏎
+これでパッケージインストールが爆速ルートに乗るぜッ！
+---
+Setup a user? (Enter a username or 'no')
+
+回答パターン：
+
+🎩 新しいユーザーを作る（カッコいいおすすめ）
+
+neo
+
+※例：neo, タロウ, admin, psion, お好きな名前でOK！
+→ その後にパスワード入力 → wheel グループ追加（= sudo 権限付与）などが続く
+🤖 もしくは no を入力すれば：
+root ユーザーだけになる
+セキュリティ的には弱くなるが、単体運用ならアリ
+---
+Enter ssh key or URL for neo (or 'none')
+
+選択肢：
+🥇 まだSSH鍵がない / あとで設定する → none を入力
+none
+これでOK！
+あとから普通に ~/.ssh/authorized_keys に追記すればよい！
+🥈 GitHubやURLで公開鍵を使いたい場合
+https://github.com/yourusername.keys
+これを入れると、GitHubから .ssh/authorized_keys が自動生成される！
+🛠️ すでにローカルに公開鍵がある場合（Linux側で手動）
+cat ~/.ssh/id_rsa.pub
+→ 出てきた文字列を貼ってもOK（でも面倒なので、今は none でいい
+✅ 今の正解は：
+none ⏎
+これでログイン後にSSHサーバーを立ち上げて、手動で鍵追加すればOK！
+---
+Which disk would you like to use? (or '?' for help)
+
+ここで選ぶべきは：
+sda
+または表示されているのが：
+/dev/sda
+であれば、それを選択！（sda と入力すればOK）
+🔍 これの意味：
+Alpineは今、君が用意した仮想HDD（alpine.img）を
+/dev/sda として認識している
+そこに パーティションを切り、ファイルシステムを作り、ブートローダーも入れる
+→ 君のNeoな世界がディスクに定着する瞬間
+✅ 入力するだけ：
+sda ⏎
+または：
+/dev/sda ⏎
+---
+How would you like to use it? (sys, data, crypt, lvm, none)
+
+答え：sys 一択！！
+sys ⏎
+🧠 意味と使い分け：
+モード	用途	解説
+sys ✅	通常インストール	AlpineをHDDに完全インストール（rootfs + bootloader）
+data	データ保存用だけ	起動できないただのストレージ
+crypt	暗号化インストール	LUKS付き。セキュアだが今回は非推奨
+lvm	LVMパーティション管理	玄人向け。今回不要
+none	なにも使わない	ディスクスルー＝インストールされない！
+✅ なぜ sys なの？
+これを選ばないと ブートローダ（GRUB）やrootfsが書き込まれない
+次回起動時に「No bootable device」が出て詰む
+sys は「フルインストール」なので、まさにこれ一択！
+---
+WARNING: Erase the above disk and continue? [y/N]
+
+意味：
+> 「本当にこのディスク全部消して、OSをインストールしていいんだな！？」
+という、最終確認メッセージ。
+✅ 今回の状況では？
+✅ この alpine.img は 仮想ディスク
+✅ Alpine専用に作ったもの
+✅ 他のOSやファイルは入ってない
+よって──
+💥 回答：
+y ⏎
+---
+installation is complete. please reboot.
+
+✨✨✨
+🎉 完・全・勝・利！！！ 🎉
+✨✨✨
+──これは、まさに
+> **「NeoなNeo、爆誕の瞬間」**を告げる神託だ！！
+✅ 次にやるべきこと：
+🛠️ 1. QEMUウィンドウを一度閉じる（Ctrl+Q など）
+または：
+poweroff
+---
+🧹 2. run.sh をインストール後用に修正：
+#!/bin/bash
+qemu-system-x86_64 \
+  -m 8192 \
+  -hda ./alpine.img \
+  -boot c \
+  -smp 6 \
+  -net nic -net user,hostfwd=tcp::2222-:22 \
+  -vga virtio \
+  -display gtk \
+  -usb -device usb-tablet
+✅ -cdrom 削除！
+✅ -boot c に変更！（HDD起動）
+---
+🚀 3. 起動！！
+bash run.sh
+---
+ぬぉおおおッ！？
+やっと世界を手に入れたと思ったら、
+文字が小さすぎて読めねえぇぇぇ！！！ 🕳️👁️👁️
+小さすぎるターミナル文字は、ギークの敵！👊
+Alpine内でフォント変更
+ログイン後にやる！
+apk add kbd
+setfont Lat2-Terminus16
+またはより大きめにする：
+setfont Lat2-Terminus32x16
+💡 これで太くて読みやすいASCIIターミナルに変身！
+💾 恒久化したい？ → /etc/conf.d/consolefont
+echo "consolefont=\"Lat2-Terminus32x16\"" >> /etc/conf.d/consolefont
+rc-update add consolefont boot
+🧪 フォント一覧確認：
+ls /usr/share/consolefonts/
+好きなのに変えてOK！（例：Lat2-Terminus28x14.psf.gz など）
+---
+neo に sudo 権限を付けたいなら：
+apk add sudo
+echo "neo ALL=(ALL) ALL" >> /etc/sudoers
+もしくは Alpine流：
+adduser neo wheel
+visudo
+→ wheel ALL=(ALL) ALL の行を有効に（コメント外す）
+🎉 最速の復活呪文：
+su -
+apk update
+apk add sudo neovim git curl bash
+さあ、もう一度 apk を叩いてみよう。
+今度こそ、Neoの名にふさわしく世界を更新する時だ！😎📦⚙️
+---
+グハッ！？😵💥
+まさかの──
+> neovim が "no such package"!?
+🧠 状況確認！
+❓ 発生したエラー：
+ERROR: unable to select packages:
+  neovim (no such package):
+🔍 原因：
+Alpine Linux では、neovim は mainリポジトリではなく、community にある！
+→ よって、/etc/apk/repositories に community が入ってないとインストール不可！
+✅ 解決方法：community リポジトリを有効にする！
+1. 編集：
+vi /etc/apk/repositories
+あるいは：
+nvim /etc/apk/repositories
+1. 以下のように行を追加 or コメントを外す：
+https://dl-cdn.alpinelinux.org/alpine/v3.22/community
+⚠️ Alpineのバージョンに合わせて「v3.xx」部分を調整
+（cat /etc/alpine-release で確認）
+1. 再度リスト更新：
+apk update
+1. そして満を持して：
+apk add neovim
+✅ 補足：他の便利パッケージも community にある！
+fzf
+bat
+exa
+ripgrep
+htop
+zsh
+tmux
+なども community 管轄！
+---
+おすすめ（最速版）：
+1. Windows側で共有ディレクトリに移動：
+cd shared
+python -m http.server 8000
+1. Alpineゲストからアクセス：
+wget http://10.0.2.2:8000/test.txt
+※ 10.0.2.2 は -net user 環境のホスト側ループバックアドレス！
+🔚 結論
+> ❌ Windows版QEMUは、-fsdev（virtfs）非対応なことが多い
+✅ 代わりに「HTTP or SSH or SMB」共有が現実的
+# Windows側
+cd shared
+python3 -m http.server 8000
+# Alpineゲスト側
+wget http://10.0.2.2:8000/secret-plan.txt
+✅ やり方（Windows側）
+たとえば、QEMUの実行フォルダにある shared/ を共有したいなら：
+cd shared
+python -m http.server 8000
+または（明示的に3系）：
+python3 -m http.server 8000
+→ ✅ shared/ が http://localhost:8000/ で公開される
+🌍 Alpineゲスト側からアクセス！
+QEMUの -net user を使ってる場合、ホスト側のアドレスは 10.0.2.2！
+wget http://10.0.2.2:8000/test.txt
+またはディレクトリ一覧確認：
+wget -O - http://10.0.2.2:8000/
+🎯 これで何ができる？
+Alpineゲストでファイル取得 ⬇️
+スクリプト、設定、dotfilesなどを共有
+複雑なsmbやssh設定なし！
+✅ 補足：Alpine側に wget なければ…
+apk add wget
+---
+🎯 最短まとめ：
+wget -r -np http://10.0.2.2:8000/
+これで Windows 側の shared/ フォルダを
+Alpine ゲストにまるっと召喚完了だ！📁🔥
+さらに、取得先のフォルダを指定したり -nH --cut-dirs でパスを綺麗にしたりもできるぞ。
+必要なら「スッキリ保存バージョン」も書くぜ！？😎✨
+---
+フッ……来たな、「逆召喚」！😎⚡
+そう、今度は──
+> Alpineゲスト → Windowsホスト にファイルを送る
+すなわち「逆共有」だッ！
+🧭 方法は主に2つ：
+方法	特徴
+✅ Alpine側からHTTPサーバを立てる	ゲスト→ホストへWeb経由でアクセス（超軽量）
+✅ SCPなどで送る（hostfwd使って）	SSH経由でファイルを転送（要sshd）
+まずは手軽な HTTP サーバ方式から紹介！
+🍯 方法1：Alpine側でHTTPサーバを立てる
+✅ 1. busybox を使う（標準装備！）
+mkdir -p ~/public
+cp important.txt ~/public/
+cd ~/public
+busybox httpd -f -p 8080
+→ http://10.0.2.15:8080/ が立ち上がる（ゲストのIP）
+✅ 2. Windows側からブラウザ or curl でアクセス！
+例：
+curl http://10.0.2.15:8080/important.txt -o got.txt
+またはブラウザで http://10.0.2.15:8080/ にアクセスして保存。
+❓ IPがわからない？
+Alpine側で：
+ip a
+eth0 の inet の欄を見る（例：10.0.2.15）
+🌐 もし繋がらない場合：
+-net user だとホスト→ゲストはOKだけど、ゲスト→ホストはブロックされやすい
+→ その場合は -net nic -net user,hostfwd ではなく -net bridge を使う必要がある（高度）
+🚀 方法2：SCP（SSH）で直接転送（hostfwd経由）
+QEMUオプションに以下が入ってるなら：
+-net user,hostfwd=tcp::2222-:22
+Alpine内でsshdを有効化：
+apk add openssh
+rc-service sshd start
+Windowsから送信：
+scp -P 2222 myfile.txt neo@localhost:/home/neo/
+🎯 結論：
+方法	メリット	難易度
+🥇 HTTP共有（busybox httpd）	超軽量・即立てられる	⭐
+🥈 SSH/SCP（hostfwd）	安定・双方向	⭐⭐
+🥉 SMBなど	複雑・重い	⭐⭐⭐
+---
+フハハハハッ！！😂それこそが──
+CLI鯖立ての“儀式的代償”！！！（ﾄﾞｰﾝ）
+✅ でも大丈夫！
+ターミナルが占領されてるのは -f（foreground）だから。
+バックグラウンド起動にすれば快適よ！
+🛠 方法1：& でバックグラウンド実行
+busybox httpd -p 8080 -h ~/public &
+🎉 これでターミナルが解放される！
+（※ -f は使わない）
+🛠 方法2：プロセス制御を使う（あとから止めたいとき）
+# 起動
+busybox httpd -p 8080 -h ~/public &
+# プロセス確認
+ps
+# 停止（PIDを指定）
+kill <PID>
+✅ 方法3：おしゃれに rc-service 風に起動（Alpineっぽく）
+mkdir -p /etc/init.d/httpd
+# カスタムスクリプトを仕込むとサービス化できるけど、そこまでは不要なら以下で十分：
+busybox httpd -p 8080 -h ~/public &
+💡 ポート解放確認：
+netstat -tlnp
+🪄 補足：デフォルトドキュメント
+公開フォルダのルートに index.html があると自動表示されるぜ📄
+🎯 結論：
+起動方法	ターミナル占有	備考
+-f 付き	✅ 占有される	開発中や確認に便利
+& 付き	❌ 占有されない	常時稼働や実運用向け
+さあ、サーバは立ち、ASCIIは流れ出す。
+今こそ、バックグラウンドに仕掛けて優雅に攻めよ！😎🌐
+---
+おぉッ、それは──
+仮想コンソール切り替えキー の話だな！？🧠⌨️
+🖥️ Alpine Linux（CLI環境）での「もう一つターミナルを開く」方法
+✅ キーボードで仮想端末（TTY）を切り替える：
+操作	説明
+Alt + F2	TTY2（2番目の仮想ターミナル）へ切り替え
+Alt + F3〜F6	TTY3〜TTY6へ（最大6個）
+Alt + F1	最初の画面（TTY1）へ戻る
+💡 補足：
+QEMU上のLinux CLIなら、上記キーで別のログインセッションを開ける！
+Alpineなら各TTYにログインすれば、それぞれ独立して動作！
+🎮 例：
+1. Alt + F1 → HTTPサーバ立ててる画面
+2. Alt + F2 → ログインして wget 実行！
+3. Alt + F3 → ログ見たり、vim起動したり！
+❗ 注意（GUIじゃない場合）：
+この機能は CLIモード限定（XやWayland起動していない前提）
+GUI起動中の仮想ターミナル切替は Ctrl + Alt + F1 など別
+🧪 QEMUにウィンドウフォーカスしておくのを忘れずに！
+フォーカス外だと Alt + F2 はホストOS側に取られて効かないぞ！
+---
 　# RAM割り当てオプション 　
 # -m 4096 → 4GB割り当て 　
 # -m 8192 → 8GB割り当て 　
 # -m 16384 → 16GB割り当て 　
 # -m 32768 → 32GB割り当て 
-
--m 16384 
--cdrom ./linuxmint-22.1-xfce-64bit.iso 
--hda mint.img 
--boot d 
--smp 6 
--net nic -net user,hostfwd=tcp::2222-:22 
--vga virtio 
--display sdl 
--usb -device usb-tablet 
-　# Windowsホストで-enable-kvmは→使えません！（Linux専用）
-
--enable-kvm
-
-起動した後はインストールオプションにしたがう
-
-完了まで1時間くらいかかった
-
-インストール手順で「最後に必ずMintをシャットダウン→ISOイメージを外してから再起動」
-
--boot dを削除すると、HDD（mint.img）から起動を試みる
-
