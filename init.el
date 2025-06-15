@@ -1,6 +1,3 @@
-;; -*- lexical-binding: t -*-
-
-;; パッケージ管理
 (require 'package)
 (setq package-archives
       '(("gnu"   . "https://elpa.gnu.org/packages/")
@@ -14,6 +11,14 @@
   (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
+
+(setq warning-suppress-types '((obsolete)))
+
+;; ddskk(input)
+(use-package ddskk
+  :ensure t)
+
+(global-set-key (kbd "C-x j") 'skk-auto-fill-mode)
 
 ;; SLIME（Common Lisp）
 (use-package slime
@@ -147,4 +152,4 @@
  '(package-selected-packages nil))
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-(require 'psc)
+;;(require 'psc)
