@@ -642,6 +642,9 @@ chafa --symbols braille image.png
 exit コマンドを入力
 Ctrl + D（EOF送信）
 どちらも即時にSSHセッションが終了します。
+---
+どうやらkmsconを起動した状態でsshは接続しない方がよい
+---
 EOF
 
   # minimal .inputrc
