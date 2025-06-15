@@ -646,6 +646,7 @@ $ less /tmp/buffer.txt
 ...
 ..
 .
+# 究極的には全てのパターンを意識に在中させる
 ---
 apk add chafa
 chafa image.png
