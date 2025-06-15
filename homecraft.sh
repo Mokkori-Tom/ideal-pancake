@@ -636,6 +636,8 @@ $ echo "nameserver 00.00.00" > /etc/resolv.conf
 # 純粋CLIで「クリップボードのようなこと」をしたいなら？
 $ cat > /tmp/buffer.txt
 $ less /tmp/buffer.txt
+#「less is more（lessはmoreより多機能）」
+# UNIXの伝統的なジョークです
 ---
 apk add chafa
 chafa image.png
