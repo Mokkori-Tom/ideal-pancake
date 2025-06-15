@@ -461,7 +461,7 @@ config.keys = {
 return config
 EOF
 
-  # minimal .inputrc
+  # qemu-Alpine-Linux
 cat > "$ABSVHOME/qemu-Alpine-setup.txt" <<"EOF"
 😎qemu-AlpineLinux🌐
 ---ディスクイメージの作成でかくても良い
