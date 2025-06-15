@@ -573,6 +573,8 @@ $ apk add kbd
 $ poweroff
 # コンソールemacs-CLIでは一緒
 $ emacs -nw
+# emacs-auto-saveはここから
+$ git clone https://github.com/manateelazycat/auto-save.git ~/.emacs.d/site-lisp/auto-save
 # listからgrep
 $ fc-list | grep -i 'mono'
 # なんだっけ？
