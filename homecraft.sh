@@ -638,7 +638,14 @@ $ cat > /tmp/buffer.txt
 $ less /tmp/buffer.txt
 #「less is more（lessはmoreより多機能）」
 # UNIXの伝統的なジョークです
-# コマンド(入力):結果(出力)
+# 入力=>出力-チャンクパターンマッチ
+# A => B (hello => 6bytes)
+# C => A (echo hello => hello)
+# CD => B (echo hello | wc -c => 6)
+# D => E (| wc -c => error)
+...
+..
+.
 ---
 apk add chafa
 chafa image.png
