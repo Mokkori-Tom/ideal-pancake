@@ -632,6 +632,13 @@ $ ssh -p 2222 neo@localhost
 # ssh-DL
 $ scp -P 2222 -r neo@localhost:~/test ./
 ---
+apk add chafa
+chafa image.png
+ANSI色付きディスプレイで、文字セルを使った画像表示が可能
+--symbols オプションで文字種類を変更（block, braille など）
+chafa --symbols braille image.png
+→ 点(ドット)芸が強調された出力になります。
+---
 exit コマンドを入力
 Ctrl + D（EOF送信）
 どちらも即時にSSHセッションが終了します。
