@@ -17,6 +17,7 @@
 ;; ddskk(input)
 (use-package ddskk
   :ensure t)
+
 (global-set-key (kbd "C-x j") 'skk-auto-fill-mode)
 
 ;; SLIME（Common Lisp）
@@ -109,17 +110,33 @@
                '(julia-mode . ("julia" "--startup-file=no" "--history-file=no"
                                "-e" "using LanguageServer; runserver()"))))
 
-;; UI と表示設定
 (use-package emacs
   :init
   (context-menu-mode 1)
   (global-tab-line-mode 1)
+  (setq display-line-numbers-type 'relative)      ;; ★ ここだけは setq で変数へ
+  (global-display-line-numbers-mode)
+  (display-battery-mode 1)
+  (display-time-mode 1)
+  (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
+  (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
   :custom
-  (current-language-environment "UTF-8")
-  (display-battery-mode t)
-  (display-time-mode t)
-  (display-line-numbers-type 'relative)
-  (scroll-bar-mode nil))
+  (current-language-environment "UTF-8"))
+
+;; UI と表示設定
+;; (use-package emacs
+;;   :init
+;;   (context-menu-mode 1)
+;;   (global-tab-line-mode 1)
+;;   :custom
+;;   (current-language-environment "UTF-8")
+;;   (display-battery-mode t)
+;;   (display-time-mode t)
+;;   (display-line-numbers-type 'relative)
+;;   (scroll-bar-mode nil))
+
+(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
 
 ;; フォント設定（custom-set-faces のままでもOK）
 (custom-set-faces
