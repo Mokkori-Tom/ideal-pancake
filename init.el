@@ -17,7 +17,6 @@
 ;; ddskk(input)
 (use-package ddskk
   :ensure t)
-
 (global-set-key (kbd "C-x j") 'skk-auto-fill-mode)
 
 ;; SLIME（Common Lisp）
