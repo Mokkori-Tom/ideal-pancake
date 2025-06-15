@@ -638,6 +638,7 @@ $ cat > /tmp/buffer.txt
 $ less /tmp/buffer.txt
 #「less is more（lessはmoreより多機能）」
 # UNIXの伝統的なジョークです
+# コマンド(入力):結果(出力)
 ---
 apk add chafa
 chafa image.png
