@@ -631,6 +631,11 @@ $ netstat -a -o | grep 8080
 $ ssh -p 2222 neo@localhost
 # ssh-DL
 $ scp -P 2222 -r neo@localhost:~/test ./
+# DNS設定
+$ echo "nameserver 00.00.00" > /etc/resolv.conf
+# 純粋CLIで「クリップボードのようなこと」をしたいなら？
+$ cat > /tmp/buffer.txt
+$ less /tmp/buffer.txt
 ---
 apk add chafa
 chafa image.png
