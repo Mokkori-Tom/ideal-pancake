@@ -1,3 +1,39 @@
+---
+apk add git emacs ripgrep fd
+git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
+~/.config/emacs/bin/doom install
+---
+(doom!
+ :input
+ japanese
+ :completion vertico
+ :ui
+ :editor evil
+ :emacs
+ :term
+ :checkers
+ :tools lsp
+ :lang org
+ :config)
+---
+;;~/.doom.d/packages.el に追加
+(package! ddskk)
+---
+;;~/.doom.d/config.el にddskk設定
+;; SKK-JISYOは必須、日本語辞書
+(setq skk-large-jisyo "~/.skk/SKK-JISYO.L")
+
+;; ddskk本体をlazy-load
+(use-package! ddskk
+  :commands skk-mode skk-auto-fill-mode
+  :init
+  (global-set-key (kbd "C-j") #'skk-mode))
+---
+mkdir -p ~/.skk
+wget -O ~/.skk/SKK-JISYO.L https://raw.githubusercontent.com/skk-dev/dict/master/SKK-JISYO.L
+---
+~/.config/emacs/bin/doom sync
+---
 # ~/.bash_profile
 if [ -z "$KMSCON" ] && [ "$XDG_VTNR" = "1" ]; then
   export KMSCON=1
