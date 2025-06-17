@@ -665,6 +665,9 @@ Ctrl + D（EOF送信）
 ---
 どうやらkmsconを起動した状態でsshは接続しない方がよい
 ---
+fbi --vt 2 -a image.png
+これで「tty2」にfbida-fbiで画像を表示。
+---
 EOF
 
   # minimal .inputrc
