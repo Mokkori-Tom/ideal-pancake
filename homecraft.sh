@@ -668,6 +668,10 @@ Ctrl + D（EOF送信）
 fbi --vt 2 -a image.png
 これで「tty2」にfbida-fbiで画像を表示。
 ---
+zellij
+Unlock-First (non-colliding) プリセット
+外部アプリケーション（vim や tmux など）とのショートカット衝突を避けたい方向け。
+---
 EOF
 
   # minimal .inputrc
