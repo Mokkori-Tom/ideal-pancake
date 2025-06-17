@@ -541,8 +541,8 @@ $ apk add sudo
 $ apk add kbd
 # これが無くては始まらない
 $ apk add wget
-# 完コピ
-$ wget -mirror --no-parent https://~
+# スマートwget
+$ wget -c -N -r -np -nH -nv -P ~/dl http://10.0.2.2:8000/
 # grepをpipeでつなぐと素晴らしい
 $ search /hogehoge | grep hoge
 # ファイル名検索
