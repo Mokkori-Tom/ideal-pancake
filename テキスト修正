@@ -1,3 +1,10 @@
+# ~/.bash_profile
+if [ -z "$KMSCON" ] && [ "$XDG_VTNR" = "1" ]; then
+  export KMSCON=1
+  kmscon --font-name="HackGen Console NF" --font-size=10 \
+    || echo "kmscon failed; falling back to bash"
+fi
+---
 qemu-system-x86_64 \
   -m 8192 \
   -cdrom ./alpine-standard-3.22.0-x86_64.iso \
