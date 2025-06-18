@@ -558,6 +558,8 @@ $ apk add kmscon
 # GUI無いverの軽量emacs
 $ apk add emacs-nox
 # 編集はvisudoでどうぞ
+# パッケージアンインストールはこちら
+$ apk del（短い、打ちやすい）
 $ /etc/sudoers
 # ユーザーをwheelグループへ追加
 $ adduser username wheel
