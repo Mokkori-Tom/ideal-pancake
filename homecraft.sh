@@ -661,6 +661,12 @@ $ less /tmp/buffer.txt
 # ？ =B> C
 # A =？> C
 ---alpine-memo
+Browsh
+FirefoxをバックエンドにしたCLIブラウザ。
+JavaScript、動画、CSS、ほぼ何でも対応。
+TUI（端末UI）なので、
+「ターミナルでウェブ全部！」な変態ツール。
+--
 # hoge.txt の内容を**hogehoge.txtに追記（append）**します。
 # hogehoge.txt が無い場合は新規作成されます。
 $ cat hoge.txt >> hogehoge.txt
