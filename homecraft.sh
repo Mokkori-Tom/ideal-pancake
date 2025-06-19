@@ -616,7 +616,7 @@ $ curl -L -o ~/.skk/SKK-JISYO.L https://raw.githubusercontent.com/skk-dev/dict/m
 (setq skk-large-jisyo "~/.skk/SKK-JISYO.L")
 ---
 # fonts_install
-$ curl https://github.com/yuru7/HackGen/releases/download/v2.10.0/HackGen_NF_v2.10.0.zip
+$ curl -L https://github.com/yuru7/HackGen/releases/download/v2.10.0/HackGen_NF_v2.10.0.zip -o share/HackGen_NF_v2.10.0.zip
 $ sudo apk add wget unzip fontconfig
 $ sudo unzip download/v2.10.0/HackGen_NF_v2.10.0.zip -d /usr/share/fonts/hackgen
 # kmscon_run
