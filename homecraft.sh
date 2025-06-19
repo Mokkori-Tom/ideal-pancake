@@ -565,6 +565,10 @@ $ /etc/sudoers
 $ adduser username wheel
 # ユーザーのグループ確認
 $ groups username
+# Alpine Linuxで新しいユーザーを追加する最短コマンド例です。
+$ adduser -D ユーザー名
+# Alpine Linuxでユーザーを削除するコマンド例です。
+$ deluser ユーザー名
 # なんだっけ?
 $ sudo whoami
 # サスペンド
