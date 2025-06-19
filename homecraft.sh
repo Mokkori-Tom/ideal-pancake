@@ -692,6 +692,22 @@ $ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent
 # Vimを起動し、コマンドモードで以下を実行します。
 :PlugInstall
 ---
+使い方
+vim-fugitive（Git連携）
+:Git … Git statusを表示
+:Gdiffsplit … diffをVim上で表示
+:Gcommit … コミット
+:Gpush … プッシュ
+など、Vim上でGit操作が簡単にできます。
+詳しくは :help fugitive を参照してください。
+vim-auto-save（自動保存）
+テキストを編集し、「挿入モードを抜ける」または「テキストが変更される」タイミングで自動的にファイルが保存されます。
+メッセージなどは表示されません（設定済み）。
+注意点
+プラグインのアップデートは :PlugUpdate で行えます。
+もし設定を変更したら、再度Vimを起動し直すか、:source ~/.vimrcで設定を再読込してください。
+自動保存を一時的にOFFにしたい場合は、let g:auto_save = 0 を設定して再起動してください。
+---
 # emacs-auto-save
 mkdir -p ~/.emacs.d/site-lisp
 cd ~/.emacs.d/site-lisp
