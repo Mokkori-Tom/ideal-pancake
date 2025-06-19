@@ -716,6 +716,31 @@ git clone https://github.com/manateelazycat/auto-save
 # python lsp
 $ pip install 'python-lsp-server[all]'
 ---
+# swank-setup
+$ curl -O https://beta.quicklisp.org/quicklisp.lisp
+$ sbcl --load quicklisp.lisp
+# sbcl
+$ (quicklisp-quickstart:install)
+$ (ql:add-to-init-file)
+$ (exit)
+# shell
+$ sbcl
+# sbcl
+$ (ql:quickload :swank)
+$ (swank:create-server :port 4005 :dont-close t)
+# emacs
+M-x slime-connect RET
+localhost RET
+4005 RET
+# shell
+$ echo '(load "~/quicklisp/setup.lisp")' >> ~/.sbclrc
+$ echo '(ql:quickload :swank)' >> ~/.sbclrc
+$ echo '(swank:create-server :port 4005 :dont-close t)' >> ~/.sbclrc
+# emacs-slime-update
+M-x package-refresh-contents RET
+M-x package-install RET slime RET
+# うはっ！君も仲間だ！！
+---
 EOF
 
   # minimal .inputrc
