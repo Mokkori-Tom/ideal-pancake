@@ -674,6 +674,7 @@ zellij
 Unlock-First (non-colliding) プリセット
 外部アプリケーション（vim や tmux など）とのショートカット衝突を避けたい方向け。
 ---
+" ~/.vimrc
 " vim-plugの初期化
 call plug#begin('~/.vim/plugged')
 " 1. Git連携を便利にするプラグイン（例: vim-fugitive）
