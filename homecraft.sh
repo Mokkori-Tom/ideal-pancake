@@ -722,6 +722,12 @@ setopt HIST_IGNORE_ALL_DUPS
 [ -f "$HISTFILE" ] && fc -R "$HISTFILE"
 autoload -Uz add-zsh-hook
 # add-zsh-hook zshexit 'fc -A'
+---
+# emacs-auto-save
+mkdir -p ~/.emacs.d/site-lisp
+cd ~/.emacs.d/site-lisp
+git clone https://github.com/manateelazycat/auto-save
+---
 EOF
     fi
   fi
