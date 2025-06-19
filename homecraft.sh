@@ -713,6 +713,9 @@ mkdir -p ~/.emacs.d/site-lisp
 cd ~/.emacs.d/site-lisp
 git clone https://github.com/manateelazycat/auto-save
 ---
+# python lsp
+$ pip install 'python-lsp-server[all]'
+---
 EOF
 
   # minimal .inputrc
