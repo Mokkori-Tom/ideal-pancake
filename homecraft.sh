@@ -674,6 +674,28 @@ zellij
 Unlock-First (non-colliding) プリセット
 外部アプリケーション（vim や tmux など）とのショートカット衝突を避けたい方向け。
 ---
+" vim-plugの初期化
+call plug#begin('~/.vim/plugged')
+" 1. Git連携を便利にするプラグイン（例: vim-fugitive）
+Plug 'tpope/vim-fugitive'
+" 2. 自動保存を行うプラグイン（例: vim-auto-save）
+Plug '907th/vim-auto-save'
+call plug#end()
+" vim-auto-saveの設定
+let g:auto_save = 1                               " 自動保存を有効化
+let g:auto_save_events = ["InsertLeave", "TextChanged"] " 特定のイベントで保存
+let g:auto_save_silent = 1                        " 保存時にメッセージ非表示
+---
+# vim-plugのインストール（初回のみ）
+$ curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+# Vimを起動し、コマンドモードで以下を実行します。
+:PlugInstall
+---
+# emacs-auto-save
+mkdir -p ~/.emacs.d/site-lisp
+cd ~/.emacs.d/site-lisp
+git clone https://github.com/manateelazycat/auto-save
+---
 EOF
 
   # minimal .inputrc
@@ -722,12 +744,6 @@ setopt HIST_IGNORE_ALL_DUPS
 [ -f "$HISTFILE" ] && fc -R "$HISTFILE"
 autoload -Uz add-zsh-hook
 # add-zsh-hook zshexit 'fc -A'
----
-# emacs-auto-save
-mkdir -p ~/.emacs.d/site-lisp
-cd ~/.emacs.d/site-lisp
-git clone https://github.com/manateelazycat/auto-save
----
 EOF
     fi
   fi
