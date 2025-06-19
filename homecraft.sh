@@ -660,6 +660,10 @@ $ less /tmp/buffer.txt
 # A =B> ？
 # ？ =B> C
 # A =？> C
+---alpine-memo
+# hoge.txt の内容を**hogehoge.txtに追記（append）**します。
+# hogehoge.txt が無い場合は新規作成されます。
+$ cat hoge.txt >> hogehoge.txt
 ---
 apk add chafa
 chafa image.png
