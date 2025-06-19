@@ -567,6 +567,8 @@ $ adduser username wheel
 $ groups username
 # Alpine Linuxで新しいユーザーを追加する最短コマンド例です。
 $ adduser -D ユーザー名
+# パスワード設定もしたい場合は
+$ passwd ユーザー名
 # Alpine Linuxでユーザーを削除するコマンド例です。
 $ deluser ユーザー名
 # なんだっけ?
