@@ -1,4 +1,77 @@
 ---
+例：ファイル hoge.txt の3行目だけ表示
+sed -n 3p hoge.txt
+例：5～8行目だけ表示
+sed -n 5,8p hoge.txt
+---
+cat session.log で何も表示されない場合：
+---
+主な原因・確認ポイント
+script セッションがまだ続行中
+---
+apk add asciinema
+コマンド録画できる世界へようこそ
+---
+ファイル指定で保存
+asciinema rec mysession.cast
+---
+再生例
+asciinema play mysession.cast
+---
+Alpine Linux での注意
+Alpine Linux では、python3-venv パッケージが必要です。
+apk add py3-virtualenv
+または
+apk add py3-venv
+が必要な場合あり。
+---
+Alpine Linuxではpip単体のパッケージは存在しま せん。
+Python 3用なら py3-pip を使います。
+sudo apk add py3-pip
+---
+ファイル名一覧（例：files.txt）に記載されたフ ァイルのみを対象にripgrepで検索するには、xargsとの組み合わせが最短です。
+xargs rg PATTERN < files.txt
+例：
+files.txt に
+foo.txt
+bar.txt
+baz.txt
+が記載されているとして、hogeを全ファイルに検索：
+xargs rg hoge < files.txt
+解説
+files.txtはファイル名またはパスを1行ずつ列挙
+xargsでリストの各ファイルを引数としてrgに渡す
+xargs rg -n "pattern" < files.txt
+ワンライナーでOK。
+リストの書式やファイル数が多い場合も高速です。
+---
+Python仮想環境からの離脱（deactivate）は、
+以下コマンド一発です。
+deactivate
+---
+ipythonおまけ: 「今のログ状態」を確認
+%logstate
+既存ログファイルを「追記モード」で再開
+%logstart -o -a mysesssion.log
+---
+ipythonエレガントな鉄則
+シェルコマンドは !
+Pythonマジックは %
+エディタ呼び出しは %edit
+---
+CLIでも焦らず、分割・編集・実行で美しく攻めよ う！
+---
+# ~は正しく解釈されない為、フルパスで表記.-rオプションでディレクトリ.
+$ scp -P 2222 neo@192.168.**.**:/home/user1/hoge.txt ./dl/
+---
+# ifconfig の基本的な使い方
+$ apk add net-tools
+#その後、以下のように使用可能になります：
+# インターフェース一覧と状態を確認：
+$ ifconfig
+# 特定インターフェースを確認：
+$ ifconfig eth0
+---
 apk add git emacs ripgrep fd
 git clone --depth 1 https://github.com/doomemacs/doomemacs ~/.config/emacs
 ~/.config/emacs/bin/doom install
