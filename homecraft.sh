@@ -660,6 +660,8 @@ $ less /tmp/buffer.txt
 # A =B> ？
 # ？ =B> C
 # A =？> C
+# Androidのストレージを参照できるようにする
+$ termux-setup-storage
 ---alpine-memo
 Browsh
 FirefoxをバックエンドにしたCLIブラウザ。
