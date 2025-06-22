@@ -1,4 +1,11 @@
 ---
+bash/zsh等なら
+~/.bashrc または ~/.zshrc 等に追記：
+export EDITOR=vim
+設定後：
+source ~/.bashrc
+# もしくは再ログイン                          以降、IPythonでも常にvimが呼ばれる。
+---
 例：ファイル hoge.txt の3行目だけ表示
 sed -n 3p hoge.txt
 例：5～8行目だけ表示
