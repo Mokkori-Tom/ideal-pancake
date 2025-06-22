@@ -30,4 +30,5 @@ let g:auto_save_events = ["InsertLeave", "TextChanged"] " 特定のイベント�
 let g:auto_save_silent = 1     
 
 " 行番号(相対表示)
+set number
 set relativenumber
