@@ -136,6 +136,7 @@ export HISTFILE="$HOME/.bash_history"
 export HISTSIZE=10000
 export HISTCONTROL=ignoredups:erasedups
 export HISTIGNORE="ls:bg:fg:history:pwd"
+export EDITOR=vim
 #export PATH="$HOME/nvim/bin:$PATH"
 #source ./myenv/Scripts/activate
 shopt -s histappend
