@@ -28,3 +28,6 @@ autocmd User skkeleton-initialize-pre call skkeleton#config({'globalDictionaries
 let g:auto_save = 1                               " 自動保存を有効化
 let g:auto_save_events = ["InsertLeave", "TextChanged"] " 特定のイベントで保存
 let g:auto_save_silent = 1     
+
+" 行番号(相対表示)
+set relativenumber
