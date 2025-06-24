@@ -1,0 +1,5 @@
+let g:denops#server#deno_path =
+  \ has('win32') ?
+  \ substitute(system('cygpath -w ' . shellescape(expand('~/.deno/bin/deno'))), '\n', '', 'g')
+  \ : expand('~/.deno/bin/deno')
+---
