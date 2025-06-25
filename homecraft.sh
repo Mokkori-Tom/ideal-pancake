@@ -203,6 +203,9 @@ vim.opt.undofile = true           -- アンドゥファイルを有効化
 -- lazy.nvimプラグイン設定
 require("lazy").setup({
   spec = {
+    { "vim-denops/denops.vim", lazy = false },
+    { "vim-skk/skkeleton", lazy = false }, -- 必ずdenops.vimより後ろに
+    { "vim-denops/denops-helloworld.vim", lazy = false }, -- （デバッグ用に推奨）
     -- 基本プラグイン
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-lualine/lualine.nvim" },
@@ -368,6 +371,18 @@ vim.keymap.set('n', '<Leader>fh', '<cmd>Telescope help_tags<CR>', { desc = 'ヘ�
 -- 置き換え
 vim.keymap.set('n', '<Leader>sr', '<cmd>lua require("spectre").open()<CR>', { desc = 'プロジェクト全体で検索＆置換' })
 vim.keymap.set('v', '<Leader>sr', '<esc><cmd>lua require("spectre").open_visual({select_word=true})<CR>', { desc = '選択範囲で検索＆置換' })
+
+vim.keymap.set("i", "<C-j>", "<Plug>(skkeleton-enable)")
+
+-- SKK辞書指定
+vim.api.nvim_create_autocmd("User", {
+  pattern = "skkeleton-initialize-pre",
+  callback = function()
+    vim.fn["skkeleton#config"]({
+      globalDictionaries = { vim.fn.expand("~/.skk/SKK-JISYO.L") }
+    })
+  end,
+})
 EOF
 
   # minimal .gitconfig
