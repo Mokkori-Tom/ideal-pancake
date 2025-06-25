@@ -1,3 +1,5 @@
+curl -fLo ~/SKK-JISYO.L.gz https://skk-dev.github.io/dict/SKK-JISYO.L.gz
+7za e -o~/.skk SKK-JISYO.L.gz
 ---
 bash/zsh等なら
 ~/.bashrc または ~/.zshrc 等に追記：
