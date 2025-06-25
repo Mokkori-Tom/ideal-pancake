@@ -234,8 +234,8 @@ require("lazy").setup({
     { "saadparwaiz1/cmp_luasnip" },
     { "onsails/lspkind-nvim" },
     { "ray-x/lsp_signature.nvim" },
-
-    -- チートシート
+    
+        -- チートシート
     {
       "sudormrfbin/cheatsheet.nvim",
       dependencies = {
@@ -321,6 +321,9 @@ require("lazy").setup({
 -- colorschemeの適用（優先順位に従い自動適用されるので明示的には不要ですが、好みで指定可能）
 -- vim.cmd.colorscheme("darkvoid")
 
+-- deno-lsp
+require('lspconfig').denols.setup{}
+
 -- lualineのセットアップ
 require("lualine").setup {}
 
@@ -355,7 +358,7 @@ cmp.setup({
 -- LSPサーバのセットアップ（Python, TypeScript）
 local lspconfig = require("lspconfig")
 lspconfig.pylsp.setup({})
-lspconfig.ts_ls.setup({})
+-- lspconfig.ts_ls.setup({})
 
 -- 引数情報の表示
 require("lsp_signature").setup({})
