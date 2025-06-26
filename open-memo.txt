@@ -1,3 +1,8 @@
+---
+export GOROOT=$HOME/go/       # Go本体(変更時のみ)
+export GOPATH=$HOME/go/bin            # ソース・バイナリ格納先
+export PATH=$GOPATH:$PATH
+---
 # --- Golang環境変数設定パターンまとめ ---
 
 # 1. 最短・現代的（Go Modules前提、標準パス使用）
