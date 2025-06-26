@@ -1,3 +1,29 @@
+# --- Golang環境変数設定パターンまとめ ---
+
+# 1. 最短・現代的（Go Modules前提、標準パス使用）
+export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin
+
+# 2. 古典的（GOPATH明示・古いプロジェクトやGOPATHモード用）
+export GOROOT=/usr/local/go       # Go本体(変更時のみ)
+export GOPATH=$HOME/go            # ソース・バイナリ格納先
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+
+# 3. Alpine Linux apk利用時（apkでgoを入れた場合）
+export PATH=$PATH:/usr/lib/go/bin:$HOME/go/bin
+
+# 4. 複数バージョン切替（バージョンマネージャ利用時: asdf, gvm, goenv等）
+export GOROOT="$HOME/.go/versions/1.xx"  # バージョンごとに指定
+export PATH=$GOROOT/bin:$PATH
+export GOPATH=$HOME/go
+export PATH=$PATH:$GOPATH/bin
+
+# 5. クロスコンパイル時や明示的なビルド設定
+export GOOS=linux    # 例: linux, windows, darwin
+export GOARCH=amd64  # 例: amd64, arm, arm64
+
+# --- 共通: 確認コマンド ---
+go env   # 現在のGo環境変数・パス等を表示
+---
 curl -fLo ~/SKK-JISYO.L.gz https://skk-dev.github.io/dict/SKK-JISYO.L.gz
 7za e -o~/.skk ~/SKK-JISYO.L.gz
 ---
