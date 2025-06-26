@@ -1,4 +1,12 @@
 ---
+なるほどね 
+:read python date.py ->結果挿入
+という感じだね
+:.!python date.py
+でも
+:read !python date.py
+でも、どちらも使えます（微妙な違いあり）。
+---
 UTF-8へ変換（CLIで一発）
 iconv -f euc-jp -t utf-8 SKK-JISYO.L > SKK-JISYO.utf8
 ---
