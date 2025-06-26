@@ -1,3 +1,11 @@
+---.dot
+digraph G {
+node [fontname="HackGen Console NF"];
+  "note1これはやまほど
+  書きまくっても問題ないということですかね？
+  つまり長文のメモはいったいどうなるのか気になる！"-> note2;
+  note1 -> note3;
+}
 ---
 $ curl -O https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/13.0.1/windows_10_cmake_Release_Graphviz-13.0.1-win64.zip
 
