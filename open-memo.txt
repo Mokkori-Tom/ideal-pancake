@@ -5,21 +5,13 @@ vim
 Visualモードで範囲を選択。
 gcc または gc でコメントアウト/アンコメントが可能。
 ---
-# 1. Goインストール (Alpine Linux)
-apk add go
-# or バイナリ直DL
-curl -LO https://go.dev/dl/go1.22.4.linux-amd64.tar.gz
-tar -C /usr/local -xzf go1.22.4.linux-amd64.tar.gz
-export PATH=$PATH:/usr/local/go/bin
-
 # 2. goplsインストール
 go install golang.org/x/tools/gopls@latest
-export PATH="$PATH:$(go env GOPATH)/bin"
 
 # 3. (プロジェクトディレクトリで)
 go mod init your-module-name
 
-# 4. LazyVim LSP設定例 (lua/plugins/lsp.lua等)
+# 4. LazyVim LSP設定例 (init.lua)
 -- Lua
 return {
   {
@@ -42,9 +34,8 @@ go mod tidy
 ---
 curl -L -O https://go.dev/dl/go1.24.4.windows-amd64.zip
 ---
-export GOROOT=$HOME/go/       # Go本体(変更時のみ)
-export GOPATH=$HOME/go/bin            # ソース・バイナリ格納先
-export PATH=$GOPATH:$PATH
+export GOPATH=$HOME/go
+export PATH=$GOPATH/bin:$PATH
 ---
 # --- Golang環境変数設定パターンまとめ ---
 
