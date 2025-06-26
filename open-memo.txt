@@ -1,4 +1,7 @@
 ---
+UTF-8へ変換（CLIで一発）
+iconv -f euc-jp -t utf-8 SKK-JISYO.L > SKK-JISYO.utf8
+---
 vim
 推奨プラグイン（Comment.nvimの例）
 インストール後のコメントアウト：
