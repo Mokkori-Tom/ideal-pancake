@@ -355,10 +355,11 @@ cmp.setup({
   },
 })
 
--- LSPサーバのセットアップ（Python, TypeScript）
+-- LSPサーバのセットアップ（Python, TypeScript(deno), golang）
 local lspconfig = require("lspconfig")
-lspconfig.pylsp.setup({})
--- lspconfig.ts_ls.setup({})
+require("lspconfig").pylsp.setup{}
+require("lspconfig").gopls.setup{}
+require("lspconfig").denols.setup{}
 
 -- 引数情報の表示
 require("lsp_signature").setup({})
