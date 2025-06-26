@@ -1,4 +1,10 @@
 ---
+vim
+推奨プラグイン（Comment.nvimの例）
+インストール後のコメントアウト：
+Visualモードで範囲を選択。
+gcc または gc でコメントアウト/アンコメントが可能。
+---
 # 1. Goインストール (Alpine Linux)
 apk add go
 # or バイナリ直DL
