@@ -1,3 +1,4 @@
+curl -L -O https://go.dev/dl/go1.24.4.windows-amd64.zip
 ---
 export GOROOT=$HOME/go/       # Go本体(変更時のみ)
 export GOPATH=$HOME/go/bin            # ソース・バイナリ格納先
