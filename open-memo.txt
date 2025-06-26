@@ -1,4 +1,8 @@
 ---
+$ curl -O https://gitlab.com/api/v4/projects/4207231/packages/generic/graphviz-releases/13.0.1/windows_10_cmake_Release_Graphviz-13.0.1-win64.zip
+
+$ dot -Tpng test-dot.dot -o graph.png
+---
 curl はURLの内容を**ダウンロード（HTTP GET）**するコマンド。
 .htmlなので、HTMLタグを含むテキストがそのまま出力される（レンダリングはしない）。
 Webブラウザと違い、curlはCSSや画像は表示しないし、リンクも解釈しない。
