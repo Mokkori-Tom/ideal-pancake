@@ -67,8 +67,8 @@ go mod tidy
 ---
 curl -L -O https://go.dev/dl/go1.24.4.windows-amd64.zip
 ---
-export GOPATH=$HOME/go
-export PATH=$GOPATH/bin:$PATH
+export GOROOT=$HOME/go/       # Go本体(変更時のみ)
+export PATH=$GOROOT/bin:$PATH
 ---
 # --- Golang環境変数設定パターンまとめ ---
 
