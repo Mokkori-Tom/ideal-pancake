@@ -1,5 +1,8 @@
 ---
-curl -L -O https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-chafa-1.16.1-1-any.pkg.tar.zst
+deno最初の儀式
+$ deno init
+---
+$ curl -L -O https://mirror.msys2.org/mingw/mingw64/mingw-w64-x86_64-chafa-1.16.1-1-any.pkg.tar.zst
 ---.dot
 digraph G {
 node [fontname="HackGen Console NF"];
