@@ -1,4 +1,39 @@
+--|
 iconv -f UTF-8 -t SHIFT-JIS < input.txt > output.txt
+toml形式で説明
+```
+# iconv.toml
+[iconv]
+description = "文字コード変換CLIツール"
+
+[iconv.usage]
+command = "iconv -f <from-encoding> -t <to-encoding> [input-file]"
+
+[iconv.example]
+from = "UTF-8"
+to   = "SHIFT-JIS"
+input  = "input.txt"
+output = "output.txt"
+command = "iconv -f UTF-8 -t SHIFT-JIS < input.txt > output.txt"
+
+[iconv.encodings]
+encodings = [
+  "UTF-8",
+  "EUC-JP",
+  "SHIFT-JIS",
+  "ISO-2022-JP",
+  "CP932",
+  "US-ASCII"
+]
+
+[iconv.options]
+from = "-f, --from-code : 入力文字コード"
+to   = "-t, --to-code   : 出力文字コード"
+list = "-l              : 対応文字コード一覧表示"
+
+[iconv.notes]
+install = "Alpine Linuxではbusybox版は機能限定、本家版はlibiconvパッケージ推奨"
+```
 ---
 https://toml.io/en/v1.0.0
 ---
