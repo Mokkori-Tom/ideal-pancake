@@ -61,3 +61,29 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""
+def split(line, vocab):
+    vocab_set = set(vocab)
+    vocab_sorted = sorted(vocab_set, key=lambda x: -len(x))
+    result, i = [], 0
+    while i < len(line):
+        for v in vocab_sorted:
+            if line.startswith(v, i):
+                if len(v) > 1:
+                    result.append(v)
+                    i += len(v)
+                    break
+        else:
+            start = i
+            while i < len(line):
+                for v in vocab_sorted:
+                    if line.startswith(v, i) and len(v) > 1:
+                        break
+                else:
+                    i += 1
+                    continue
+                break
+            result.append(line[start:i])
+    return [token for token in result if token]  # 空文字除去
+"""
