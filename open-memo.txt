@@ -1,3 +1,4 @@
+https://docs.github.com/ja/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax#custom-anchors
 """
 忠実なBPE(Byte Pair Encoding)では、コーパス全体的に注意ができませんね。
 番号置換BPEで行きましょうか。
