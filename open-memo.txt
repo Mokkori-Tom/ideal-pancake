@@ -1,3 +1,4 @@
+iconv -f UTF-8 -t SHIFT-JIS < input.txt > output.txt
 ---
 https://toml.io/en/v1.0.0
 ---
