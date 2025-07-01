@@ -1,0 +1,67 @@
+# 制御構造一覧 (program_control.toml)
+[meta]
+title = "制御構造"
+desc  = "プログラムの基本的な処理フローを制御する構造一覧"
+
+[[control]]
+name   = "順次"
+desc   = "上から順に命令を実行"
+example = '''
+a = 1
+b = 2
+c = a + b
+'''
+
+[[control]]
+name   = "分岐"
+desc   = "条件によって処理を分ける"
+example = '''
+if a > b:
+    print("aが大きい")
+else:
+    print("bが大きい")
+'''
+
+[[control]]
+name   = "繰り返し"
+desc   = "条件が成立する間、処理を繰り返す"
+example = '''
+for i in range(3):
+    print(i)
+
+while a < 5:
+    print(a)
+    a += 1
+'''
+
+[[control]]
+name   = "break/continue"
+desc   = "繰り返し内での分岐・中断・スキップ"
+example = '''
+for i in range(10):
+    if i == 5:
+        break
+    if i % 2 == 0:
+        continue
+    print(i)
+'''
+
+[[control]]
+name   = "関数"
+desc   = "処理のまとまり・再利用"
+example = '''
+def func(x):
+    return x*2
+
+y = func(5)
+'''
+
+[[control]]
+name   = "例外処理"
+desc   = "エラー時の処理を分岐"
+example = '''
+try:
+    処理
+except Exception:
+    エラー時処理
+'''
