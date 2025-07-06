@@ -169,61 +169,52 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- 選択範囲のインデントを「基準行」と同じ幅に揃える（例: カーソル行のインデント幅を取得し、他行へ適用）
+-- 選択範囲のインデントをカーソル行と同じ幅に揃える
 vim.keymap.set('v', '<leader>=', function()
-  -- カーソル行のインデント幅取得
   local line = vim.fn.line('.')
   local indent = vim.fn.indent(line)
-  -- 選択範囲
   local start_line = vim.fn.line("'<")
   local end_line = vim.fn.line("'>")
-  -- 各行のインデントを揃える
   for l = start_line, end_line do
     vim.fn.setline(l, string.rep(' ', indent) .. vim.fn.matchstr(vim.fn.getline(l), [[^\s*\zs.*]]))
   end
 end, { noremap = true, silent = true, desc = "選択範囲のインデントをカーソル行に揃える" })
 
--- 基本的なエディタ設定
-vim.opt.clipboard:append("unnamedplus") --クリップボード同期
-vim.opt.number = true             -- 行番号を表示
-vim.opt.relativenumber = true     -- 相対行番号を表示
-vim.opt.expandtab = true          -- タブをスペースに変換
-vim.opt.shiftwidth = 2            -- インデントの幅
-vim.opt.tabstop = 2               -- タブ幅
-vim.opt.smartindent = true        -- スマートインデント
-vim.opt.wrap = true               -- 行の折り返しをしない
-vim.opt.linebreak = true          -- 単語の途中で折り返さない
-vim.opt.showbreak = '↪ '          -- 折り返し行の先頭に表示（お好みで）
-vim.opt.cursorline = true         -- カーソル行の強調
-vim.opt.termguicolors = true      -- 24bitカラー
-vim.opt.clipboard = "unnamedplus" -- クリップボード連携
-vim.opt.signcolumn = "yes"        -- サインカラム常に表示
-vim.opt.undofile = true           -- アンドゥファイルを有効化
+-- 基本エディタ設定
+vim.opt.clipboard = "unnamedplus"   -- クリップボード連携
+vim.opt.number = true               -- 行番号表示
+vim.opt.relativenumber = true       -- 相対行番号
+vim.opt.expandtab = true            -- タブ→スペース
+vim.opt.shiftwidth = 2              -- インデント幅
+vim.opt.tabstop = 2                 -- タブ幅
+vim.opt.smartindent = true          -- スマートインデント
+vim.opt.wrap = true                 -- 行の折り返し
+vim.opt.linebreak = true            -- 単語途中で折り返さない
+vim.opt.showbreak = '↪ '            -- 折り返し表示
+vim.opt.cursorline = true           -- カーソル行強調
+vim.opt.termguicolors = true        -- 24bitカラー
+vim.opt.signcolumn = "yes"          -- サインカラム常時
+vim.opt.undofile = true             -- アンドゥファイル有効
 
 -- lazy.nvimプラグイン設定
 require("lazy").setup({
   spec = {
-    { "vim-denops/denops.vim", lazy = false },
-    { "vim-skk/skkeleton", lazy = false }, -- 必ずdenops.vimより後ろに
-    { "vim-denops/denops-helloworld.vim", lazy = false }, -- （デバッグ用に推奨）
-    -- 基本プラグイン
+    { "vim-denops/denops.vim",         lazy = false },
+    { "vim-skk/skkeleton",             lazy = false },
+    { "vim-denops/denops-helloworld.vim", lazy = false },
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-lualine/lualine.nvim" },
     { "folke/tokyonight.nvim" },
-    { "mbbill/undotree", cmd = "UndotreeToggle" },
+    { "mbbill/undotree",               cmd = "UndotreeToggle" },
     {
       "Pocco81/auto-save.nvim",
-      config = function()
-        require("auto-save").setup({})
-      end,
+      config = function() require("auto-save").setup({}) end,
       event = { "InsertLeave", "TextChanged" },
     },
     { "tpope/vim-fugitive" },
     { "lewis6991/gitsigns.nvim" },
     { "kdheepak/lazygit.nvim" },
     { "sindrets/diffview.nvim" },
-
-    -- LSP＆補完
     { "neovim/nvim-lspconfig" },
     { "hrsh7th/nvim-cmp" },
     { "hrsh7th/cmp-nvim-lsp" },
@@ -234,8 +225,8 @@ require("lazy").setup({
     { "saadparwaiz1/cmp_luasnip" },
     { "onsails/lspkind-nvim" },
     { "ray-x/lsp_signature.nvim" },
-    
-        -- チートシート
+    { "williamboman/mason.nvim" },
+    { "williamboman/mason-lspconfig.nvim" },
     {
       "sudormrfbin/cheatsheet.nvim",
       dependencies = {
@@ -245,92 +236,74 @@ require("lazy").setup({
       },
       cmd = { "Cheatsheet" },
     },
-
-    -- which-key
     {
       "folke/which-key.nvim",
-      config = function()
-        require("which-key").setup({})
-      end,
+      config = function() require("which-key").setup({}) end,
       event = "VeryLazy",
     },
-    -- leap
     {
       "ggandor/leap.nvim",
-      config = function()
-        require("leap").add_default_mappings()
-      end,
+      config = function() require("leap").add_default_mappings() end,
       event = "BufReadPost",
     },
-    -- telescope
     {
       "nvim-telescope/telescope.nvim",
       dependencies = { "nvim-lua/plenary.nvim", "nvim-lua/popup.nvim" },
       cmd = "Telescope",
-      config = function()
-        require("telescope").setup({})
-      end,
+      config = function() require("telescope").setup({}) end,
     },
     {
       "nvim-pack/nvim-spectre",
       dependencies = { "nvim-lua/plenary.nvim" },
       cmd = "Spectre",
-      config = function()
-        require("spectre").setup()
-      end,
-   },
-   {
+      config = function() require("spectre").setup() end,
+    },
+    {
       "aliqyan-21/darkvoid.nvim",
       priority = 1000,
       config = function()
         vim.cmd.colorscheme("darkvoid")
-        -- 背景透過
         for _, group in ipairs({
-  "Normal", "NormalNC", "SignColumn", "StatusLine", "StatusLineNC",
-  "VertSplit", "WinSeparator", "EndOfBuffer", "MsgArea", "MsgSeparator",
-  "NormalFloat", "FloatBorder", "LineNr", "Folded", "CursorLine", "CursorLineNr"
-}) do
+          "Normal", "NormalNC", "SignColumn", "StatusLine", "StatusLineNC",
+          "VertSplit", "WinSeparator", "EndOfBuffer", "MsgArea", "MsgSeparator",
+          "NormalFloat", "FloatBorder", "LineNr", "Folded", "CursorLine", "CursorLineNr"
+        }) do
           vim.api.nvim_set_hl(0, group, { bg = "none" })
         end
-          vim.api.nvim_set_hl(0, "Comment", { fg = "#64b5f6", italic = true })     -- コメントに青み＋斜体
-          vim.api.nvim_set_hl(0, "Keyword", { fg = "#d3869b", bold = true })      -- キーワードを紫系＋太字
-          vim.api.nvim_set_hl(0, "Identifier", { fg = "#ffd700" })                -- 変数名を金色
-          vim.api.nvim_set_hl(0, "String", { fg = "#8ec07c" })                    -- 文字列をグリーン
-          vim.api.nvim_set_hl(0, "Function", { fg = "#fabd2f", bold = true })     -- 関数名をオレンジ
-          vim.api.nvim_set_hl(0, "Type", { fg = "#b8bb26", bold = true })         -- 型名に黄緑
-          vim.api.nvim_set_hl(0, "LineNr", { fg = "#a0a0a0", bold = true })    -- やや明るいグレー
-          vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ffd700", bold = true })  -- カーソル行の番号を金色
-          vim.api.nvim_set_hl(0, "Visual", { bg = "#44475a" })  -- ドラキュラ風薄い紫
-          -- Tree-sitter (nvim 0.8+)
-          vim.api.nvim_set_hl(0, "@comment",    { fg = "#64b5f6", italic = true })
-          vim.api.nvim_set_hl(0, "@keyword",    { fg = "#d3869b", bold = true })
-          vim.api.nvim_set_hl(0, "@string",     { fg = "#8ec07c" })
-          vim.api.nvim_set_hl(0, "@function",   { fg = "#fabd2f", bold = true })
-          vim.api.nvim_set_hl(0, "@type",       { fg = "#b8bb26", bold = true })
-          vim.api.nvim_set_hl(0, "@variable",   { fg = "#ffd700" })
-
+        vim.api.nvim_set_hl(0, "Comment",    { fg = "#64b5f6", italic = true })
+        vim.api.nvim_set_hl(0, "Keyword",    { fg = "#d3869b", bold = true })
+        vim.api.nvim_set_hl(0, "Identifier", { fg = "#ffd700" })
+        vim.api.nvim_set_hl(0, "String",     { fg = "#8ec07c" })
+        vim.api.nvim_set_hl(0, "Function",   { fg = "#fabd2f", bold = true })
+        vim.api.nvim_set_hl(0, "Type",       { fg = "#b8bb26", bold = true })
+        vim.api.nvim_set_hl(0, "LineNr",     { fg = "#a0a0a0", bold = true })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ffd700", bold = true })
+        vim.api.nvim_set_hl(0, "Visual",     { bg = "#44475a" })
+        -- Tree-sitter (nvim 0.8+)
+        vim.api.nvim_set_hl(0, "@comment",   { fg = "#64b5f6", italic = true })
+        vim.api.nvim_set_hl(0, "@keyword",   { fg = "#d3869b", bold = true })
+        vim.api.nvim_set_hl(0, "@string",    { fg = "#8ec07c" })
+        vim.api.nvim_set_hl(0, "@function",  { fg = "#fabd2f", bold = true })
+        vim.api.nvim_set_hl(0, "@type",      { fg = "#b8bb26", bold = true })
+        vim.api.nvim_set_hl(0, "@variable",  { fg = "#ffd700" })
       end,
-     },
-    -- ANSIカラー対応カラースキーム（任意）
-    --{ "2nthony/vim-ansi-colors" },
+    },
+    -- { "2nthony/vim-ansi-colors" },
   },
-  install = { colorscheme = { "darkvoid", "tokyonight", "habamax" } },  -- 優先順で適用
+  install = { colorscheme = { "darkvoid", "tokyonight", "habamax" } },
   checker = { enabled = true },
 })
 
--- colorschemeの適用（優先順位に従い自動適用されるので明示的には不要ですが、好みで指定可能）
+-- カラー設定（install.colorscheme優先。明示指定も可能）
 -- vim.cmd.colorscheme("darkvoid")
 
--- deno-lsp
-require('lspconfig').denols.setup{}
-
--- lualineのセットアップ
+-- lualineセットアップ
 require("lualine").setup {}
 
 -- gitsigns.nvimセットアップ
 require("gitsigns").setup()
 
--- nvim-cmp, LuaSnip, lspkindの初期設定
+-- nvim-cmp, LuaSnip, lspkindのセットアップ
 local cmp = require("cmp")
 cmp.setup({
   snippet = {
@@ -340,9 +313,9 @@ cmp.setup({
   },
   mapping = cmp.mapping.preset.insert({
     ["<C-Space>"] = cmp.mapping.complete(),
-    ["<CR>"] = cmp.mapping.confirm({ select = true }),
-    ["<Tab>"] = cmp.mapping.select_next_item(),
-    ["<S-Tab>"] = cmp.mapping.select_prev_item(),
+    ["<CR>"]      = cmp.mapping.confirm({ select = true }),
+    ["<Tab>"]     = cmp.mapping.select_next_item(),
+    ["<S-Tab>"]   = cmp.mapping.select_prev_item(),
   }),
   sources = cmp.config.sources({
     { name = "nvim_lsp" },
@@ -355,28 +328,15 @@ cmp.setup({
   },
 })
 
--- LSPサーバのセットアップ（Python, TypeScript(deno), golang）
+-- LSPサーバのセットアップ（Python, Go, Deno, taplo）
 local lspconfig = require("lspconfig")
-require("lspconfig").pylsp.setup{}
-require("lspconfig").gopls.setup{}
-require("lspconfig").denols.setup{}
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+for _, lsp in ipairs({ "pylsp", "gopls", "denols", "taplo" }) do
+  lspconfig[lsp].setup({ capabilities = capabilities })
+end
 
 -- 引数情報の表示
 require("lsp_signature").setup({})
-
--- ファイル検索
-vim.keymap.set('n', '<Leader>ff', '<cmd>Telescope find_files<CR>', { desc = 'ファイル検索' })
--- Grep検索
-vim.keymap.set('n', '<Leader>fg', '<cmd>Telescope live_grep<CR>', { desc = 'Grep検索' })
--- バッファ一覧
-vim.keymap.set('n', '<Leader>fb', '<cmd>Telescope buffers<CR>', { desc = 'バッファ一覧' })
--- ヘルプ検索
-vim.keymap.set('n', '<Leader>fh', '<cmd>Telescope help_tags<CR>', { desc = 'ヘルプ検索' })
--- 置き換え
-vim.keymap.set('n', '<Leader>sr', '<cmd>lua require("spectre").open()<CR>', { desc = 'プロジェクト全体で検索＆置換' })
-vim.keymap.set('v', '<Leader>sr', '<esc><cmd>lua require("spectre").open_visual({select_word=true})<CR>', { desc = '選択範囲で検索＆置換' })
-
-vim.keymap.set("i", "<C-j>", "<Plug>(skkeleton-enable)")
 
 -- SKK辞書指定
 vim.api.nvim_create_autocmd("User", {
@@ -387,6 +347,31 @@ vim.api.nvim_create_autocmd("User", {
     })
   end,
 })
+
+-- ファイル/検索キーマップ
+vim.keymap.set('n', '<Leader>ff', '<cmd>Telescope find_files<CR>',   { desc = 'ファイル検索' })
+vim.keymap.set('n', '<Leader>fg', '<cmd>Telescope live_grep<CR>',   { desc = 'Grep検索' })
+vim.keymap.set('n', '<Leader>fb', '<cmd>Telescope buffers<CR>',      { desc = 'バッファ一覧' })
+vim.keymap.set('n', '<Leader>fh', '<cmd>Telescope help_tags<CR>',    { desc = 'ヘルプ検索' })
+vim.keymap.set('n', '<Leader>sr', '<cmd>lua require("spectre").open()<CR>', { desc = 'プロジェクト全体で検索＆置換' })
+vim.keymap.set('v', '<Leader>sr', '<esc><cmd>lua require("spectre").open_visual({select_word=true})<CR>', { desc = '選択範囲で検索＆置換' })
+vim.keymap.set("i", "<C-j>", "<Plug>(skkeleton-enable)")
+
+-- TOML保存時の自動format
+-- vim.api.nvim_create_autocmd("BufWritePre", {
+--   pattern = "*.toml",
+--   callback = function()
+--     vim.lsp.buf.format({ async = false })
+--   end,
+-- })
+
+-- 2. 手動format用キーマップ（n: normal mode）
+vim.keymap.set('n', '<leader>cf', function()
+  vim.lsp.buf.format({ async = false })
+end, { desc = "TOML: 手動format" })
+
+require("mason").setup()
+require("mason-lspconfig").setup({ ensure_installed = { "taplo" } })
 EOF
 
   # minimal .gitconfig
