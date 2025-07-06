@@ -2,6 +2,8 @@
 画像ビューワー
 https://github.com/atanunq/viu/releases
 
+viu-x86_64-pc-windows-msvc.exe -> viu.exe
+
 [名称]
 viu = "Rust製クロスプラットフォームCLI画像ビューア。Windows, Linux, macOS対応"
 
