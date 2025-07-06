@@ -1,6 +1,50 @@
 ---
 画像ビューワー
 https://github.com/atanunq/viu/releases
+
+[名称]
+viu = "Rust製クロスプラットフォームCLI画像ビューア。Windows, Linux, macOS対応"
+
+[特徴]
+X不要        = true
+Windows動作   = true
+ターミナル出力 = true
+ANSIカラー   = "ターミナルに画像をANSIアートとして描画"
+対応形式      = ["jpg", "png", "gif", "bmp", "webp", "tiff", "他"]
+ディレクトリ対応 = "viu -r ./dir"
+GIF対応      = "アニメGIFは再生可能（-f, -1, -sオプション）"
+透過対応      = "-tで透過画像も可"
+
+[主なオプション]
+width        = "-w <幅>  画像幅指定"
+height       = "-h <高さ> 画像高さ指定"
+recursive    = "-r       ディレクトリ再帰"
+name         = "-n       ファイル名表示"
+block        = "-b       ブロックモード強制"
+static       = "-s       GIFの1枚目のみ"
+frame_rate   = "-f <fps> GIF再生速度"
+once         = "-1       GIFを1回だけ再生"
+transparent  = "-t       透過画像を透過で描画"
+help         = "-H, --help  ヘルプ"
+version      = "-V, --version  バージョン表示"
+
+[使い方]
+単体画像      = "viu img.png"
+複数画像      = "viu *.jpg"
+ディレクトリ  = "viu -r ./images"
+サイズ指定    = "viu -w 80 img.png"
+GIF再生       = "viu anim.gif"
+GIF1枚目のみ  = "viu -s anim.gif"
+ファイル名表示= "viu -n img.png"
+
+[インストール]
+MSYS2        = "pacman -S viu"
+Windows      = "scoop install viu (またはcargo install viu)"
+AlpineLinux  = "apk add viu"
+
+[備考]
+quoted_key = "viuはWindows, Linux, macOSでCLI画像閲覧に最適"
+quoted_key2 = "純粋なフレームバッファ描画(fim的)ではなくANSIカラーでターミナル表示"
 ---
 秩序 = ノイズ集合 −（無作為部分）＝ 有意な差分パターン
 ---
