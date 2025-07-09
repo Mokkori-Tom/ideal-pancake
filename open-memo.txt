@@ -1,4 +1,31 @@
 ---
+[system_call_io]
+概要 = "ユーザーが書いたテキスト（コード）が、どのようにしてOS・ハードウェアの操作（I/O制御）に繋がるか"
+本質 = "プログラム → ライブラリ/ランタイム → システムコール → OSカーネル → ハードウェア"
+例 = [
+  "print('Hello, World!') → write(1, 'Hello, World!\n', 14)",
+  "open('file.txt') → openat(AT_FDCWD, 'file.txt', O_RDONLY)"
+]
+
+[仕組み]
+1 = "ユーザーコードは高水準命令（例: print, fmt.Println, std::cout）"
+2 = "標準ライブラリやランタイムが、その命令を低水準APIに変換"
+3 = "ランタイムやOSライブラリが『システムコール』という特別な命令を生成"
+4 = "システムコールがOSカーネルに処理を委譲"
+5 = "カーネルが実際のI/O（ファイル書き込み、端末出力、ソケット通信など）を実行"
+
+[差分]
+作文 = "ただ文字を出力するだけ。システムリソースは動かない"
+システムコール経由 = "文字列やバイト列がOS資源を通じて外界（ファイル、端末、ネットワーク等）へ作用"
+
+[アルパイン最短例]
+bash = "echo 'Hello, World!'"
+go   = 'echo "package main\nimport \"fmt\"\nfunc main(){fmt.Println(\"Hello, World!\")}" | go run -'
+c    = 'echo -e "#include<stdio.h>\\nint main(){puts(\\"Hello, World!\\");}" | gcc -x c - && ./a.out'
+
+[補足]
+豆知識 = "Linuxでは『strace -e trace=write コマンド』で実際のwriteシステムコールを観察可能"
+---
 [project]
 name       = "Go by Example"
 desc       = "annotated Go example site builder"
