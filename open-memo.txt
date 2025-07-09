@@ -1,4 +1,49 @@
 ---
+[project]
+name       = "Go by Example"
+desc       = "annotated Go example site builder"
+url        = "https://gobyexample.com"
+license    = "CC BY 3.0"
+author     = "Mark McGranaghan"
+
+[structure]
+src        = "examples/"
+template   = "templates/"
+public     = "public/"
+tools      = "tools/"
+modfile    = "go.mod"
+
+[build]
+requires   = "Go (latest recommended)"
+commands   = [
+  "tools/build          # build once",
+  "tools/build-loop     # build continuously",
+  "tools/serve          # local http://127.0.0.1:8000/",
+  "tools/upload         # publish (needs AWS creds)"
+]
+
+[faq]
+found_bug      = "Open issue or PR: https://github.com/mmcgrana/gobyexample"
+go_version     = "latest Go recommended; strong backwards compatibility"
+order_warning  = "Concurrent/Map order is non-deterministic—don't panic"
+
+[translations]
+zh = "https://gobyexample-cn.github.io/"
+fr = "http://le-go-par-l-exemple.keiruaprod.fr"
+ja = "http://spinute.org/go-by-example"
+ko = "https://mingrammer.com/gobyexample/"
+ru = "https://gobyexample.com.ru/"
+uk = "https://butuzov.github.io/gobyexample/"
+pt = "https://lcslitx.github.io/GoEmExemplos/"
+my = "https://setkyar.github.io/gobyexample"
+
+[acknowledgement]
+docco = "http://jashkenas.github.io/docco/ (Jeremy Ashkenas, inspiration)"
+
+[special]
+gopher_author = "Renée French"
+gopher_license = "CC BY 3.0"
+---
 画像ビューワー
 https://github.com/atanunq/viu/releases
 
