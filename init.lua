@@ -21,41 +21,40 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 -- 基本エディタ設定
-vim.opt.clipboard = "unnamedplus"   -- クリップボード連携
-vim.opt.number = true               -- 行番号表示
-vim.opt.relativenumber = true       -- 相対行番号
-vim.opt.expandtab = true            -- タブ→スペース
-vim.opt.shiftwidth = 2              -- インデント幅
-vim.opt.tabstop = 2                 -- タブ幅
-vim.opt.smartindent = true          -- スマートインデント
-vim.opt.wrap = true                 -- 行の折り返し
-vim.opt.linebreak = true            -- 単語途中で折り返さない
-vim.opt.showbreak = '↪ '            -- 折り返し表示
-vim.opt.cursorline = true           -- カーソル行強調
-vim.opt.termguicolors = true        -- 24bitカラー
-vim.opt.signcolumn = "yes"          -- サインカラム常時
-vim.opt.undofile = true             -- アンドゥファイル有効
+vim.opt.clipboard = "unnamedplus"
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 2
+vim.opt.tabstop = 2
+vim.opt.smartindent = true
+vim.opt.wrap = true
+vim.opt.linebreak = true
+vim.opt.showbreak = '↪ '
+vim.opt.cursorline = true
+vim.opt.termguicolors = true
+vim.opt.signcolumn = "yes"
+vim.opt.undofile = true
 
 -- lazy.nvimプラグイン設定
 require("lazy").setup({
   spec = {
-    { "vim-denops/denops.vim",         lazy = false },
-    { "vim-skk/skkeleton",             lazy = false },
-    { "vim-denops/denops-helloworld.vim", lazy = false },
+    { "tyru/eskk.vim", config = function()
+        vim.g['eskk#directory'] = vim.fn.expand("~/.skk")
+        vim.g['eskk#dictionary'] = vim.fn.expand("~/.skk/SKK-JISYO.L")
+      end
+    },
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-lualine/lualine.nvim" },
     { "folke/tokyonight.nvim" },
-    { "mbbill/undotree",               cmd = "UndotreeToggle" },
-    {
-      "Pocco81/auto-save.nvim",
-      config = function() require("auto-save").setup({}) end,
-      event = { "InsertLeave", "TextChanged" },
-    },
+    { "mbbill/undotree", cmd = "UndotreeToggle" },
+    { "Pocco81/auto-save.nvim", config = function() require("auto-save").setup({}) end, event = { "InsertLeave", "TextChanged" } },
     { "tpope/vim-fugitive" },
     { "lewis6991/gitsigns.nvim" },
     { "kdheepak/lazygit.nvim" },
     { "sindrets/diffview.nvim" },
-    -- ==== LSP/補完（追加言語含む）====
+
+    -- ==== LSP/補完/スニペット ====
     { "neovim/nvim-lspconfig" },
     { "hrsh7th/nvim-cmp" },
     { "hrsh7th/cmp-nvim-lsp" },
@@ -66,45 +65,12 @@ require("lazy").setup({
     { "saadparwaiz1/cmp_luasnip" },
     { "onsails/lspkind-nvim" },
     { "ray-x/lsp_signature.nvim" },
-    { "williamboman/mason.nvim" },
-    { "williamboman/mason-lspconfig.nvim" },
-    -- ==== /LSP ====
-    {
-      "sudormrfbin/cheatsheet.nvim",
-      dependencies = {
-        "nvim-telescope/telescope.nvim",
-        "nvim-lua/popup.nvim",
-        "nvim-lua/plenary.nvim",
-      },
-      cmd = { "Cheatsheet" },
-    },
-    {
-      "folke/which-key.nvim",
-      config = function() require("which-key").setup({}) end,
-      event = "VeryLazy",
-    },
-    {
-      "ggandor/leap.nvim",
-      config = function() require("leap").add_default_mappings() end,
-      event = "BufReadPost",
-    },
-    {
-      "nvim-telescope/telescope.nvim",
-      dependencies = { "nvim-lua/plenary.nvim", "nvim-lua/popup.nvim" },
-      cmd = "Telescope",
-      config = function() require("telescope").setup({}) end,
-    },
-    {
-      "nvim-pack/nvim-spectre",
-      dependencies = { "nvim-lua/plenary.nvim" },
-      cmd = "Spectre",
-      config = function() require("spectre").setup() end,
-    },
+    { "rafamadriz/friendly-snippets" },
     {
       "folke/tokyonight.nvim",
       priority = 1000,
       config = function()
-        vim.cmd.colorscheme("tokyonight-night") 
+        vim.cmd.colorscheme("tokyonight-night")
         -- 基本的な透過
         for _, g in ipairs({
           "Normal", "NormalNC", "SignColumn", "StatusLine", "StatusLineNC",
@@ -114,8 +80,6 @@ require("lazy").setup({
           vim.api.nvim_set_hl(0, g, { bg = "none" })
         end
         -- 見やすさ強調: コメントや可読性重視だけ上書き
-        vim.api.nvim_set_hl(0, "LineNr", { fg = "#ffffff", bold = true }) 
-        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ff9e64", bold = true })
         vim.api.nvim_set_hl(0, "Comment",    { fg = "#7aa2f7", italic = true })
         vim.api.nvim_set_hl(0, "String",     { fg = "#9ece6a" })
         vim.api.nvim_set_hl(0, "Function",   { fg = "#bb9af7", bold = true })
@@ -123,46 +87,34 @@ require("lazy").setup({
         vim.api.nvim_set_hl(0, "Visual",     { bg = "#33467c" })
       end,
     },
+    -- ユーティリティ
+    { "folke/which-key.nvim", config = function() require("which-key").setup({}) end, event = "VeryLazy" },
+    { "ggandor/leap.nvim", config = function() require("leap").add_default_mappings() end, event = "BufReadPost" },
+    { "nvim-telescope/telescope.nvim", dependencies = { "nvim-lua/plenary.nvim", "nvim-lua/popup.nvim" }, cmd = "Telescope", config = function() require("telescope").setup({}) end },
+    { "nvim-pack/nvim-spectre", dependencies = { "nvim-lua/plenary.nvim" }, cmd = "Spectre", config = function() require("spectre").setup() end },
   },
   install = { colorscheme = { "darkvoid", "tokyonight", "habamax" } },
   checker = { enabled = true },
 })
 
--- lualineセットアップ
+-- lualine/gitsigns
 require("lualine").setup {}
-
--- gitsigns.nvimセットアップ
 require("gitsigns").setup()
 
-require("mason").setup()
-require("mason-lspconfig").setup({
-  ensure_installed = {
-    --"pylsp", 
-    "gopls", "denols", "taplo",
-    "rust_analyzer", "ts_ls", "lua_ls", "bashls"
-  }
-})
+-- LuaSnip/VSCスニペット
+require("luasnip.loaders.from_vscode").lazy_load()
 
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
-for _, lsp in ipairs({
-  "pylsp", "gopls", "denols", "taplo",
-  "rust_analyzer", "ts_ls", "lua_ls", "bashls"
-}) do
-  require("lspconfig")[lsp].setup({ capabilities = capabilities })
-end
-
+-- cmp設定
 local cmp = require("cmp")
 cmp.setup({
   snippet = {
-    expand = function(args)
-      require("luasnip").lsp_expand(args.body)
-    end,
+    expand = function(args) require("luasnip").lsp_expand(args.body) end,
   },
   mapping = cmp.mapping.preset.insert({
     ["<C-Space>"] = cmp.mapping.complete(),
-    ["<CR>"]      = cmp.mapping.confirm({ select = true }),
-    ["<Tab>"]     = cmp.mapping.select_next_item(),
-    ["<S-Tab>"]   = cmp.mapping.select_prev_item(),
+    ["<CR>"] = cmp.mapping.confirm({ select = true }),
+    ["<Tab>"] = cmp.mapping.select_next_item(),
+    ["<S-Tab>"] = cmp.mapping.select_prev_item(),
   }),
   sources = {
     { name = "nvim_lsp" },
@@ -175,15 +127,46 @@ cmp.setup({
   },
 })
 
+-- LSP 設定（lspconfig直指定）
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
+local lspconfig = require("lspconfig")
+
+for _, lsp in ipairs({ 
+  "pylsp",
+  "gopls", 
+  "lua_ls", 
+  "rust_analyzer", 
+  "ts_ls", 
+  "bashls" 
+}) do
+  lspconfig[lsp].setup({ capabilities = capabilities })
+end
+
+-- lsp_signature
 require("lsp_signature").setup({})
 
--- SKK辞書指定
-vim.api.nvim_create_autocmd("User", {
-  pattern = "skkeleton-initialize-pre",
+-- format on save
+vim.api.nvim_create_autocmd("BufWritePre", {
   callback = function()
-    vim.fn["skkeleton#config"]({
-      globalDictionaries = { vim.fn.expand("~/.skk/SKK-JISYO.L") }
-    })
+    vim.lsp.buf.format({ async = false })
+  end,
+})
+
+-- LSPアタッチ時のキーマップ
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    local buf = event.buf
+    local map = function(mode, lhs, rhs)
+      vim.keymap.set(mode, lhs, rhs, { buffer = buf })
+    end
+    map('n', 'gd', vim.lsp.buf.definition)
+    map('n', 'K', vim.lsp.buf.hover)
+    map('n', '<leader>rn', vim.lsp.buf.rename)
+    map('n', '<leader>ca', vim.lsp.buf.code_action)
+    map('n', 'gr', vim.lsp.buf.references)
+    map('n', '<leader>f', function()
+      vim.lsp.buf.format({ async = true })
+    end)
   end,
 })
 
@@ -194,12 +177,6 @@ vim.keymap.set('n', '<Leader>fb', '<cmd>Telescope buffers<CR>',      { desc = '�
 vim.keymap.set('n', '<Leader>fh', '<cmd>Telescope help_tags<CR>',    { desc = 'ヘルプ検索' })
 vim.keymap.set('n', '<Leader>sr', '<cmd>lua require("spectre").open()<CR>', { desc = 'プロジェクト全体で検索＆置換' })
 vim.keymap.set('v', '<Leader>sr', '<esc><cmd>lua require("spectre").open_visual({select_word=true})<CR>', { desc = '選択範囲で検索＆置換' })
-vim.keymap.set("i", "<C-j>", "<Plug>(skkeleton-enable)")
-
--- 手動format用キーマップ（n: normal mode）
-vim.keymap.set('n', '<leader>cf', function()
-  vim.lsp.buf.format({ async = false })
-end, { desc = "TOML: 手動format" })
 
 -- 選択範囲のインデントをカーソル行と同じ幅に揃える
 vim.keymap.set('v', '<leader>=', function()
