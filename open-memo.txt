@@ -1,4 +1,52 @@
 ---
+[[lsp]]
+name = "pylsp"
+lang = "Python"
+desc = "Python用LSP（python-lsp-server）。最もオープンソース純度が高い実装。"
+install = "pip install 'python-lsp-server[all]'"
+repo = "https://github.com/python-lsp/python-lsp-server"
+setup = 'require("lspconfig").pylsp.setup{}'
+
+[[lsp]]
+name = "gopls"
+lang = "Go"
+desc = "Go公式のLSPサーバ。Goツールチェインで自動導入可能。"
+install = "go install golang.org/x/tools/gopls@latest"
+repo = "https://github.com/golang/tools/tree/master/gopls"
+setup = 'require("lspconfig").gopls.setup{}'
+
+[[lsp]]
+name = "lua_ls"
+lang = "Lua"
+desc = "Lua言語公式LSP（旧sumneko_lua）。最新は 'lua-language-server' 名義。"
+install = "brew install lua-language-server # Mac例\n# or: apk add lua-language-server"
+repo = "https://github.com/LuaLS/lua-language-server"
+setup = 'require("lspconfig").lua_ls.setup{}'
+
+[[lsp]]
+name = "rust_analyzer"
+lang = "Rust"
+desc = "Rust公式推奨の次世代LSP。"
+install = "cargo install rust-analyzer --locked\n# or: apk add rust-analyzer"
+repo = "https://github.com/rust-lang/rust-analyzer"
+setup = 'require("lspconfig").rust_analyzer.setup{}'
+
+[[lsp]]
+name = "tsserver"
+lang = "TypeScript/JavaScript"
+desc = "TypeScript/JavaScript公式LSPサーバ。"
+install = "npm i -g typescript typescript-language-server"
+repo = "https://github.com/typescript-language-server/typescript-language-server"
+setup = 'require("lspconfig").tsserver.setup{}'
+
+[[lsp]]
+name = "bashls"
+lang = "Bash"
+desc = "Bash用LSP（bash-language-server）。"
+install = "npm i -g bash-language-server"
+repo = "https://github.com/bash-lsp/bash-language-server"
+setup = 'require("lspconfig").bashls.setup{}'
+---
 [assistant]
 name = "default"
 current = "エンジニアモード"
