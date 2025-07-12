@@ -6,7 +6,7 @@ export APPDATA=$HOME/.config # windows appdata path
 export download=C:/Users/$USERNAME/Downloads # windows DL path
 
 # $HOME/.bashrc
-# 環境変数の設定
+# set env
 export LANGUAGE=ja_JP.ja
 export LANG=ja_JP.UTF-8
 export XDG_DATA_HOME=$HOME/.local/share # https://wiki.archlinux.org/title/XDG_Base_Directory
@@ -18,7 +18,7 @@ export tools=$HOME/tools # your tools path
 export EDITOR=nvim
 export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 
-# リソース用PATHの追加
+# Resource files
 # https://www.python.org/downloads/windows
 # https://github.com/PintaProject/Pinta/releases
 # https://github.com/BurntSushi/ripgrep/releases
@@ -64,15 +64,15 @@ PROMPT_COMMAND='
   history -a; history -n
   PS1="$VENV\[\e[32m\][$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]$(date +%Y%m%d_%H:%M)\[\e[0m\] \w]\n\$ "
 '
-# fzf本体インストール
+# fzf install
 # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-# インストールスクリプト実行
+# run install script
 # ~/.fzf/install --key-bindings --completion --no-update-rc
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
-# 1. コマンド履歴補完 bash> Ctrl+R → echo 'hello' 
-# 2. ファイルパス補完 bash> vim Ctrl+T → vim /etc/passw
+# 1. Command Conp bash> Ctrl+R → echo 'hello' 
+# 2. File Conp bash> vim Ctrl+T → vim /etc/passw
 
 realtime_rg_fzf() {
   local tmpfile=$(mktemp)
@@ -83,7 +83,7 @@ realtime_rg_fzf() {
         --preview 'bat --style=numbers --color=always {1} --highlight-line {2}' \
         --preview-window='up:60%' \
         --prompt="Q rg > " \
-        --header="上下キーで移動、Enterで選択（Escで終了）" \
+        --header="Move:Up Dn, Select: Enter（Out: Esc）" \
         < "$tmpfile")
     [ -z "$selected" ] && break
     local file line
@@ -94,5 +94,5 @@ realtime_rg_fzf() {
   done
   rm -f "$tmpfile"
 }
-# Bashバインド
+# Bash kye
 bind -x '"\C-g": realtime_rg_fzf'
