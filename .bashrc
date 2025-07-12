@@ -1,7 +1,10 @@
+# If windows PortableGit env
 # cat 'export HOME="/home/root"' >> /etc/bash.bashrc
 # cat 'source /home/root/.bashrc' >> /etc/bash.bashrc
 # cat 'cd $HOME' >> /etc/bash.bashrc
 # cat 'set bell-style none' >> $HOME/.inputrc
+export APPDATA=$HOME/.config # windows appdata path
+export download=C:/Users/$USERNAME/Downloads # windows DL path
 
 # $HOME/.bashrc
 # 環境変数の設定
@@ -12,8 +15,6 @@ export XDG_CACHE_HOME=$HOME/.cache
 export XDG_STATE_HOME=$HOME/.local/state
 export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CONFIG_DIRS=/etc/xdg
-export APPDATA=$HOME/.config # windows appdata path
-export download=C:/Users/$USERNAME/Downloads # windows DL path
 export tools=$HOME/tools # your tools path
 export EDITOR=nvim
 export GOROOT=$HOME/go/ # Go本体(変更時のみ)
