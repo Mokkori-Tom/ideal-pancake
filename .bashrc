@@ -1,7 +1,6 @@
 # If windows PortableGit env
 # cat 'export HOME="/home/root"' >> /etc/bash.bashrc
 # cat 'source /home/root/.bashrc' >> /etc/bash.bashrc
-# cat 'cd $HOME' >> /etc/bash.bashrc
 # cat 'set bell-style none' >> $HOME/.inputrc
 export APPDATA=$HOME/.config # windows appdata path
 export download=C:/Users/$USERNAME/Downloads # windows DL path
@@ -20,20 +19,41 @@ export EDITOR=nvim
 export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 
 # リソース用PATHの追加
-export PATH=$HOME/tools:$PATH
-export PATH=$GOROOT/bin:$PATH # https://go.dev/dl/
-export PATH=$HOME/python:$PATH # https://www.python.org/downloads/windows/
-export PATH=$HOME/python/Scripts:$PATH 
-export PATH=$HOME/Pinta/bin:$PATH # https://github.com/PintaProject/Pinta/releases
-export PATH=$HOME/ripgrep:$PATH # https://github.com/BurntSushi/ripgrep/releases
-export PATH=$HOME/nvim/bin:$PATH # https://github.com/neovim/neovim/releases
-export PATH=$HOME/node:$PATH # https://nodejs.org/ja/download
-export PATH=$HOME/lualsp/bin/:$PATH # https://github.com/LuaLS/lua-language-server/releases
-export PATH=$HOME/gcc/bin/:$PATH # https://github.com/niXman/mingw-builds-binaries/releases
-export PATH=$HOME/clangd/bin/:$PATH # https://github.com/clangd/clangd/releases
-# export PATH=$HOME/:$PATH  
+# https://www.python.org/downloads/windows
+# https://github.com/PintaProject/Pinta/releases
+# https://github.com/BurntSushi/ripgrep/releases
+# https://github.com/neovim/neovim/releases
+# https://nodejs.org/ja/downloads
+# https://github.com/LuaLS/lua-language-server/releases
+# https://github.com/niXman/mingw-builds-binaries/releases
+# https://github.com/clangd/clangd/releases
+# https://github.com/denoland/deno/releases
+# https://github.com/junegunn/fzf/releases
+# https://github.com/sharkdp/bat/releases
+export PATH=$PATH:$HOME/tools
+export PATH=$PATH:$GOROOT/bin
+export PATH=$PATH:$HOME/python
+export PATH=$PATH:$HOME/python/Scripts
+export PATH=$PATH:$HOME/Pinta/bin
+export PATH=$PATH:$HOME/ripgrep
+export PATH=$PATH:$HOME/nvim/bin
+export PATH=$PATH:$HOME/node
+export PATH=$PATH:$HOME/lualsp/bin
+export PATH=$PATH:$HOME/gcc/bin
+export PATH=$PATH:$HOME/clangd/bin 
+export PATH=$PATH:$HOME/deno
+export PATH=$PATH:$HOME/fzf 
+export PATH=$PATH:$HOME/bat
 
 alias ll='ls -la --color=auto'
+
+export HISTFILE="$HOME/.bash_history"
+export HISTSIZE=10000
+export HISTFILESIZE=10000
+export HISTCONTROL="ignoredups:erasedups"
+export HISTIGNORE="ls:bg:fg:history:pwd"
+shopt -s histappend 2>/dev/null
+[ -f "$HISTFILE" ] && history -r
 
 PROMPT_COMMAND='
   HOME_NAME=$(basename "$HOME")
@@ -41,13 +61,38 @@ PROMPT_COMMAND='
   if [ -n "$VIRTUAL_ENV" ]; then
     VENV="\[\e[35m\]("$(basename "$VIRTUAL_ENV")")\[\e[0m\]"
   fi
-  PS1="$VENV\[\e[33m\]\[\e[0m\]\[\e[32m\][$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]$(date +%Y%m%d_%H:%M)\[\e[0m\] \w]\n\$ "
+  history -a; history -n
+  PS1="$VENV\[\e[32m\][$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]$(date +%Y%m%d_%H:%M)\[\e[0m\] \w]\n\$ "
 '
-export HISTFILE="$HOME/.bash_history"
-export HISTSIZE=10000
-export HISTFILESIZE=10000
-export HISTCONTROL=ignoredups:erasedups
-export HISTIGNORE="ls:bg:fg:history:pwd"
-shopt -s histappend 2>/dev/null
-[ -f "$HISTFILE" ] && history -r
-PROMPT_COMMAND='history -a; history -n;'"$PROMPT_COMMAND"
+# fzf本体インストール
+# git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+# インストールスクリプト実行
+# ~/.fzf/install --key-bindings --completion --no-update-rc
+
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+
+# 1. コマンド履歴補完 bash> Ctrl+R → echo 'hello' 
+# 2. ファイルパス補完 bash> vim Ctrl+T → vim /etc/passw
+
+realtime_rg_fzf() {
+  local tmpfile=$(mktemp)
+  rg --line-number --no-heading --color=never "" > "$tmpfile"
+  while :; do
+    local selected
+    selected=$(fzf --ansi --delimiter : \
+        --preview 'bat --style=numbers --color=always {1} --highlight-line {2}' \
+        --preview-window='up:60%' \
+        --prompt="Q rg > " \
+        --header="上下キーで移動、Enterで選択（Escで終了）" \
+        < "$tmpfile")
+    [ -z "$selected" ] && break
+    local file line
+    file=$(echo "$selected" | cut -d: -f1)
+    line=$(echo "$selected" | cut -d: -f2)
+    [ -z "$file" ] && continue
+    ${EDITOR:-nvim} +"$line" "$file"
+  done
+  rm -f "$tmpfile"
+}
+# Bashバインド
+bind -x '"\C-g": realtime_rg_fzf'
