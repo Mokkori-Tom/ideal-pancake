@@ -1,7 +1,7 @@
 # If windows PortableGit env
 # cat 'export HOME="/home/root"' >> /etc/bash.bashrc
 # cat 'source /home/root/.bashrc' >> /etc/bash.bashrc
-# cat 'set bell-style none' >> $HOME/.inputrc
+# cat 'set bell-style none' > $HOME/.inputrc
 export APPDATA=$HOME/.config # windows appdata path
 export download=C:/Users/$USERNAME/Downloads # windows DL path
 
