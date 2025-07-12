@@ -49,10 +49,12 @@ require("lazy").setup({
 
     -- === カラースキーム/透過 ===
     {
-      "folke/tokyonight.nvim",
+      "catppuccin/nvim",
       priority = 1000,
       config = function()
-        vim.cmd.colorscheme("tokyonight-night")
+        vim.cmd.colorscheme(
+          "catppuccin-mocha"
+        )
         -- 透過 & ハイライト調整
         for _, g in ipairs({
           "Normal", "NormalNC", "SignColumn", "StatusLine", "StatusLineNC",
@@ -61,11 +63,7 @@ require("lazy").setup({
         }) do
           vim.api.nvim_set_hl(0, g, { bg = "none" })
         end
-        vim.api.nvim_set_hl(0, "Comment", { fg = "#7aa2f7", italic = true })
-        vim.api.nvim_set_hl(0, "String", { fg = "#9ece6a" })
-        vim.api.nvim_set_hl(0, "Function", { fg = "#bb9af7", bold = true })
-        vim.api.nvim_set_hl(0, "Keyword", { fg = "#7dcfff", bold = true })
-        vim.api.nvim_set_hl(0, "Visual", { bg = "#33467c" })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { fg = "#ffd700", bold = true })
       end,
     },
 
@@ -119,12 +117,6 @@ require("lazy").setup({
         })
       end,
     },
-  },
-  install = {
-    colorscheme = {
-      "tokyonight",
-      "habamax"
-    }
   },
   checker = { enabled = true },
 })
