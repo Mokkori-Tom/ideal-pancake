@@ -16,7 +16,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CONFIG_DIRS=/etc/xdg
 export tools=$HOME/tools # your tools path
 export EDITOR=nvim
-export GOROOT=$HOME/go/ # Go本体(変更時のみ)
+export GOROOT=$HOME/go/ # Go main unit (only when changing)
 
 # Resource files
 # https://www.python.org/downloads/windows
