@@ -30,6 +30,7 @@ export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 # https://github.com/denoland/deno/releases
 # https://github.com/junegunn/fzf/releases
 # https://github.com/sharkdp/bat/releases
+# https://rubyinstaller.org/downloads/
 export PATH=$PATH:$HOME/tools
 export PATH=$PATH:$GOROOT/bin
 export PATH=$PATH:$HOME/python
@@ -44,6 +45,7 @@ export PATH=$PATH:$HOME/clangd/bin
 export PATH=$PATH:$HOME/deno
 export PATH=$PATH:$HOME/fzf 
 export PATH=$PATH:$HOME/bat
+export PATH=$PATH:$HOME/ruby/bin
 
 alias ll='ls -la --color=auto'
 
