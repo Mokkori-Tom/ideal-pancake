@@ -1,7 +1,7 @@
 # If windows PortableGit env
 # cat 'export HOME="/home/root"' >> /etc/bash.bashrc
-# cat 'source $HOME/.bashrc' >> /etc/bash.bashrc
-# cat 'set bell-style none' > $HOME/.inputrc
+# cat 'source /home/root/.bashrc' >> /etc/bash.bashrc
+# cat 'set bell-style none' >> $HOME/.inputrc
 export APPDATA=$HOME/.config # windows appdata path
 export download=C:/Users/$USERNAME/Downloads # windows DL path
 
@@ -16,7 +16,7 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CONFIG_DIRS=/etc/xdg
 export tools=$HOME/tools # your tools path
 export EDITOR=nvim
-export GOROOT=$HOME/go/ # Go main unit (only when changing)
+export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 
 # Resource files
 # https://www.python.org/downloads/windows
@@ -31,6 +31,7 @@ export GOROOT=$HOME/go/ # Go main unit (only when changing)
 # https://github.com/junegunn/fzf/releases
 # https://github.com/sharkdp/bat/releases
 # https://rubyinstaller.org/downloads/
+# https://github.com/dandavison/delta/releases
 export PATH=$PATH:$HOME/tools
 export PATH=$PATH:$GOROOT/bin
 export PATH=$PATH:$HOME/python
@@ -46,6 +47,7 @@ export PATH=$PATH:$HOME/deno
 export PATH=$PATH:$HOME/fzf 
 export PATH=$PATH:$HOME/bat
 export PATH=$PATH:$HOME/ruby/bin
+export PATH=$PATH:$HOME/gitdelta
 
 alias ll='ls -la --color=auto'
 
