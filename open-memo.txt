@@ -1,41 +1,56 @@
 ---
-"型" = "レシーバ"
+# Git初commitまでのトラブルシュート道中記 (v1.0.0)
 
-"型" = [
-"ユーザー定義型",
-"組み込み型",
+[起点]
+状況 = "Windows環境、リポジトリ初期化直後、.bashrcをgit管理したい"
+分岐 = ["改行コード警告", "author情報未設定", "commit失敗"]
+
+[[step]]
+no = 1
+action = "git status"
+result = """
+On branch HomeBranch
+No commits yet
+new file:   .bashrc
+modified:   .bashrc
+untracked:  多数
+"""
+解説 = "初commit前・.bashrcがadd&さらに修正あり。典型的な混乱パターン。"
+
+[[step]]
+no = 2
+action = "git add .bashrc"
+warning = "LF will be replaced by CRLF the next time Git touches it"
+解説 = "WindowsでLF→CRLF変換警告。UNIX流儀では要対応。"
+
+[[step]]
+no = 3
+action = "git config --global core.autocrlf input"
+effect = "LF改行を維持しつつ、Windowsの自動変換を抑止。"
+解説 = "UNIXライクな改行を守る。"
+
+[[step]]
+no = 4
+action = "git commit -m 'Add initial .bashrc'"
+error = "Author identity unknown"
+advice = [
+  "git config --global user.name 'Tom'",
+  "git config --global user.email 'tom@example.com'"
 ]
+解説 = "commitにはauthor(name/email)情報が必須。"
 
-組み込み型 = プリミティブ型 = ビルトイン型 = [string, int, ...,]
+[[step]]
+no = 5
+action = "git config --global user.name 'Tom'"
+action2 = "git config --global user.email 'tom@example.com'"
+effect = "commit可能に。"
 
-ユーザー定義型 = [
-型構造体（struct）,
-カスタムint型,
-カスタム関数型,
-インターフェース型,
-]
-
-"型構造体（struct）" = "型（Type）複数フィールドを束ねる複合型"
-
-"構造体から生成された実体" = 値型インスタンス = 構造体の値＝ 実体
-
-構造体のポインタ ＝ ポインタ型インスタンス = 実体が存在する場所（メモリアドレス）を指し示す情報 =  インスタンスのポインタ型（*T）
-
-参照 = Goではポインタ型（*T）
-
-scanner = ポインタ型インスタンス
-
-メソッド = ある型（レシーバ）に紐付いた関数 = 型のインスタンスに対して呼び出せる特殊な関数
-
-bufio = パッケージ = 構造体（型）や関数の集合体
-
-bufio.Scanner = 構造体の型
-
-*bufio.Scanner = ポインタ型インスタンス
-
-.Text() = ポインタ型インスタンス（scanner）に対するメソッド呼び出し
-
-fmt.Println(scanner.Text()) = 値型インスタンスを出力する関数呼び出し
+[step]
+no = 6
+action = "git commit -m 'Add initial .bashrc'"
+result = "[HomeBranch (root-commit) ec6d2e8] Add initial .bashrc"
+解説 = "初commit成功。"
+status = "大勝利"
 ---
 [[lsp]]
 name = "pylsp"
