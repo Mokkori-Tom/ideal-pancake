@@ -1,7 +1,7 @@
 # If windows PortableGit env
-# cat 'export HOME="/home/root"' >> /etc/bash.bashrc
-# cat 'source /home/root/.bashrc' >> /etc/bash.bashrc
-# cat 'set bell-style none' >> $HOME/.inputrc
+# echo 'export HOME="/home/root"' >> /etc/bash.bashrc
+# echo 'source /home/root/.bashrc' >> /etc/bash.bashrc
+# echo 'set bell-style none' >> $HOME/.inputrc
 export APPDATA=$HOME/.config # windows appdata path
 export download=C:/Users/$USERNAME/Downloads # windows DL path
 
@@ -32,6 +32,8 @@ export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 # https://github.com/sharkdp/bat/releases
 # https://rubyinstaller.org/downloads/
 # https://github.com/dandavison/delta/releases
+# echo '[delta]' >> ~/.gitconfig
+# echo 'theme = "Monokai Extended"' >> ~/.gitconfig
 export PATH=$PATH:$HOME/tools
 export PATH=$PATH:$GOROOT/bin
 export PATH=$PATH:$HOME/python
