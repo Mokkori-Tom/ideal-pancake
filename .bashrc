@@ -33,6 +33,9 @@ export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 # https://rubyinstaller.org/downloads/
 # https://github.com/dandavison/delta/releases
 # https://dandavison.github.io/delta/
+# https://github.com/sharkdp/fd/releases
+# https://github.com/avih/uclip/releases
+# https://github.com/jesseduffield/lazygit/releases
 export PATH=$PATH:$HOME/tools
 export PATH=$PATH:$GOROOT/bin
 export PATH=$PATH:$HOME/python
