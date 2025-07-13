@@ -32,8 +32,7 @@ export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 # https://github.com/sharkdp/bat/releases
 # https://rubyinstaller.org/downloads/
 # https://github.com/dandavison/delta/releases
-# echo '[delta]' >> ~/.gitconfig
-# echo 'theme = "Monokai Extended"' >> ~/.gitconfig
+# git config --global delta.theme "OneHalfDark"
 export PATH=$PATH:$HOME/tools
 export PATH=$PATH:$GOROOT/bin
 export PATH=$PATH:$HOME/python
