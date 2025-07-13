@@ -51,6 +51,8 @@ export PATH=$PATH:$HOME/ruby/bin
 export PATH=$PATH:$HOME/gitdelta
 
 alias ll='ls -la --color=auto'
+alias gimp="gimp --no-splash"
+alias krita="krita --nosplash"
 
 export HISTFILE="$HOME/.bash_history"
 export HISTSIZE=10000
