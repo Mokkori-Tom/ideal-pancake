@@ -1,0 +1,657 @@
+# https://www.ruby-lang.org/ja/documentation/quickstart/
+
+[Interactive.Ruby]
+
+IRB = "Interactive Rubyの略"
+
+"IRBを立ち上げましょう" = "Terminalを立ち上げてirbと入力し、enterキーを押して下さい。"
+
+"平方根(square root)を求める" = """
+irb(main):006:0> Math.sqrt(9)
+=> 3.0
+"""
+
+["Ruby的.Math.sqrt(9).これは一体何なんでしょうか？"] 
+
+"Math.sqrt(9)" = "「9の平方根を計算しているのでは」と 思った方は、それで正解です。"
+
+# "もうちょっと詳しく見てみましょう。" = "Math は一体なんでしょうか？"
+
+["Ruby的.Math.sqrt(9).これは一体何なんでしょうか？.Math は一体なんでしょうか？"] 
+
+Math = "数学のためのビルトインモジュールです" 
+
+"ビルトインモジュール" = "標準で組み込まれているモジュールです"
+
+"モジュール" = [
+"関連コードをグループ化する",
+"関連するメソッドを馴染みのある名前でグループ化する",
+]
+
+"Method" = [
+"メソッド",
+"Function",
+"関数",
+"sin()",
+"tan()",
+"等々...",
+]
+
+["Ruby的.Math.sqrt(9).これは一体何なんでしょうか？.このドット（.）は何でしょうか？"] 
+
+"このドット（.）" = [
+"レシーバの「メッセージ」を指定するための記号です。",
+"「どのオブジェクト／モジュールに、どの命令を届けるか」を明示するシンタックス。",
+]
+
+"メッセージ" = [
+"メソッド呼び出し",
+"Math.sqrt(9)では、sqrt(9)がレシーバ Math に送られるメッセージ",
+"オブジェクト／モジュールに届く命令内容",
+]
+
+"sqrt" = "「平方根(square root)」の省略形"
+
+"sqrt(9)" = "sqrt()というメソッドにパラメータとして9を与えて呼び出しています。"
+
+"レシーバ" = [
+"receiver",
+"メソッドがどのモジュール（module）や型（type）、オブジェクト（object）に紐付いているかを示す変数名",
+]
+
+"Math.sqrt()" = "Mathモジュールに紐付いているsqrt()" 
+
+"パラメータ" = "変数"
+
+"レシーバ.メソッド(パラメータ)" = "Math.sqrt(9)"
+
+"receiver.method(parameter)" = "レシーバ.メソッド(パラメータ)"
+
+"Goでは「func (receiver Type) Method(parameter)」" = "Rubyでは「receiver.method(parameter)」" = "「お嬢様にティーカップをお運びなさい」"
+
+"型" = "Type"
+
+"オブジェクト" = "構造体" = "クラス"
+
+["Ruby的.この計算結果を覚えさせるには"]
+
+"変数に代入" = """
+irb(main):007:0> a = 3 ** 2
+=> 9
+irb(main):008:0> b = 4 ** 2
+=> 16
+irb(main):009:0> Math.sqrt(a+b)
+=> 5.0
+"""
+
+["Ruby的.いちいち入力せずに、何度も“Hello”と言いたい時にはどうすればいいでしょうか？.メソッドを定義しましょう！"]
+
+"メソッドを定義しましょう！" = [
+"""
+def<Space><Function name>
+receiver.method(parameter)
+end
+""",
+"""
+def hi
+puts "Hello World!"
+end
+""",
+]
+
+"<関数名>" = "<Function name>"
+
+"Rubyはレシーバやカッコの省略ができる" = [
+"""
+全部書くと -> $stdout.puts("Hello World!")
+レシーバーとカッコ省略 -> puts "Hello World!"
+""",
+]
+
+["Ruby的.簡潔で繰り返せるメソッド"]
+
+"hiメソッドを何度か実行してみましょう。" = """
+hi
+Hello World!
+=> nil
+
+hi()
+Hello World!
+=> nil
+"""
+
+"引数がなければ、名前以外は不要です。" = [ 
+"メソッド名の後ろに空のカッコをつけることができますが、 省略しても構いません。",
+"""
+hi
+Hello World!
+=> nil
+
+hi()
+Hello World!
+=> nil
+""",
+]
+
+["Ruby的.全世界ではなく、特定の人にhelloと言いたい場合はどうすればいいでしょうか？.名前を引数としてとるようにhiを再定義すればいいのです。"]
+
+"名前を引数としてとるようにhiを再定義すればいいのです。" = """
+def hi(name)
+puts "Hello #{name}!"
+end
+"""
+
+"#{name}とは一体何なのでしょうか。" = [
+"これは、文字列に何かを挿入する際の Rubyでのやり方なのです。",
+"ブレース{}の間にあるものは（もし文字列でなければ）文字列に変換され、 その外側の文字列の中に置き換えられます。",
+]
+
+"デフォルト引数のWorld" = [
+"""
+def hi(name = "World")
+""",
+"""
+もしnameが与えられなければ、nameのデフォルト値である"World"を 使う
+""",
+]
+
+["Ruby的.Greeterの例.Greeterクラス"]
+
+"挨拶用のクラス（設計図）。まだ実体はない。" = """
+class Greeter
+  def initialize(name = "World")
+    @name = name
+  end 
+
+  def say_hi 
+    puts "Hi #{@name}!" 
+  end 
+  
+  def say_bye 
+    puts "Bye #{@name}, come back soon." 
+  end 
+end
+"""
+
+type = "クラス（Class）"
+
+# どうすればこのGreeterクラスを動かせるでしょうか？ オブジェクトを作りましょう。
+
+["Ruby的.Greeterの例.Greeterオブジェクト"]
+
+"Greeterクラスから生成された実体（インスタンス）。" = '''
+g = Greeter.new("Tom")  # ← これが「Greeterオブジェクト」
+
+g.say_hi                
+# => "Hi Tom!"
+'''
+
+equals = ["Greeterのインスタンス", "Greeterオブジェクト"]
+
+["Ruby的.Greeterの例.本質"]
+
+"クラス"      = "設計図"
+
+"オブジェクト" = "設計図から生成された実体"
+
+"インスタンス" = "オブジェクトと同義"
+
+["Ruby的.Greeterの例.差分"]
+
+Greeter = "型"
+
+"g = Greeter.new" = "インスタンス（オブジェクト）"
+
+"g" = "がオブジェクト"
+
+["Ruby的.Greeterの例.Objectの殻の中"]
+
+# インスタンス変数はオブジェクトの内側に隠されています。
+
+"インスタンス変数は完全に 見えないようになっているのでは無く" = [
+"オブジェクトをinspectすれば いつでも見ることはできます",
+"他にもアクセスする手段はある",
+]
+
+"Greeterオブジェクトにはどんなメソッドがあるのでしょうか？" = [
+"Greeter.instance_methods",
+"おー。メソッドがいっぱいありますね。",
+"これはGreeterオブジェクトの親やその上の祖先のクラスで定義された すべての メソッド",
+]
+
+"Greeterで定義されたメソッドだけを一覧したいのなら、引数falseを渡します。" = [
+"Greeter.instance_methods(false)",
+"これは祖先のクラスで定義されたメソッドが不要であることを意味します。",
+"お、こちらの方がよさそうですね。",
+]
+
+"greeterオブジェクトがどのメソッドに 反応するか見てみましょう。" = [
+"""
+greeter.respond_to?("name")
+=> false
+""",
+"""
+greeter.respond_to?("say_hi")
+=> true
+""",
+"""
+greeter.respond_to?("to_s")
+=> true
+""",
+]
+
+"to_s" = "何かを文字列に変換するもので、 すべてのオブジェクトに標準で定義されているメソッドです"
+
+["Ruby的.クラスの変更"]
+
+# 名前を表示したり変えたりしたい場合はどうでしょう？
+
+"Rubyはオブジェクトの変数にアクセスできる簡単な方法を用意しています。" =  [
+"""
+class Greeter
+attr_accessor :name
+end
+=> [:name, :name=]
+""",
+"attr_accessorを使うと2つの新しいメソッドが定義されます。 nameは値を参照するメソッドで、name=は値を設定するメソッドです。",
+]
+
+["Ruby的.Rubyファイルの編集.ri20min.rb"]
+
+"IRBを抜けるには" = """
+“quit”や“exit”とタイプするか、コントロールキーを押しながらDキーを押します。
+"""
+
+"コメント" = [
+"Rubyでは、ハッシュマークで始まる行の内容は コメントになり、インタプリタからは無視されます。",
+"# !/usr/bin/env ruby",
+]
+
+"このファイルの最初の行は 特別な行で、Unix系のOSではファイルをどう実行するかをシェルに知らせてくれます。" = "# !/usr/bin/env ruby"
+
+"このsay_hiメソッドはちょっと複雑" = """
+# Say hi to everybody
+def say_hi
+  if @names.nil?
+    puts "..."
+  elsif @names.respond_to?("each")
+    # @names is a list of some kind, iterate!
+    @names.each do |name|
+      puts "Hello #{name}!"
+    end
+  else
+    puts "Hello #{@names}!"
+  end
+end
+"""
+
+
+"インスタンス変数の@namesによって判断が行われているように見えます。" = [
+"""
+if @names.nil?
+  puts "..."
+""",
+"もしこれがnilなら、ドットを3つ表示するだけです。",
+# 誰もいなければ誰にも挨拶しない、 ということでよいですね？
+]
+
+"@namesオブジェクトがeachメソッドを持っている場合" = [
+"イテレーションできる何かであるということ",
+"イテレータとしてforやmap等で使える",
+"Array", 
+"Hash", 
+"Range", 
+"Set", 
+"自作コレクション",
+]
+
+"イテレーション" = [
+"iteration",
+"""
+@names.each do |name|
+  puts "Hello #{name}!"
+end
+""",
+"""
+リスト内のすべての要素の値について、1つずつnameという変数に代入され、 そしてputs "Hello #{name}!"という表現がそのnameの値を使って実行されます。
+""",
+]
+
+"@names.each do |name|" = "eachはコードブロックをとるメソッドで、リストにある要素それぞれに対して ブロック内のコードを実行します。"
+
+"do と endで囲われている部分がそのブロックです。" = [
+"""
+do |name|
+  puts "Hello #{name}!"
+end
+""",
+"ブロックは無名関数やlambdaに似ています。",
+]
+
+"パイプ文字の挟まれた変数がこのブロックのパラメタになります。" = "|name|"
+
+iteration = "繰り返し処理。コレクション等の各要素を順に処理すること。"
+
+"not_iteration" = [
+"has_each_method = false",
+"単体値、または繰り返し非対応",
+"数値", 
+"単なるStruct", 
+"シンボル"
+]
+
+"Ruby流" = [
+"each/respond_to?(:each)が真ならforで回せる",
+"has_each_method = true",
+]
+
+["Ruby的.Rubyの極み.ブロック.ri20min.rb"]
+
+"ブロックが真の力を発揮する" = "リストよりももっと複雑なものを扱うとき" 
+
+"say_byeメソッド" = """
+# Say bye to everybody
+def say_bye
+  if @names.nil?
+    puts "..."
+  elsif @names.respond_to?("join")
+    # Join the list elements with commas
+    puts "Goodbye #{@names.join(", ")}.  Come back soon!"
+  else
+    puts "Goodbye #{@names}.  Come back soon!"
+  end
+end
+"""
+
+"say_byeメソッドはeachを使いません。その代わり、@namesがjoinメソッドを 処理できるかをチェックしています。" = [
+"""
+elsif @names.respond_to?("join")
+""",
+"もし処理できることがわかれば、それを使います。 そうでなければ、変数の値を文字列として出力します。",
+"このメソッドは実際の変数の型を意識せず、サポートしているメソッドに頼っています。",
+"これは“Duck Typing”という名前で知られている",
+"この方法の良いところは、 対応する変数の型に不要な制約を課さずにすむことです。",
+"もし誰かが新たな種類のリストクラスを持ち出してくれば、 joinメソッドが他のリストと同様の意味を持っている限り、 すべては期待した通り動きます。",
+]
+
+["Ruby的.スクリプトの実行.ri20min.rb"]
+
+"ファイルの残りの部分はこのクラスをメソッドを呼び出すものです。" = """
+if __FILE__ == $0
+  mg = MegaGreeter.new
+  mg.say_hi
+  mg.say_bye
+
+  # Change name to be "Zeke"
+  mg.names = "Zeke"
+  mg.say_hi
+  mg.say_bye
+
+  # Change the name to an array of names
+  mg.names = ["Albert", "Brenda", "Charles",
+              "Dave", "Engelbert"]
+  mg.say_hi
+  mg.say_bye
+
+  # Change to nil
+  mg.names = nil
+  mg.say_hi
+  mg.say_bye
+end
+"""
+
+"__FILE__ は現在のファイル名を返す特別な変数です。 $0はプログラムを実行するときに使われるファイル名です。" = [
+"if __FILE__ == $0",
+"このチェックは、「もしこれがメインファイルとして実行されているならば……」 という意味になります。",
+"これは、ライブラリとして使われる場合には実行されないけれど、 実行ファイルとして使われる場合には実行されるコードを書くために 使われます。",
+]
+
+["Ruby的.もっと知るために"]
+
+"Rubyには" = [
+"この他にもたくさんの異なる制御構造",
+"ブロックとyieldの使い方",
+"モジュールとmixin",
+"その他の興味深いしくみがあります",
+]
+
+"ネットで提供されているマニュアルやチュートリアルなどへのリンクを 辿ってみてください。" = "https://www.ruby-lang.org/ja/documentation/"
+
+["Ruby的.ri20min.rb"]
+"ri20min.rb" = """
+#!/usr/bin/env ruby
+
+class MegaGreeter
+  attr_accessor :names
+
+  # Create the object
+  def initialize(names = "World")
+    @names = names
+  end
+
+  # Say hi to everybody
+  def say_hi
+    if @names.nil?
+      puts "..."
+    elsif @names.respond_to?("each")
+      # @names is a list of some kind, iterate!
+      @names.each do |name|
+        puts "Hello #{name}!"
+      end
+    else
+      puts "Hello #{@names}!"
+    end
+  end
+
+  # Say bye to everybody
+  def say_bye
+    if @names.nil?
+      puts "..."
+    elsif @names.respond_to?("join")
+      # Join the list elements with commas
+      puts "Goodbye #{@names.join(", ")}.  Come back soon!"
+    else
+      puts "Goodbye #{@names}.  Come back soon!"
+    end
+  end
+end
+
+
+if __FILE__ == $0
+  mg = MegaGreeter.new
+  mg.say_hi
+  mg.say_bye
+
+  # Change name to be "Zeke"
+  mg.names = "Zeke"
+  mg.say_hi
+  mg.say_bye
+
+  # Change the name to an array of names
+  mg.names = ["Albert", "Brenda", "Charles",
+              "Dave", "Engelbert"]
+  mg.say_hi
+  mg.say_bye
+
+  # Change to nil
+  mg.names = nil
+  mg.say_hi
+  mg.say_bye
+end
+"""
+
+"内部でeachは基本的に" = """
+yield "Albert"を実行し、続いてyield "Brenda"、yield "Charles"などと 実行していきます。
+"""
+
+"duck typing" = [
+"カモっぽければカモ",
+"つまり「インターフェース型」でなく「メソッド持ってればOK」主義",
+]
+
+iteration = "「回す！」"
+
+decoration = "「包む・盛る！」"
+
+"何レーション" = "「ノリで造語化、語感で押し切る！」"
+
+"語尾につけると、それっぽく聞こえる" = "「このプロジェクト、もう少しイノベーション感をデコレーションしてイテレーションしたら完璧ですね」"
+
+["Go的.用語対応表"]
+
+# インスタンス・オブジェクト・構造体の関係（Go流視点）
+
+"オブジェクト"   = "構造体"     # Goではstruct型が「オブジェクト」と同義に見なされやすい
+
+"インスタンス"   = "構造体の値" # struct型から生成された値（実体）がインスタンス
+
+"構造体"         = "型"         # 設計図（Type）であり、まだ「実体」ではない
+
+["Go的.本質"]
+"型"             = "設計図"
+
+"インスタンス"   = "設計図から生成された実体"
+
+"オブジェクト"   = [
+"インスタンスとほぼ同義（特にOOP）",
+"Object",
+]
+
+"構造体"         = "Goの代表的な型（Type）"
+
+"構造体の値"     = "インスタンス"
+
+["Go的.差分解説"]
+
+"Goの場合" = [
+"struct本体 = 型 = 設計図",
+"structの値（var s MyStruct）= インスタンス = 実体",
+"オブジェクト ＝ struct型の値、もしくはstruct型を持つ変数",
+]
+
+"Java/Ruby等OOP言語" = [
+"クラス = 設計図",
+"オブジェクト = インスタンス = 実体（newで生成）",
+]
+
+["Go的.注意"]
+"C言語やGo" = [ 
+"「struct型の値」と「ポインタ値（*T）」どちらもインスタンス",
+"型とインスタンスは厳密には異なる",
+]
+
+"レシーバ" = "型のインスタンス"
+
+"構造体" = "型の一種"
+
+"型" = "設計図（struct型・int型・カスタム型 etc.）"
+
+"型" = [
+"ユーザー定義型",
+"組み込み型",
+]
+
+"組み込み型" = [
+"プリミティブ型",
+"ビルトイン型",
+"string",
+"int", 
+"...",
+]
+
+"ユーザー定義型" = [
+"型構造体（struct）",
+"カスタムint型",
+"カスタム関数型",
+"インターフェース型",
+]
+
+"型構造体（struct）" = "型（Type）複数フィールドを束ねる複合型"
+
+"構造体から生成された実体" = [
+"値型インスタンス",
+"構造体の値",
+"実体",
+]
+
+"構造体のポインタ" = [
+"ポインタ型インスタンス",
+"実体が存在する場所（メモリアドレス）を指し示す情報",
+"インスタンスのポインタ型（*T）",
+]
+
+"参照" = "Goではポインタ型（*T）"
+
+scanner = "ポインタ型インスタンス"
+
+"メソッド" = [
+"ある型（レシーバ）に紐付いた関数",
+"型のインスタンスに対して呼び出せる特殊な関数",
+]
+
+bufio = [
+"パッケージ",
+"構造体（型）や関数の集合体",
+]
+
+"bufio.Scanner" = "構造体の型"
+
+"*bufio.Scanner" = "ポインタ型インスタンス"
+
+".Text()" = "ポインタ型インスタンス（scanner）に対するメソッド呼び出し"
+
+"fmt.Println(scanner.Text())" = "値型インスタンスを出力する関数呼び出し"
+
+["Go的."bufio例"]
+"scanner := bufio.NewScanner(os.Stdin)" = [
+"→ scannerの型は*bufio.Scanner",
+"Scanner構造体のポインタ＝インスタンスの参照）",
+]
+
+"構造体を直で生成 var s bufio.Scanner" = "これは値型インスタンス"
+
+["Go的.関数"]
+name = "main"
+type = "関数"
+desc = "エントリーポイント（トップレベル関数）"
+
+["Go的.関数"]
+name = "bufio.NewScanner"
+type = "関数"
+desc = "bufioパッケージの関数。Scanner型インスタンス（ポインタ）を生成して返す。"
+
+["Go的.関数"]
+name = "fmt.Println"
+type = "関数"
+desc = "fmtパッケージの関数。引数を標準出力に出力する。"
+
+["Go的.メソッド"]
+name = "Scan"
+receiver = "*bufio.Scanner"
+desc = "scanner変数に紐付くメソッド。次の1行を読み込む。"
+
+["Go的.メソッド"]
+name = "Text"
+receiver = "*bufio.Scanner"
+desc = "scanner変数に紐付くメソッド。直前に読み込んだ1行のテキストを返す。"
+
+["差分"]
+"差分" = [
+  "diff: オブジェクトA vs B, フラットな比較",
+  "git: ファイルAのv1 vs v2, 履歴に沿った比較"
+]
+
+"他の多くのプログラミング言語ではforループを使ってリストを扱います。" = """
+# Cでは以下のようになります。
+for (i=0; i<number_of_elements; i++)
+{
+  do_something_with(element[i]);
+}
+"""
+
+"これは動作しますが、あまりエレガントではありません。 iのような使い捨ての変数が必要ですし、そのリストがどのくらいの長さになるか 計算する必要がありますし、どのようにリストを走査するか説明する必要があります。" = """
+for (i=0; i<number_of_elements; i++)
+{
+  do_something_with(element[i]);
+}
+"""
