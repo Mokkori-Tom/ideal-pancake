@@ -160,7 +160,9 @@ for _, lsp in ipairs({
   "lua_ls",        -- repo = "https://github.com/LuaLS/lua-language-server"
   "rust_analyzer", -- cargo install rust-analyzer --locked\n#
   "ts_ls",         -- npm i -g typescript typescript-language-server
-  "bashls"         -- npm i -g bash-language-server
+  "bashls",        -- npm i -g bash-language-server
+  "clangd",        -- repo = "https://github.com/clangd/clangd"
+  "solargraph",    -- gem install solargraph
 }) do
   lspconfig[lsp].setup({ capabilities = capabilities })
 end
