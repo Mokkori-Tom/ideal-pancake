@@ -36,6 +36,7 @@ export GOROOT=$HOME/go/ # Go本体(変更時のみ)
 # https://github.com/sharkdp/fd/releases
 # https://github.com/avih/uclip/releases
 # https://github.com/jesseduffield/lazygit/releases
+# https://github.com/charmbracelet/glow
 export PATH=$PATH:$HOME/tools
 export PATH=$PATH:$GOROOT/bin
 export PATH=$PATH:$HOME/python
@@ -52,6 +53,7 @@ export PATH=$PATH:$HOME/fzf
 export PATH=$PATH:$HOME/bat
 export PATH=$PATH:$HOME/ruby/bin
 export PATH=$PATH:$HOME/gitdelta
+export PATH=$PATH:$HOME/glow
 
 alias ll='ls -la --color=auto'
 alias gimp="gimp --no-splash"
