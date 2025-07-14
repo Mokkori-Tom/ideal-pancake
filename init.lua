@@ -35,6 +35,15 @@ vim.opt.termguicolors = true
 vim.opt.signcolumn = "yes"
 vim.opt.undofile = true
 
+-- vimwiki
+vim.g.vimwiki_list = {
+  {
+    path = "~/vimwiki",
+    syntax = "markdown",
+    ext = ".md",
+  },
+}
+
 -- lazy.nvimプラグイン
 require("lazy").setup({
   spec = {
@@ -71,7 +80,7 @@ require("lazy").setup({
     { "nvim-treesitter/nvim-treesitter", build = ":TSUpdate" },
     { "nvim-lualine/lualine.nvim" },
     { "mbbill/undotree",                 cmd = "UndotreeToggle" },
-    { "Pocco81/auto-save.nvim",          config = function() require("auto-save").setup({}) end,         event = { "InsertLeave", "TextChanged" } },
+    { "Pocco81/auto-save.nvim",          config = function() require("auto-save").setup({}) end, event = { "InsertLeave", "TextChanged" } },
 
     -- === Git連携 ===
     { "tpope/vim-fugitive",              cmd = "Git" },
@@ -93,8 +102,14 @@ require("lazy").setup({
     { "rafamadriz/friendly-snippets" },
 
     -- === ユーティリティ系 ===
-    { "folke/which-key.nvim",            config = function() require("which-key").setup({}) end,         event = "VeryLazy" },
-    { "ggandor/leap.nvim",               config = function() require("leap").add_default_mappings() end, event = "BufReadPost" },
+    -- vimwiki
+    {
+      "vimwiki/vimwiki",
+      config = function()
+      end
+    },
+    { "folke/which-key.nvim", config = function() require("which-key").setup({}) end,         event = "VeryLazy" },
+    { "ggandor/leap.nvim",    config = function() require("leap").add_default_mappings() end, event = "BufReadPost" },
 
     -- Telescopeはplenary.nvim
     {
