@@ -76,6 +76,17 @@ PROMPT_COMMAND='
   history -a; history -n
   PS1="$VENV\[\e[32m\][$HOME_NAME]\[\e[0m\][\u@\h \[\e[36m\]$(date +%Y%m%d_%H:%M)\[\e[0m\] \w]\n\$ "
 '
+
+# PROMPT_COMMAND='
+#   HOME_NAME=$(basename "$HOME")
+#   VENV=""
+#   if [ -n "$VIRTUAL_ENV" ]; then
+#     VENV="\[\e[35m\]("$(basename "$VIRTUAL_ENV")")\[\e[0m\]"
+#   fi
+#   history -a; history -n
+#   PS1="$VENV\[\e[32m\][$HOME_NAME]\[\e[36m\][$(date +%Y%m%d_%H:%M)]\[\e[0m\][\w]\n\$ "
+# '
+
 # fzf install
 # git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 # run install script
