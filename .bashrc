@@ -108,3 +108,6 @@ realtime_rg_fzf() {
 }
 # Bash kye
 bind -x '"\C-g": realtime_rg_fzf'
+
+# https://github.com/tmux/tmux/wiki/Getting-Started
+# tmux new
