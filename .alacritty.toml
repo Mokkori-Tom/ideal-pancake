@@ -1,0 +1,14 @@
+[shell]
+program = "busybox64.exe"
+args = ["sh", "-c", "./setup.sh; exec sh"]
+
+[window]
+opacity = 0.95
+decorations = "none"
+
+[font]
+size = 12.0
+
+[font.normal]
+family = "JetBrainsMono Nerd Font"
+style = "Regular"
