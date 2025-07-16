@@ -1,4 +1,15 @@
 ---
+Alacritty-Portable/
+├── alacritty.exe
+├── busybox64.exe
+├── setup.sh
+├── alacritty.toml
+├── start.bat            ← ← ← 起動トリガー！
+├── root/
+│   └── .config/
+│       └── alacritty/
+│           └── その他設定 or theme
+---
 /
 ├── bin
 ├── sbin
