@@ -1,4 +1,5 @@
 #!/bin/sh
+# busybox -> ash
 export HOME="$PWD/root"  # 先に必ず設定
 export OPT="$PWD/opt"
 # $HOME/.profile
