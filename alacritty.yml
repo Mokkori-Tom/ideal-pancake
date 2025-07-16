@@ -1,0 +1,19 @@
+# ~/.config/alacritty/alacritty.yml
+
+shell:
+  program: "busybox64.exe"
+  args:
+    - "sh"
+    - "setup.sh"
+
+working_directory: "."
+
+window:
+  decorations: none
+  opacity: 0.95
+
+font:
+  normal:
+    family: "JetBrainsMono Nerd Font"
+    style: Regular
+  size: 12.0
