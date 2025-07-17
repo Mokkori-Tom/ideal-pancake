@@ -1,4 +1,13 @@
 ---
+minish/
+├── minish(.exe)
+├── opt/
+│   └── busybox/
+│       ├── busybox(.exe)
+│       └── init.sh
+├── home/
+│   └── .profile
+---
 Alacritty-Portable/
 ├── alacritty.exe
 ├── busybox64.exe
