@@ -1,4 +1,13 @@
 ---
+# https://github.com/msys2/msys2-installer/releases
+cp /etc/pacman.conf /tmp/pacman.conf
+echo 'XferCommand = /usr/bin/curl -k -L -C - -f -o %o %u' >> /tmp/pacman.conf # (-k is SSL認証OFF)
+pacman-key --init
+pacman-key --populate msys2
+pacman -Sy
+pacman -S git
+pacman -S tmux
+---
 minish/
 ├── minish(.exe)
 ├── opt/
