@@ -1,4 +1,31 @@
 ---
+[方法]
+1 = "ローカルで作成 → git push"
+2 = "GitHub Web UIで新規作成"
+
+[手順.1]
+desc = "ローカルで階層を作りcommit/push"
+例 = '''
+$ mkdir -p foo/bar/baz
+$ touch foo/bar/baz/.keep  # 空ディレクトリはgit管理不可
+$ git add foo/bar/baz/.keep
+$ git commit -m "add nested dirs"
+$ git push
+'''
+
+[手順.2]
+desc = "GitHubのWeb UIから新規ファイル作成"
+例 = '''
+1. github.com上でリポジトリを開く
+2. Add file → Create new file を選択
+3. ファイル名を 'foo/bar/baz/filename.txt' のように入力
+4. Commit
+'''
+
+[補足]
+空ディレクトリ = "gitは空ディレクトリを管理できない。ダミーファイル（例：.keep）を置く"
+ディレクトリ階層 = "パス区切りで '/' を使えば階層化できる"
+---
 # https://github.com/msys2/msys2-installer/releases
 cp /etc/pacman.conf /tmp/pacman.conf
 echo 'XferCommand = /usr/bin/curl -k -L -C - -f -o %o %u' >> /tmp/pacman.conf # (-k is SSL認証OFF)
