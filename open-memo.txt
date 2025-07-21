@@ -1,3 +1,13 @@
+```toml
+[Code.generation.elements.main]
+"Code-format" = "python"
+"Generation-candidate" = "3"
+[Code.generation.elements.sub.1]
+"Input-value" = "1"
+"Output-value" = "2"
+# 以降、要素が、増えるほど抽象化される
+```
+---
 https://github.com/gitui-org/gitui
 ---
 [方法]
