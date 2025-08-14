@@ -129,7 +129,7 @@ smap (coc-snippets-jump-prev)
 " wget http://openlab.jp/skk/dic/SKK-JISYO.L.gz
 " gzip -d SKK-JISYO.L.gz
 let g:skk_jisyo = expand(‘~/.skk-jisyo’)
-let g:skk_large_jisyo = ‘/usr/share/skk/SKK-JISYO.L’
+let g:skk_large_jisyo = ‘~/.skk/SKK-JISYO.L’
 let g:skk_control_j_key = ‘’
 let g:skk_auto_save_jisyo = 1
 let g:skk_egg_like_newline = 1
