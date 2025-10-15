@@ -1,3 +1,126 @@
+#!/usr/bin/env bash  
+set -euo pipefail  
+  
+# --- 必要最小限の環境変数 ------------------------------------------  
+export GGML_VULKAN_DEVICE="${GGML_VULKAN_DEVICE:-0}"   # 使わない場合は削除  
+export GGML_OPENCL_DISABLE=1                          # OpenCL を使わない場合  
+# -------------------------------------------------------------------  
+  
+LLAMA_CLI="${LLAMA_CLI:-./llama.cpp/llama-cli}"  
+MODEL="${MODEL:-./models/Qwen3-1.7B-IQ4_XS.gguf}"  
+SYS="${SYS:-You must choose only from the options. Other answers are not allowed.  
+---  
+Other answers are not allowed.  
+{  
+option1: yes!,  
+option2: no...  
+}  
+}"  
+  
+CTX=3072  
+BATCH=768  
+N_PREDICT=-1      # 生成トークン数（-1 はモデル上限まで）  
+SEED=0  
+MAINGPU=0  
+# GPU0を使う時は0(2個目を使う時は1)  
+# CPUを使う時は-1  
+NGL=999  
+# GPU全部乗せ999  
+# GPU全部乗せない0  
+  
+# プロンプトを一時ファイルに格納  
+TMP_PROMPT="$(mktemp)"  
+trap 'rm -f "$TMP_PROMPT"' EXIT  
+cat - > "$TMP_PROMPT"  
+  
+exec "$LLAMA_CLI" \  
+  -m "$MODEL" \  
+  --temp 1.3 \  
+  -c "$CTX" -b "$BATCH" \  
+  -n "$N_PREDICT" --seed "$SEED" \  
+  --split-mode none --simple-io -st \  
+  -ngl "$NGL" \  
+  --main-gpu "$MAINGPU" \  
+  -sys "$SYS" \  
+  -f "$TMP_PROMPT"
+
+#!/usr/bin/env bash  
+set -euo pipefail  
+  
+# --- 必要最小限の環境変数 ------------------------------------------  
+export GGML_VULKAN_DEVICE="${GGML_VULKAN_DEVICE:-0}"   # 使わない場合は削除  
+export GGML_OPENCL_DISABLE=1                          # OpenCL を使わない場合  
+# -------------------------------------------------------------------  
+  
+LLAMA_CLI="${LLAMA_CLI:-./llama.cpp/llama-cli}"  
+MODEL="${MODEL:-./models/Qwen3-1.7B-IQ4_XS.gguf}"  
+SYS="${SYS:-Translate only the text into English.}"  
+  
+CTX=3072  
+BATCH=768  
+N_PREDICT=-1      # 生成トークン数（-1 はモデル上限まで）  
+SEED=0  
+MAINGPU=0  
+# GPU0を使う時は0(2個目を使う時は1)  
+# CPUを使う時は-1  
+NGL=999  
+# GPU全部乗せ999  
+# GPU全部乗せない0  
+  
+# プロンプトを一時ファイルに格納  
+TMP_PROMPT="$(mktemp)"  
+trap 'rm -f "$TMP_PROMPT"' EXIT  
+cat - > "$TMP_PROMPT"  
+  
+exec "$LLAMA_CLI" \  
+  -m "$MODEL" \  
+  --temp 1.3 \  
+  -c "$CTX" -b "$BATCH" \  
+  -n "$N_PREDICT" --seed "$SEED" \  
+  --split-mode none --simple-io -st \  
+  -ngl "$NGL" \  
+  --main-gpu "$MAINGPU" \  
+  -sys "$SYS" \  
+  -f "$TMP_PROMPT"
+
+#!/usr/bin/env bash  
+set -euo pipefail  
+  
+# --- 必要最小限の環境変数 ------------------------------------------  
+export GGML_VULKAN_DEVICE="${GGML_VULKAN_DEVICE:-0}"   # 使わない場合は削除  
+export GGML_OPENCL_DISABLE=1                          # OpenCL を使わない場合  
+# -------------------------------------------------------------------  
+  
+LLAMA_CLI="${LLAMA_CLI:-./llama.cpp/llama-cli}"  
+MODEL="${MODEL:-./models/Qwen3-1.7B-IQ4_XS.gguf}"  
+SYS="${SYS:-Output only bash scripts according to the task. The script must be enclosed in code bloc tags.}"  
+  
+CTX=3072  
+BATCH=768  
+N_PREDICT=-1      # 生成トークン数（-1 はモデル上限まで）  
+SEED=0  
+MAINGPU=0  
+# GPU0を使う時は0(2個目を使う時は1)  
+# CPUを使う時は-1  
+NGL=999  
+# GPU全部乗せ999  
+# GPU全部乗せない0  
+  
+# プロンプトを一時ファイルに格納  
+TMP_PROMPT="$(mktemp)"  
+trap 'rm -f "$TMP_PROMPT"' EXIT  
+cat - > "$TMP_PROMPT"  
+  
+exec "$LLAMA_CLI" \  
+  -m "$MODEL" \  
+  --temp 1.3 \  
+  -c "$CTX" -b "$BATCH" \  
+  -n "$N_PREDICT" --seed "$SEED" \  
+  --split-mode none --simple-io -st \  
+  -ngl "$NGL" \  
+  --main-gpu "$MAINGPU" \  
+  -sys "$SYS" \  
+  -f "$TMP_PROMPT"
 ```toml
 [Code.generation.elements.main]
 "Code-format" = "python"
