@@ -2,7 +2,6 @@
 # exec-llama-chunks.sh
 set -euo pipefail
 
-# — UTF-8を明示（MSYS2/WSLでも崩れにくく）
 export LANG=${LANG:-C.UTF-8}
 export LC_ALL=${LC_ALL:-C.UTF-8}
 
