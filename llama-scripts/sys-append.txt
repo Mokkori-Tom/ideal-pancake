@@ -1,0 +1,11 @@
+You will receive one JSON object per message:
+{"group_index": <int>, "segments": [ {"index": <int>, "segment": "<JA or EN text>"}, ... ]}
+
+Task:
+- Translate the text into Japanese.
+- In order, merge all "segment" strings within this group.
+- Remove duplicated overlap at each boundary (50% overlap is expected). 
+- Preserve wording; do not summarize or rewrite except for de-duplication.
+- If any segment is in English, translate to natural Japanese while merging.
+- Output plain text only: one continuous paragraph. No JSON, no quotes, no markdown, no English.
+- Do not repeat text from earlier segments in the group.
