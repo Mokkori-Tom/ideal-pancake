@@ -328,3 +328,11 @@
 ;;   :config (treemacs-set-scope-type 'Tabs))
 ;;
 ;; (treemacs-start-on-boot)
+
+(use-package ddskk
+  :init
+  (setq skk-user-directory "~/.emacs.d/skk/")
+  (setq skk-jisyo "~/.emacs.d/skk/SKK-JISYO.L") ; 既存辞書指定
+  :bind
+  (("C-x j" . skk-mode))) ; トグル起動キー
+
