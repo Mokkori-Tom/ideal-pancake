@@ -1,171 +1,330 @@
+(menu-bar-mode -1)  
+
 (require 'package)
 (setq package-archives
-      '(("gnu"   . "https://elpa.gnu.org/packages/")
-        ("melpa" . "https://melpa.org/packages/")))
+      '(("gnu"    . "https://elpa.gnu.org/packages/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa"  . "https://melpa.org/packages/")))  ;; 必要なら
+
 (package-initialize)
+(unless package-archive-contents (package-refresh-contents))
+(unless (package-installed-p 'evil)
+(package-install 'evil))
+(require 'evil)
+(evil-mode 1)
 
-(unless package-archive-contents
-  (package-refresh-contents))
-
-(unless (package-installed-p 'use-package)
-  (package-install 'use-package))
-(require 'use-package)
-(setq use-package-always-ensure t)
-
-(setq warning-suppress-types '((obsolete)))
-
-;; ddskk(input)
-(use-package ddskk
-  :ensure t)
-
-(global-set-key (kbd "C-x j") 'skk-auto-fill-mode)
-
-;; SLIME（Common Lisp）
-(use-package slime
-  :init
-  (setq inferior-lisp-program "sbcl")
-  :config
-  (slime-setup '(slime-fancy)))
-
-;; jupyter.el（org-babel用）
-(use-package jupyter
-  :defer t)
-
-;; Org-mode
-(use-package org
-  :mode ("\\.org\\'" . org-mode)
-  :hook ((org-mode . visual-line-mode)
-         (org-mode . variable-pitch-mode))
-  :custom
-  (org-hide-emphasis-markers t)
-  (org-startup-indented t)
-  (org-startup-folded 'content)
-  (org-ellipsis " ▾")
-  :config
-  ;; Org-Babel 言語設定
-  (org-babel-do-load-languages
-
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (julia      . t)
-     (python     . t)
-     (jupyter    . t))))
-
-;; which-key：キーバインド補助
-(use-package which-key
-  :config
-  (which-key-mode)
-  :custom
-  (which-key-idle-delay 0.3))
-
-;; magit：Git フロントエンド
-(use-package magit
-  :commands magit-status)
-
-;; company：補完機能
-(use-package company
-  :hook (after-init . global-company-mode)
-  :custom
-  (company-idle-delay 0.2)
-  (company-minimum-prefix-length 1))
-
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               `((python-mode) . ("~/myenv/Scripts/pylsp.exe"))))
-
-;; projectile：プロジェクト管理
-(use-package projectile
-  :init
-  (projectile-mode +1)
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-  :custom
-  (projectile-completion-system 'default))
-
-;; Ivy/Counsel：補完UI
-(use-package ivy
-  :init (ivy-mode 1)
-  :custom
-  (ivy-use-virtual-buffers t)
-  (enable-recursive-minibuffers t))
-
-(use-package counsel
-  :after ivy
-  :config (counsel-mode 1))
-
-;; Consult：高機能UI
-(use-package consult
-  :bind
-  (("C-s" . consult-line)
-   ("C-x b" . consult-buffer)))
-
-;; LSPクライアント（軽量な eglot）
-(use-package eglot
-  :hook ((python-mode . eglot-ensure)
-         (julia-mode . eglot-ensure)
-         (c-mode . eglot-ensure)
-         (c++-mode . eglot-ensure))
-  :config
-  (add-to-list 'eglot-server-programs
-               '(julia-mode . ("julia" "--startup-file=no" "--history-file=no"
-                               "-e" "using LanguageServer; runserver()"))))
-
-(use-package emacs
-  :init
-  (context-menu-mode 1)
-  (global-tab-line-mode 1)
-  (setq display-line-numbers-type 'relative)      ;; ★ ここだけは setq で変数へ
-  (global-display-line-numbers-mode)
-  (display-battery-mode 1)
-  (display-time-mode 1)
-  (when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-  (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
-  (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1))
-  :custom
-  (current-language-environment "UTF-8"))
-
-;; UI と表示設定
-;; (use-package emacs
-;;   :init
-;;   (context-menu-mode 1)
-;;   (global-tab-line-mode 1)
-;;   :custom
-;;   (current-language-environment "UTF-8")
-;;   (display-battery-mode t)
-;;   (display-time-mode t)
-;;   (display-line-numbers-type 'relative)
-;;   (scroll-bar-mode nil))
-
-(when (fboundp 'menu-bar-mode) (menu-bar-mode -1))
-
-;; フォント設定（custom-set-faces のままでもOK）
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "HackGen Console NF" :foundry "outline" :slant normal :weight regular :height 120 :width normal)))))
-
-;; auto-save（手動インストールした外部パッケージ）
-(add-to-list 'load-path "~/.emacs.d/site-lisp/auto-save") ;; 適宜パス変更
-(require 'auto-save)
-(auto-save-enable)
-
-(setq auto-save-silent t)   ;; 静かに保存
-(setq auto-save-delete-trailing-whitespace t) ;; 保存時に行末の空白削除
-
-;; 特定条件で auto-save を無効化（例：GPGファイル）
-(setq auto-save-disable-predicates
-      '((lambda ()
-          (string-suffix-p
-           "gpg"
-           (file-name-extension (buffer-name)) t))))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages nil))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )
 
-(add-to-list 'load-path "~/.emacs.d/lisp/")
-;;(require 'psc)
+ 
+;; Corfu enhances in-buffer completion by displaying a compact popup with
+;; current candidates, positioned either below or above the point. Candidates
+;; can be selected by navigating up or down.
+(use-package corfu
+  :ensure t
+  :commands (corfu-mode global-corfu-mode)
+
+  :hook ((prog-mode . corfu-mode)
+         (shell-mode . corfu-mode)
+         (eshell-mode . corfu-mode))
+
+  :custom
+  ;; Hide commands in M-x which do not apply to the current mode.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  ;; Disable Ispell completion function. As an alternative try `cape-dict'.
+  (text-mode-ispell-word-completion nil)
+  (tab-always-indent 'complete)
+
+  (corfu-auto t)
+  ;; Enable Corfu
+  :config
+  (global-corfu-mode))
+
+;; Cape, or Completion At Point Extensions, extends the capabilities of
+;; in-buffer completion. It integrates with Corfu or the default completion UI,
+;; by providing additional backends through completion-at-point-functions.
+(use-package cape
+  :ensure t
+  :commands (cape-dabbrev cape-file cape-elisp-block)
+  :bind ("C-c p" . cape-prefix-map)
+  :init
+  ;; Add to the global default value of `completion-at-point-functions' which is
+  ;; used by `completion-at-point'.
+  (add-hook 'completion-at-point-functions #'cape-dabbrev)
+  (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block))
+ 
+;; 端末専用ポップアップ
+(use-package corfu-terminal
+  :ensure t
+  :after corfu
+  :commands (corfu-terminal-mode)
+  :bind ("C-c t" . corfu-terminal-mode)
+  :init
+  (unless (display-graphic-p)
+    (corfu-terminal-mode +1)))
+
+(mapc #'disable-theme custom-enabled-themes)  ; Disable all active themes
+(load-theme 'modus-vivendi t)  ; Load the built-in theme
+
+;; Give Emacs tab-bar a style similar to Vim's
+(use-package vim-tab-bar
+  :ensure t
+  :commands vim-tab-bar-mode
+  :hook (after-init . vim-tab-bar-mode))
+
+;; The evil-surround package simplifies handling surrounding characters, such as
+;; parentheses, brackets, quotes, etc. It provides key bindings to easily add,
+;; change, or delete these surrounding characters in pairs. For instance, you
+;; can surround the currently selected text with double quotes in visual state
+;; using S" or gS".
+(use-package evil-surround
+  :after evil
+  :ensure t
+  :commands global-evil-surround-mode
+  :custom
+  (evil-surround-pairs-alist
+   '((?\( . ("(" . ")"))
+     (?\[ . ("[" . "]"))
+     (?\{ . ("{" . "}"))
+
+     (?\) . ("(" . ")"))
+     (?\] . ("[" . "]"))
+     (?\} . ("{" . "}"))
+
+     (?< . ("<" . ">"))
+     (?> . ("<" . ">"))))
+  :hook (after-init . global-evil-surround-mode))
+
+(use-package magit
+  :ensure t
+  :commands (magit-status)
+  :config ("C-x g" . magit-status))
+
+(use-package undo-tree
+  :ensure t
+  :commands (magit-status)
+  :config (global-undo-tree-mode))
+
+;; Tree-sitter in Emacs is an incremental parsing system introduced in Emacs 29
+;; that provides precise, high-performance syntax highlighting. It supports a
+;; broad set of programming languages, including Bash, C, C++, C#, CMake, CSS,
+;; Dockerfile, Go, Java, JavaScript, JSON, Python, Rust, TOML, TypeScript, YAML,
+;; Elisp, Lua, Markdown, and many others.
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+;; Set up the Language Server Protocol (LSP) servers using Eglot.
+(use-package eglot
+  :ensure t
+  :commands (eglot-ensure
+             eglot-rename
+             eglot-format-buffer))
+
+;; Configure Eglot to enable or disable certain options for the pylsp server
+;; in Python development. (Note that a third-party tool,
+;; https://github.com/python-lsp/python-lsp-server, must be installed),
+(add-hook 'python-mode-hook #'eglot-ensure)
+(add-hook 'python-ts-mode-hook #'eglot-ensure)
+(setq-default eglot-workspace-configuration
+              `(:pylsp (:plugins
+                        (;; Fix imports and syntax using `eglot-format-buffer`
+                         :isort (:enabled t)
+                         :autopep8 (:enabled t)
+
+                         ;; Syntax checkers (works with Flymake)
+                         :pylint (:enabled t)
+                         :pycodestyle (:enabled t)
+                         :flake8 (:enabled t)
+                         :pyflakes (:enabled t)
+                         :pydocstyle (:enabled t)
+                         :mccabe (:enabled t)
+
+                         :yapf (:enabled :json-false)
+                         :rope_autoimport (:enabled :json-false)))))
+
+(setq inferior-lisp-program "sbcl")
+(setq slime-contribs '(slime-fancy))
+(load (expand-file-name "~/quicklisp/slime-helper.el"))
+
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+;; The markdown-mode package provides a major mode for Emacs for syntax
+;; highlighting, editing commands, and preview support for Markdown documents.
+;; It supports core Markdown syntax as well as extensions like GitHub Flavored
+;; Markdown (GFM).
+(use-package markdown-mode
+  :commands (gfm-mode
+             gfm-view-mode
+             markdown-mode
+             markdown-view-mode)
+  :mode (("\\.markdown\\'" . markdown-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("README\\.md\\'" . gfm-mode))
+  :bind
+  (:map markdown-mode-map
+        ("C-c C-e" . markdown-do)))
+
+;; The following code enables commenting and uncommenting by pressing gcc in
+;; normal mode and gc in visual mode.
+(with-eval-after-load "evil"
+  (evil-define-operator my-evil-comment-or-uncomment (beg end)
+    "Toggle comment for the region between BEG and END."
+    (interactive "<r>")
+    (comment-or-uncomment-region beg end))
+  (evil-define-key 'normal 'global (kbd "gc") 'my-evil-comment-or-uncomment))
+
+(use-package buffer-terminator
+  :ensure t
+  :custom
+  ;; Enable/Disable verbose mode to log buffer cleanup events
+  (buffer-terminator-verbose nil)
+
+  ;; Set the inactivity timeout (in seconds) after which buffers are considered
+  ;; inactive (default is 30 minutes):
+  (buffer-terminator-inactivity-timeout (* 30 60)) ; 30 minutes
+
+  ;; Define how frequently the cleanup process should run (default is every 10
+  ;; minutes):
+  (buffer-terminator-interval (* 10 60)) ; 10 minutes
+
+  :config
+  (buffer-terminator-mode 1))
+;; A file and project explorer for Emacs that displays a structured tree
+;; layout, similar to file browsers in modern IDEs. It functions as a sidebar
+;; in the left window, providing a persistent view of files, projects, and
+;; other elements.
+(use-package treemacs
+  :ensure t
+  :commands (treemacs
+             treemacs-select-window
+             treemacs-delete-other-windows
+             treemacs-select-directory
+             treemacs-bookmark
+             treemacs-find-file
+             treemacs-find-tag)
+
+  :bind
+  (:map global-map
+        ("M-0"       . treemacs-select-window)
+        ("C-x t 1"   . treemacs-delete-other-windows)
+        ("C-x t t"   . treemacs)
+        ("C-x t d"   . treemacs-select-directory)
+        ("C-x t B"   . treemacs-bookmark)
+        ("C-x t C-t" . treemacs-find-file)
+        ("C-x t M-t" . treemacs-find-tag))
+
+  :init
+  (with-eval-after-load 'winum
+    (define-key winum-keymap (kbd "M-0") #'treemacs-select-window))
+
+  :config
+  (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
+        treemacs-deferred-git-apply-delay        0.5
+        treemacs-directory-name-transformer      #'identity
+        treemacs-display-in-side-window          t
+        treemacs-eldoc-display                   'simple
+        treemacs-file-event-delay                2000
+        treemacs-file-extension-regex            treemacs-last-period-regex-value
+        treemacs-file-follow-delay               0.2
+        treemacs-file-name-transformer           #'identity
+        treemacs-follow-after-init               t
+        treemacs-expand-after-init               t
+        treemacs-find-workspace-method           'find-for-file-or-pick-first
+        treemacs-git-command-pipe                ""
+        treemacs-goto-tag-strategy               'refetch-index
+        treemacs-header-scroll-indicators        '(nil . "^^^^^^")
+        treemacs-hide-dot-git-directory          t
+        treemacs-indentation                     2
+        treemacs-indentation-string              " "
+        treemacs-is-never-other-window           nil
+        treemacs-max-git-entries                 5000
+        treemacs-missing-project-action          'ask
+        treemacs-move-files-by-mouse-dragging    t
+        treemacs-move-forward-on-expand          nil
+        treemacs-no-png-images                   nil
+        treemacs-no-delete-other-windows         t
+        treemacs-project-follow-cleanup          nil
+        treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+        treemacs-position                        'left
+        treemacs-read-string-input               'from-child-frame
+        treemacs-recenter-distance               0.1
+        treemacs-recenter-after-file-follow      nil
+        treemacs-recenter-after-tag-follow       nil
+        treemacs-recenter-after-project-jump     'always
+        treemacs-recenter-after-project-expand   'on-distance
+        treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
+        treemacs-project-follow-into-home        nil
+        treemacs-show-cursor                     nil
+        treemacs-show-hidden-files               t
+        treemacs-silent-filewatch                nil
+        treemacs-silent-refresh                  nil
+        treemacs-sorting                         'alphabetic-asc
+        treemacs-select-when-already-in-treemacs 'move-back
+        treemacs-space-between-root-nodes        t
+        treemacs-tag-follow-cleanup              t
+        treemacs-tag-follow-delay                1.5
+        treemacs-text-scale                      nil
+        treemacs-user-mode-line-format           nil
+        treemacs-user-header-line-format         nil
+        treemacs-wide-toggle-width               70
+        treemacs-width                           35
+        treemacs-width-increment                 1
+        treemacs-width-is-initially-locked       t
+        treemacs-workspace-switch-cleanup        nil)
+
+  ;; The default width and height of the icons is 22 pixels. If you are
+  ;; using a Hi-DPI display, uncomment this to double the icon size.
+  ;; (treemacs-resize-icons 44)
+
+  (treemacs-follow-mode t)
+  (treemacs-filewatch-mode t)
+  (treemacs-fringe-indicator-mode 'always)
+
+  ;;(when treemacs-python-executable
+  ;;  (treemacs-git-commit-diff-mode t))
+
+  (pcase (cons (not (null (executable-find "git")))
+               (not (null treemacs-python-executable)))
+    (`(t . t)
+     (treemacs-git-mode 'deferred))
+    (`(t . _)
+     (treemacs-git-mode 'simple)))
+
+  (treemacs-hide-gitignored-files-mode nil))
+
+;; (use-package treemacs-evil
+;;   :after (treemacs evil)
+;;   :ensure t)
+;;
+;; (use-package treemacs-icons-dired
+;;   :hook (dired-mode . treemacs-icons-dired-enable-once)
+;;   :ensure t)
+;;
+;; (use-package treemacs-tab-bar  ; treemacs-tab-bar if you use tab-bar-mode
+;;   :after (treemacs)
+;;   :ensure t
+;;   :config (treemacs-set-scope-type 'Tabs))
+;;
+;; (treemacs-start-on-boot)
