@@ -5,7 +5,7 @@
 ; ├── quicklisp/  
 ; └── write-csv.lisp
 
-; 実行は
+; 実行方法
 ; 開発中は --load 対話環境を起動
 ; sbcl --load write-csv.lisp
 ; 配布後は --script 実行して即終了
