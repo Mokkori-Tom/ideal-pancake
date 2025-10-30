@@ -10,11 +10,11 @@ sbclインストールしておく
 |#
 
 #|
-; 実行方法
-; 開発中は --load 対話環境を起動
-; sbcl --load write-csv.lisp
-; 配布後は --script 実行して即終了
-; sbcl --script write-csv.lisp
+実行方法
+開発中は --load 対話環境を起動
+sbcl --load write-csv.lisp
+配布後は --script 実行して即終了
+sbcl --script write-csv.lisp
 |#
 
 ; 外部更新を禁止の場合（オフライン前提）
