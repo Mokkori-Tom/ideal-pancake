@@ -15,7 +15,6 @@ SEED=${SEED:--1}
 MAINGPU=${MAINGPU:-0}
 NGL=${NGL:-999}
 SPLIT_MODE=${SPLIT_MODE:-none}
-
 TIMEOUT_SEC="${TIMEOUT_SEC:-}"
 PROMPT_CACHE="${PROMPT_CACHE:-}"
 
@@ -37,18 +36,24 @@ LL_ARGS=(
   -sm "$SPLIT_MODE"
   "${SYS_ARGS[@]}"
 )
-
 [ -n "$PROMPT_CACHE" ] && LL_ARGS+=( --prompt-cache "$PROMPT_CACHE" )
 
-# --- read stdin completely ---
-prompt="$(cat)"
-# guard: empty input
-[ -z "$prompt" ] && { echo "warning: empty stdin" >&2; exit 0; }
+# --- read stdin safely (all bytes, keep newlines exactly) ---
+#   use cat > "$tmp" to avoid shell word splitting
+TMP="$(mktemp)"
+trap 'rm -f "$TMP"' EXIT
+cat >"$TMP"
+
+# empty check
+if [ ! -s "$TMP" ]; then
+  echo "warning: empty stdin" >&2
+  exit 0
+fi
 
 # --- run ---
 if [ -n "$TIMEOUT_SEC" ]; then
-  printf '%s' "$prompt" | timeout --preserve-status --kill-after=2s "${TIMEOUT_SEC}s" \
-    "$LLAMA_CLI" "${LL_ARGS[@]}"
+  timeout --preserve-status --kill-after=2s "${TIMEOUT_SEC}s" \
+    "$LLAMA_CLI" "${LL_ARGS[@]}" -f "$TMP"
 else
-  printf '%s' "$prompt" | "$LLAMA_CLI" "${LL_ARGS[@]}"
+  "$LLAMA_CLI" "${LL_ARGS[@]}" -f "$TMP"
 fi
