@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# exec-llama-stdio.sh — pure stdio, simple & robust
 set -euo pipefail
 
 export LANG=${LANG:-C.UTF-8}
