@@ -28,6 +28,7 @@ SYS_ARGS=()
 
 LL_ARGS=(
   -m "$MODEL"
+  --no-warmup
   --simple-io
   -st
   -c "$CTX" -b "$BATCH"
