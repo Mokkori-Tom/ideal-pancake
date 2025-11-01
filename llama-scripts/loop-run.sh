@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # === 設定（環境変数で上書き可）===
-script="${script:-./exec-llama.sh}"   # 実行スクリプト（実行権限あり推奨）
+script="${script:-./exec-llama.sh}"   # 実行スクリプト（shebangで実行）
 indir="${indir:-./loopdir}"           # 入力ディレクトリ
 outdir="${outdir:-./loop-outdir}"     # 出力ディレクトリ
 resume="${resume:-1}"                 # 1=入力より新しい出力はスキップ
@@ -10,37 +10,45 @@ resume="${resume:-1}"                 # 1=入力より新しい出力はスキ�
 # === 準備 ===
 mkdir -p -- "$outdir"
 
-# 絶対パス化（BSD/GNUどちらでも動くように）
+# 絶対パス化
 indir_abs="$(cd "$indir" && pwd)"
 outdir_abs="$(cd "$outdir" && pwd)"
 
-# outdir が indir 配下なら、相対パスを求めて後で prune
+# outdir が indir 配下なら prune 用の相対パス
 prune_rel=""
 case "$outdir_abs" in
   "$indir_abs"/*) prune_rel="${outdir_abs#"$indir_abs/"}" ;;
 esac
 
+# 文字列を確実に stderr に出す（printf 実装差回避）
+say() { printf '%s\n' "$*" >&2; }
+
+# 入力より出力が新しいか（find -newer を使って移植性確保）
+is_up_to_date() {
+  in="$1"; out="$2"
+  [ -e "$out" ] && find "$out" -newer "$in" -print -quit >/dev/null 2>&1
+}
+
 # === 実行 ===
-# BSD互換：-printf を使わず、cd してから -print0 で列挙
 cd "$indir_abs"
 
+# BSD/GNU 互換: -print0 を使い、-printf 非使用
 find . \
   ${prune_rel:+\( -path "./$prune_rel" -o -path "./$prune_rel/*" \) -prune -o} \
   -type f -print0 |
 while IFS= read -r -d '' rel; do
-  rel="${rel#./}"                              # "./" を除去
+  rel="${rel#./}"
   in="$indir_abs/$rel"
   out="$outdir_abs/$rel"
   mkdir -p -- "$(dirname -- "$out")"
 
-  if [[ "$resume" == "1" && -e "$out" && "$out" -nt "$in" ]]; then
-    printf '[skip] %s (up-to-date)\n' "$rel" >&2
+  if [ "$resume" = "1" ] && is_up_to_date "$in" "$out"; then
+    say "[skip] $rel (up-to-date)"
     continue
   fi
 
-  printf '--- processing: %s -> %s ---\n' "$in" "$out" >&2
-  # ここを shebang 実行に変更（27行目の“無効なオプション”回避）
+  say "--- processing: $in -> $out ---"
   if ! "$script" <"$in" >"$out"; then
-    printf 'error processing %s\n' "$in" >&2
+    say "error processing $in"
   fi
 done
