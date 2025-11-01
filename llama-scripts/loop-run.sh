@@ -1,29 +1,35 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# === 設定 ===
-script="${script:-./exec-llama.sh}"  # 実行スクリプト
-indir="${indir:-./loopdir}"          # 入力ディレクトリ
-outdir="${outdir:-./loop-outdir}"    # 出力ディレクトリ
+# === 設定（環境変数で上書き可）===
+script="${script:-./exec-llama.sh}"   # 実行スクリプト
+indir="${indir:-./loopdir}"           # 入力ディレクトリ（相対OK）
+outdir="${outdir:-./loop-outdir}"     # 出力ディレクトリ
+resume="${resume:-1}"                 # 1=入力より新しい出力はスキップ
 
 # === 準備 ===
-mkdir -p "$outdir"
+mkdir -p -- "$outdir"
 
 # === 実行 ===
-find "$indir" -type f | while IFS= read -r f; do
-  # indir/ 以降の相対パスを抽出
-  rel="${f#$indir/}"
-
-  # 出力先パス（拡張子を維持）
+# - indir配下の outdir は除外（再帰防止）
+# - %P で indir からの相対パスを得る
+while IFS= read -r -d '' rel; do
+  in="$indir/$rel"
   out="$outdir/$rel"
+  mkdir -p -- "$(dirname -- "$out")"
 
-  # 出力先ディレクトリを作成
-  mkdir -p "$(dirname "$out")"
-
-  echo "--- processing: $f -> $out ---" >&2
-
-  # 実行（逐次処理）
-  if ! cat "$f" | bash "$script" > "$out"; then
-    echo "error processing $f" >&2
+  # 既存が新しければスキップ
+  if [[ "$resume" == "1" && -e "$out" && "$out" -nt "$in" ]]; then
+    printf '[skip] %s (up-to-date)\n' "$rel" >&2
+    continue
   fi
-done
+
+  printf '--- processing: %s -> %s ---\n' "$in" "$out" >&2
+  if ! bash "$script" <"$in" >"$out"; then
+    printf 'error processing %s\n' "$in" >&2
+  fi
+done < <(
+  find "$indir" \
+    \( -path "$outdir" -o -path "$outdir/*" \) -prune -o \
+    -type f -printf '%P\0'
+)
