@@ -8,7 +8,7 @@ LLAMA_CLI="${LLAMA_CLI:-./llama.cpp/llama-cli}"
 MODEL="${MODEL:-./models/Qwen3-4B-Instruct-2507-IQ4_NL.gguf}"
 SYS_FILE="${SYS_FILE:-./system-prompt.txt}"
 
-CTX=${CTX:-8192}
+CTX=${CTX:-8192} #32768
 BATCH=${BATCH:-512}
 N_PREDICT=${N_PREDICT:--1}
 SEED=${SEED:--1}
