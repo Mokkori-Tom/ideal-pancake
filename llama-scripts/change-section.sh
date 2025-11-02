@@ -26,10 +26,8 @@ for f in "$indir"/*; do
   END {
     gsub(/^[\n\r]+|[\n\r]+$/, "", user_text)
     gsub(/^[\n\r]+|[\n\r]+$/, "", assistant_text)
-    print "*　*　*"
     print assistant_text
     print "<original>"
-    print "*　*　*"
     print user_text
     print "</original>"
   }' "$f" > "$out"
