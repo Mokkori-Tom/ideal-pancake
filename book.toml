@@ -1,0 +1,8 @@
+[book]
+authors = []
+language = "en"
+src = "src"
+title = "MyWiki"
+# 3) book.toml に追記（既に [output.html] があればそこへ）
+[output.html]
+additional-js = ["assets/fzf.umd.js", "assets/elasticlunr.js"]
