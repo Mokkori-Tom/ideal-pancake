@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# batch-reformat.sh
+# change-section.sh
 set -euo pipefail
 
 indir="${1:-./in}"
