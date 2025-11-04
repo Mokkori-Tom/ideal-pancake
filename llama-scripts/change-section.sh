@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# change-section.sh
+# batch-reformat.sh
 set -euo pipefail
 
 indir="${1:-./in}"
@@ -22,7 +22,6 @@ for f in "$indir"/*; do
     assistant_text = ""
   }
 
-  # セクション識別
   /^user$/ {
     in_user = 1
     in_assistant = 0
@@ -35,30 +34,26 @@ for f in "$indir"/*; do
     next
   }
 
-  # 行全体が [end of text]（前後に空白を含んでもOK）の場合は破棄
   /^[[:space:]]*\[end of text\][[:space:]]*$/ {
     in_user = 0
     in_assistant = 0
     next
   }
 
-  # 本文の蓄積
   in_user {
+    gsub(/\[end of text\]/, "", $0)  # 行中のタグを即削除
     user_text = (user_text ? user_text ORS : "") $0
     next
   }
 
   in_assistant {
+    gsub(/\[end of text\]/, "", $0)  # 行中のタグを即削除
     assistant_text = (assistant_text ? assistant_text ORS : "") $0
     next
   }
 
   END {
-    # 行中に紛れ込んだ [end of text] も除去
-    gsub(/\[end of text\]/, "", user_text)
-    gsub(/\[end of text\]/, "", assistant_text)
-
-    # 先頭・末尾の余計な改行をトリム
+    # 先頭・末尾の余計な改行を除去
     gsub(/^[\n\r]+|[\n\r]+$/, "", user_text)
     gsub(/^[\n\r]+|[\n\r]+$/, "", assistant_text)
 
