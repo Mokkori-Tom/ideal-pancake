@@ -3,7 +3,7 @@
 set -euo pipefail
 
 : "${MODEL:=./models/Qwen3-30B-A3B-Instruct-2507-IQ4_NL.gguf}"
-: "${script:=./exec-llama.sh}"
+: "${script:=./exec-llama-simple.sh}"
 
 # 処理対象のテキスト群
 : "${indir:=./hogehoge-in/}"
