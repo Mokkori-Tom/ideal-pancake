@@ -14,14 +14,12 @@ set -euo pipefail
 # 出力ディレクトリ
 : "${outdir:=./hogehoge-out/}"
 
-
 # システムプロンプト
 # <sys-prompt> - </sys-prompt>
 : "${SYS_FILE:=./prompt/sys-prompt.txt}"                         
 # メインユーザープロンプト
 # <main-prompt> - </main-prompt>
 : "${USER_PROMPT_FILE:=./prompt/main-user.txt}"
-
 
 # ===== 準備 =====
 [ -f "$USER_PROMPT_FILE" ] || { echo "error: not found: $USER_PROMPT_FILE" >&2; exit 2; }
