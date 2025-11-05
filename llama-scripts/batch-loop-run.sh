@@ -3,16 +3,17 @@
 set -euo pipefail
 
 # ===== 設定 =====
-: "${MODEL:=./models/Qwen3.gguf}"
 # 使用モデル
-: "${script:=./exec-llama-simple.sh}"  
+: "${MODEL:=./models/Qwen3.gguf}"
 # 実行スクリプト
+: "${script:=./exec-llama-simple.sh}"
 
+# 入力ディレクトリ
 # <file-path> - </file-path>
 : "${indir:=./hogehoge-in/}"
-# 入力ディレクトリ
-: "${outdir:=./hogehoge-out/}"
 # 出力ディレクトリ
+: "${outdir:=./hogehoge-out/}"
+
 
 # システムプロンプト
 # <sys-prompt> - </sys-prompt>
