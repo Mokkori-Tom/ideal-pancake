@@ -12,6 +12,7 @@ set -euo pipefail
 # バッチプロンプト(システムプロンプト)
 : "${SYS_FILE:=./prompt/sys-prompt.txt}"
 # バッチプロンプト(ユーザープロンプト)
+# <main-prompt>-</main-prompt>
 : "${USER_PROMPT_FILE:=./prompt/main-user.txt}"
 
 # === メインプロンプト読込 ===
