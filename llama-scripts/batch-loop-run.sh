@@ -10,6 +10,7 @@ set -euo pipefail
 
 # 入力ディレクトリ
 # <file-path> - </file-path>
+# <file-text>(テキスト本文)</file-text>
 : "${indir:=./hogehoge-in/}"
 # 出力ディレクトリ
 : "${outdir:=./hogehoge-out/}"
