@@ -6,6 +6,7 @@ set -euo pipefail
 : "${script:=./exec-llama-simple.sh}"
 
 # 処理対象のテキスト群
+# <file-path>-</file-path>
 : "${indir:=./hogehoge-in/}"
 : "${outdir:=./hogehoge-out/}"
 
