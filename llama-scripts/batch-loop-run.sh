@@ -3,18 +3,24 @@
 set -euo pipefail
 
 # ===== 設定 =====
-: "${MODEL:=./models/Qwen3-30B-A3B-Instruct-2507-IQ4_NL.gguf}"   # 使用モデル
-: "${script:=./exec-llama-simple.sh}"                            # 実行スクリプト
+: "${MODEL:=./models/Qwen3-30B-A3B-Instruct-2507-IQ4_NL.gguf}"
+# 使用モデル
+: "${script:=./exec-llama-simple.sh}"  
+# 実行スクリプト
 
 # <file-path> - </file-path>
-: "${indir:=./hogehoge-in/}"                                     # 入力ディレクトリ
-: "${outdir:=./hogehoge-out/}"                                   # 出力ディレクトリ
+: "${indir:=./hogehoge-in/}"
+# 入力ディレクトリ
+: "${outdir:=./hogehoge-out/}"
+# 出力ディレクトリ
 
+# システムプロンプト
 # <sys-prompt> - </sys-prompt>
-: "${SYS_FILE:=./prompt/sys-prompt.txt}"                         # システムプロンプト
-
+: "${SYS_FILE:=./prompt/sys-prompt.txt}"                         
+# メインユーザープロンプト
 # <main-prompt> - </main-prompt>
-: "${USER_PROMPT_FILE:=./prompt/main-user.txt}"                  # メインユーザープロンプト
+: "${USER_PROMPT_FILE:=./prompt/main-user.txt}"
+
 
 # ===== 準備 =====
 [ -f "$USER_PROMPT_FILE" ] || { echo "error: not found: $USER_PROMPT_FILE" >&2; exit 2; }
