@@ -4,10 +4,15 @@ set -euo pipefail
 
 : "${MODEL:=./models/Qwen3-30B-A3B-Instruct-2507-IQ4_NL.gguf}"
 : "${script:=./exec-llama.sh}"
-: "${SYS_FILE:=./prompt/tr-jp.txt}"
-: "${indir:=./hogehoge/}"
-: "${outdir:=./hogehoge-en/}"
-: "${USER_PROMPT_FILE:=./prompt/main-user.txt}"  # ← 外部ファイル指定（必須）
+
+# 処理対象のテキスト群
+: "${indir:=./hogehoge-in/}"
+: "${outdir:=./hogehoge-out/}"
+
+# バッチプロンプト(システムプロンプト)
+: "${SYS_FILE:=./prompt/sys-prompt.txt}"
+# バッチプロンプト(ユーザープロンプト)
+: "${USER_PROMPT_FILE:=./prompt/main-user.txt}"
 
 # === メインプロンプト読込 ===
 if [ ! -f "$USER_PROMPT_FILE" ]; then
