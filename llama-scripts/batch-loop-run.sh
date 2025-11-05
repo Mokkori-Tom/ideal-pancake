@@ -3,7 +3,7 @@
 set -euo pipefail
 
 # ===== 設定 =====
-: "${MODEL:=./models/Qwen3-30B-A3B-Instruct-2507-IQ4_NL.gguf}"
+: "${MODEL:=./models/Qwen3.gguf}"
 # 使用モデル
 : "${script:=./exec-llama-simple.sh}"  
 # 実行スクリプト
