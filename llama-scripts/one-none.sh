@@ -1,0 +1,1 @@
+rg --count-matches "<none>" -g "*" ./target_dir | awk -F: '$2 == 1 {print $1}'
