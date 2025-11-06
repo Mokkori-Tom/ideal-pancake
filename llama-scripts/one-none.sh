@@ -1,4 +1,4 @@
-function none-one
+function one-none
     if test (count $argv) -gt 0
         set dir (realpath $argv[1])
     else
