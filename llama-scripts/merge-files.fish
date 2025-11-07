@@ -16,16 +16,16 @@ function merge-files
     set outdir (dirname "$outfile")
     mkdir -p "$outdir"
 
-    # 出力ファイルを初期化して、ここで作成しておく
+    # 出力ファイルを空で作成
     echo -n "" > "$outfile"
+
+    # 出力ファイルの絶対パスを取得
     set outfile_abs (realpath "$outfile")
 
-    # ファイル名でソートして結合（サブディレクトリは無視）
+    # src 直下のファイルを名前順ソートで結合
     for f in (find "$src" -maxdepth 1 -type f | sort)
-        set f_abs (realpath "$f")
-
         # 出力ファイル自身はスキップ
-        if test "$f_abs" = "$outfile_abs"
+        if test "$f" = "$outfile_abs"
             continue
         end
 
