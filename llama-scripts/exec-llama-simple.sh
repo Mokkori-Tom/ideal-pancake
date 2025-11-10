@@ -24,7 +24,7 @@ PROMPT_CACHE="${PROMPT_CACHE:-}"
 MAX_INPUT_BYTES="${MAX_INPUT_BYTES:-1048576}"
 
 # バイナリチェックをスキップしたい場合は 1 にする
-SKIP_BINARY_CHECK="${SKIP_BINARY_CHECK:-0}"
+SKIP_BINARY_CHECK="${SKIP_BINARY_CHECK:-1}"
 
 # --- validation ---
 command -v "$LLAMA_CLI" >/dev/null 2>&1 || { echo "llama-cli not found" >&2; exit 127; }
