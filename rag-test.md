@@ -50,7 +50,7 @@ cd ~/rag-test
 nano test.sh
 
 中身を全部これにしてください。
-
+```
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -90,7 +90,7 @@ print("query:", query)
 for rank, (dist, idx) in enumerate(zip(D[0], I[0]), start=1):
     print(f"Top {rank}: idx={idx}, dist={dist:.4f}, text={sentences[idx]}")
 PY
-
+```
 保存したら実行権限を付けます。
 
 chmod +x test.sh
