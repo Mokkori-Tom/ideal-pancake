@@ -33,11 +33,11 @@ UV_LINK_MODE=copy uv pip install "numpy<2.0" "faiss-cpu" "fastembed"
 ```
 これで
 
-numpy 1.26 系
+- numpy 1.26 系
 
-faiss-cpu
+- faiss-cpu
 
-fastembed（0.7.3 想定）
+- fastembed（0.7.3 想定）
 が入ります。
 
 
