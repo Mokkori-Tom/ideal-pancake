@@ -16,21 +16,21 @@ cd ~/rag-test
 ---
 
 ② 仮想環境を作成（Python 3.11）
-
+```
 cd ~/rag-test
 
 UV_LINK_MODE=copy uv venv .venv --python 3.11
 source .venv/bin/activate
-
+```
 
 ---
 
 ③ ライブラリを「安全な組み合わせ」でインストール
 
 NumPy は 2.x ではなく 1.x に固定します。
-
+```
 UV_LINK_MODE=copy uv pip install "numpy<2.0" "faiss-cpu" "fastembed"
-
+```
 これで
 
 numpy 1.26 系
@@ -45,10 +45,10 @@ fastembed（0.7.3 想定）
 ---
 
 ④ test.sh を作成
-
+```
 cd ~/rag-test
 nano test.sh
-
+```
 中身を全部これにしてください。
 ```
 #!/usr/bin/env bash
@@ -92,20 +92,20 @@ for rank, (dist, idx) in enumerate(zip(D[0], I[0]), start=1):
 PY
 ```
 保存したら実行権限を付けます。
-
+```
 chmod +x test.sh
-
+```
 
 ---
 
 ⑤ 動作確認
 
 まだ source .venv/bin/activate していなければ、もう一度有効化して
-
+```
 cd ~/rag-test
 source .venv/bin/activate
 bash ./test.sh
-
+```
 うまくいけば
 
 embedding shape: (3, 384) のような行
