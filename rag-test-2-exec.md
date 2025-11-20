@@ -24,7 +24,7 @@ exec-llama-json-rag.sh
 ざっくり流れはこうなります。
 
 (1) コーパス作成
-
+```
 texts/ 配下のファイル
         |
         v
@@ -36,9 +36,9 @@ texts/ 配下のファイル
         |
         +--> corpus.jsonl (1行1JSON: {id, text})
 
-
+```
 (2) ベクトルインデックス構築
-
+```
 corpus.jsonl
       |
       v
@@ -48,10 +48,10 @@ corpus.jsonl
       |
       +--> corpus.sqlite (id, text, faiss_idx)
       +--> corpus.index  (FAISS)
-
+```
 
 (3) 実行時 RAG + LLM
-
+```
 ユーザの質問(プロンプト)
       |
       v
@@ -71,7 +71,7 @@ corpus.jsonl
                         | llama   |
                         | (llama-cli) 
                         +---------+
-
+```
 必要環境
 
 Python 3.11 目安
@@ -102,7 +102,7 @@ llama.cpp の llama-cli バイナリ（パスが通っているか、もしく�
 
 
 ディレクトリ構成（例）
-
+```
 project-root/
  ├ texts/                … インデックスしたいテキスト
  ├ json_docs/            … make-json.py が作成
@@ -115,7 +115,7 @@ project-root/
  ├ exec-llama-json-rag.sh
  └ prompt/
      └ prompt.txt        … llama 用システムプロンプト等
-
+```
 使い方ざっくり
 
 1. texts/ にテキストファイルを置く
@@ -163,7 +163,7 @@ id は「相対パス + 内容ハッシュ」で一意になるようにして�
 
 
 スクリプト全文
-
+```
 #!/usr/bin/env python
 """
 texts/ 以下の“読める”ファイルをすべて
@@ -218,7 +218,7 @@ with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as jf:
 temp_jsonl.replace(JSONL_FP)
 
 print(f"変換完了: 個別 JSON → {JSON_DIR}/, まとめ → {JSONL_FP}")
-
+```
 ポイント
 
 TXT_DIR.rglob("*") なので拡張子は問わず、「読めるテキスト」ならなんでも対象です。
@@ -247,7 +247,7 @@ FAISS に登録して corpus.index として保存
 
 
 スクリプト全文
-
+```
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -376,7 +376,7 @@ else:
         conn.commit()
         print(f"追加完了: ntotal={index.ntotal}")
 PY
-
+```
 ポイント
 
 既存の corpus.sqlite / corpus.index がある場合は
@@ -410,7 +410,7 @@ id → text な辞書を JSON で出力します。
 
 
 スクリプト全文
-
+```
 #!/usr/bin/env bash
 # rag-search.sh : ベクトル検索 → id ➔ text の辞書を JSON で返す
 set -euo pipefail
@@ -491,7 +491,7 @@ for faiss_idx in I[0]:
 # ---------- 出力 ----------
 print(json.dumps({"DB": dictionary}, ensure_ascii=False, indent=2))
 PY
-
+```
 ポイント
 
 出力は
@@ -525,7 +525,7 @@ rag-search.sh を呼び出して、プロンプトに関連するコーパス断
 
 
 生成する JSON のイメージ：
-
+```
 {
   "main_prompt": "ユーザからの依頼本文",
   "DB": { "...": "RAG 用の参考テキスト", "...": "..." },
@@ -534,9 +534,9 @@ rag-search.sh を呼び出して、プロンプトに関連するコーパス断
     { "path": "path/to/file2.txt", "text": "……内容……" }
   ]
 }
-
+```
 スクリプト全文
-
+```
 #!/usr/bin/env bash
 # exec-llama-json-rag.sh  (MSYS + RAG 改善版, DB は JSON オブジェクト)
 
@@ -834,7 +834,7 @@ for ((i=0; i<${#dirs[@]}-1; i++)); do
     done
   done
 done
-
+```
 主なオプションと環境変数
 
 環境変数
