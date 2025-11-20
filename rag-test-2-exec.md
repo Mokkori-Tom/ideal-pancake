@@ -73,7 +73,7 @@ corpus.jsonl
                         +---------+
 ```
 必要環境
-
+```
 Python 3.11 目安
 
 uv（uv run を使用）
@@ -96,7 +96,7 @@ jq
 file
 
 sqlite3（デバッグ時など）
-
+```
 
 llama.cpp の llama-cli バイナリ（パスが通っているか、もしくは LLAMA_CLI で指定）
 
@@ -122,25 +122,25 @@ project-root/
 
 
 2. コーパス JSONL & 個別 JSON を作成
-
+```
 python make-json.py
-
+```
 
 3. ベクトルインデックスを構築
-
-./db-build.sh
-
+```
+bash db-build.sh
+```
 
 4. ベクトル検索だけ試す
-
-echo "検索したい内容" | ./rag-search.sh
-
+```
+echo "検索したい内容" | bash rag-search.sh
+```
 
 5. LLM + RAG でまとめて実行（例：texts/ 配下の .txt を順番に処理）
-
+```
 echo "このコーパスから◯◯について教えて" \
-  | ./exec-llama-json-rag.sh -d texts -r --ext .txt -- --temp 0.2
-
+  | bash exec-llama-json-rag.sh -d texts -r --ext .txt -- --temp 0.2
+```
 -- より後ろは llama-cli にそのまま渡されます。
 
 
