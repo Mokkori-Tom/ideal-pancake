@@ -686,9 +686,9 @@ if [[ -n $MAIN_PROMPT ]]; then
       "${RAG_CMD[@]}"            <<<"$MAIN_PROMPT" >"$rag_tmp" 2>/dev/null || true
     fi
 
-    # .dictionary をそのまま JSON オブジェクトとして取り込む
+    # .DB をそのまま JSON オブジェクトとして取り込む
     # 失敗した場合や存在しない場合は {} にフォールバック
-    if ! RAG_DB_JSON=$(jq '.dictionary // {}' "$rag_tmp" 2>/dev/null); then
+    if ! RAG_DB_JSON=$(jq '.DB // {}' "$rag_tmp" 2>/dev/null); then
       RAG_DB_JSON='{}'
     fi
 
