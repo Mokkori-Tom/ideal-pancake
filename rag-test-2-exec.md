@@ -19,7 +19,7 @@ rag-search.sh     … クエリ → 近傍 id→text 辞書 (JSON)
 exec-llama-json-rag.sh
                   … プロンプト + RAG + ファイル群 → llama-cli
 ```
-全体フロー
+## 全体フロー
 
 ざっくり流れはこうなります。
 
@@ -148,7 +148,7 @@ echo "このコーパスから◯◯について教えて" \
 
 ---
 
-make-json.py : texts/ から JSON と JSONL を作る
+## make-json.py : texts/ から JSON と JSONL を作る
 
 役割
 
@@ -231,7 +231,7 @@ JSONL は一度テンポラリファイルに書き出してから replace() し
 
 ---
 
-db-build.sh : corpus.jsonl から FAISS + SQLite を作る
+## db-build.sh : corpus.jsonl から FAISS + SQLite を作る
 
 役割
 
@@ -394,7 +394,7 @@ MODEL_NAME に fastembed のモデル名を入れると差し替え可能です�
 
 ---
 
-rag-search.sh : クエリから近傍ドキュメントを取り出す
+## rag-search.sh : クエリから近傍ドキュメントを取り出す
 
 役割
 
@@ -511,7 +511,7 @@ TOPK を変えれば検索件数を調整できます（環境変数ではなく
 
 ---
 
-exec-llama-json-rag.sh : プロンプト + RAG + ファイル群を llama-cli へ渡す
+## exec-llama-json-rag.sh : プロンプト + RAG + ファイル群を llama-cli へ渡す
 
 役割
 
