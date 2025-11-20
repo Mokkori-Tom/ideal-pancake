@@ -18,13 +18,11 @@ db-build.sh       … corpus.jsonl → corpus.sqlite + corpus.index
 rag-search.sh     … クエリ → 近傍 id→text 辞書 (JSON)
 exec-llama-json-rag.sh
                   … プロンプト + RAG + ファイル群 → llama-cli
-````
 
-## 全体フロー
+全体フロー
 
 ざっくり流れはこうなります。
 
-```txt
 (1) コーパス作成
 
 texts/ 配下のファイル
@@ -73,28 +71,38 @@ corpus.jsonl
                         | llama   |
                         | (llama-cli) 
                         +---------+
-```
 
-## 必要環境
+必要環境
 
-* Python 3.11 目安
-* [uv](https://github.com/astral-sh/uv)（`uv run` を使用）
-* Python ライブラリ
+Python 3.11 目安
 
-  * `fastembed`
-  * `faiss-cpu`
-  * `numpy`
-* CLI ツール
+uv（uv run を使用）
 
-  * `bash`
-  * `jq`
-  * `file`
-  * `sqlite3`（デバッグ時など）
-* `llama.cpp` の `llama-cli` バイナリ（パスが通っているか、もしくは `LLAMA_CLI` で指定）
+Python ライブラリ
 
-## ディレクトリ構成（例）
+fastembed
 
-```txt
+faiss-cpu
+
+numpy
+
+
+CLI ツール
+
+bash
+
+jq
+
+file
+
+sqlite3（デバッグ時など）
+
+
+llama.cpp の llama-cli バイナリ（パスが通っているか、もしくは LLAMA_CLI で指定）
+
+
+ディレクトリ構成（例）
+
 project-root/
  ├ texts/                … インデックスしたいテキスト
  ├ json_docs/            … make-json.py が作成
@@ -107,54 +115,55 @@ project-root/
  ├ exec-llama-json-rag.sh
  └ prompt/
      └ prompt.txt        … llama 用システムプロンプト等
-```
 
-## 使い方ざっくり
+使い方ざっくり
 
-1. `texts/` にテキストファイルを置く
+1. texts/ にテキストファイルを置く
+
 
 2. コーパス JSONL & 個別 JSON を作成
 
-   ```bash
-   python make-json.py
-   ```
+python make-json.py
+
 
 3. ベクトルインデックスを構築
 
-   ```bash
-   ./db-build.sh
-   ```
+./db-build.sh
+
 
 4. ベクトル検索だけ試す
 
-   ```bash
-   echo "検索したい内容" | ./rag-search.sh
-   ```
+echo "検索したい内容" | ./rag-search.sh
 
-5. LLM + RAG でまとめて実行（例：`texts/` 配下の `.txt` を順番に処理）
 
-   ```bash
-   echo "このコーパスから◯◯について教えて" \
-     | ./exec-llama-json-rag.sh -d texts -r --ext .txt -- --temp 0.2
-   ```
+5. LLM + RAG でまとめて実行（例：texts/ 配下の .txt を順番に処理）
 
-   `--` より後ろは `llama-cli` にそのまま渡されます。
+echo "このコーパスから◯◯について教えて" \
+  | ./exec-llama-json-rag.sh -d texts -r --ext .txt -- --temp 0.2
+
+-- より後ろは llama-cli にそのまま渡されます。
+
+
+
 
 ---
 
-## `make-json.py` : texts/ から JSON と JSONL を作る
+make-json.py : texts/ から JSON と JSONL を作る
 
-### 役割
+役割
 
-* `texts/` 以下の「読めるファイル」を全部なめて
+texts/ 以下の「読めるファイル」を全部なめて
 
-  * `json_docs/<同じパス>.json` として 1 ファイル 1 JSON に
-  * `corpus.jsonl` に 1 行 1 レコード（`{id, text}`）で追記
-* `id` は「相対パス + 内容ハッシュ」で一意になるようにしています。
+json_docs/<同じパス>.json として 1 ファイル 1 JSON に
 
-### スクリプト全文
+corpus.jsonl に 1 行 1 レコード（{id, text}）で追記
 
-```python
+
+id は「相対パス + 内容ハッシュ」で一意になるようにしています。
+
+
+スクリプト全文
+
 #!/usr/bin/env python
 """
 texts/ 以下の“読める”ファイルをすべて
@@ -209,30 +218,36 @@ with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as jf:
 temp_jsonl.replace(JSONL_FP)
 
 print(f"変換完了: 個別 JSON → {JSON_DIR}/, まとめ → {JSONL_FP}")
-```
 
-### ポイント
+ポイント
 
-* `TXT_DIR.rglob("*")` なので拡張子は問わず、「読めるテキスト」ならなんでも対象です。
-* `errors="ignore"` で壊れた文字も無視して読み込み。
-* JSONL は一度テンポラリファイルに書き出してから `replace()` しているので、
-  途中で落ちても `corpus.jsonl` が中途半端な状態になりにくくなっています。
+TXT_DIR.rglob("*") なので拡張子は問わず、「読めるテキスト」ならなんでも対象です。
+
+errors="ignore" で壊れた文字も無視して読み込み。
+
+JSONL は一度テンポラリファイルに書き出してから replace() しているので、 途中で落ちても corpus.jsonl が中途半端な状態になりにくくなっています。
+
+
 
 ---
 
-## `db-build.sh` : corpus.jsonl から FAISS + SQLite を作る
+db-build.sh : corpus.jsonl から FAISS + SQLite を作る
 
-### 役割
+役割
 
-* `corpus.jsonl`（1行1レコード `{id,text}`）を読み込み
-* `fastembed` で埋め込みを計算
-* `FAISS` に登録して `corpus.index` として保存
-* メタ情報（`id`, `faiss_idx`, `text`）を `corpus.sqlite` に保存
-* 既存 DB がある場合は差分追加にも対応（※不整合があるときはフル再構築）
+corpus.jsonl（1行1レコード {id,text}）を読み込み
 
-### スクリプト全文
+fastembed で埋め込みを計算
 
-```bash
+FAISS に登録して corpus.index として保存
+
+メタ情報（id, faiss_idx, text）を corpus.sqlite に保存
+
+既存 DB がある場合は差分追加にも対応（※不整合があるときはフル再構築）
+
+
+スクリプト全文
+
 #!/usr/bin/env bash
 set -euo pipefail
 cd "$(dirname "$0")"
@@ -361,32 +376,41 @@ else:
         conn.commit()
         print(f"追加完了: ntotal={index.ntotal}")
 PY
-```
 
-### ポイント
+ポイント
 
-* 既存の `corpus.sqlite` / `corpus.index` がある場合は
+既存の corpus.sqlite / corpus.index がある場合は
 
-  * ドキュメント数に不整合があればフル再構築
-  * `corpus.jsonl` の方から削除された `id` があってもフル再構築
-* 問題なければ「新しい `id` だけ追加」する差分モードで高速に更新できます。
-* `MODEL_NAME` に fastembed のモデル名を入れると差し替え可能です。
+ドキュメント数に不整合があればフル再構築
+
+corpus.jsonl の方から削除された id があってもフル再構築
+
+
+問題なければ「新しい id だけ追加」する差分モードで高速に更新できます。
+
+MODEL_NAME に fastembed のモデル名を入れると差し替え可能です。
+
+
 
 ---
 
-## `rag-search.sh` : クエリから近傍ドキュメントを取り出す
+rag-search.sh : クエリから近傍ドキュメントを取り出す
 
-### 役割
+役割
 
-* 標準入力または引数からクエリ文字列を受け取る
-* `fastembed` でクエリをベクトル化
-* `corpus.index` に対して FAISS 検索
-* `corpus.sqlite` から `id` ごとの本文を引いてきて
-* `id → text` な辞書を JSON で出力します。
+標準入力または引数からクエリ文字列を受け取る
 
-### スクリプト全文
+fastembed でクエリをベクトル化
 
-```bash
+corpus.index に対して FAISS 検索
+
+corpus.sqlite から id ごとの本文を引いてきて
+
+id → text な辞書を JSON で出力します。
+
+
+スクリプト全文
+
 #!/usr/bin/env bash
 # rag-search.sh : ベクトル検索 → id ➔ text の辞書を JSON で返す
 set -euo pipefail
@@ -467,38 +491,41 @@ for faiss_idx in I[0]:
 # ---------- 出力 ----------
 print(json.dumps({"DB": dictionary}, ensure_ascii=False, indent=2))
 PY
-```
 
-### ポイント
+ポイント
 
-* 出力は
+出力は
 
-  ```json
-  {
-    "DB": {
-      "path/to/file.txt#deadbeef": "……本文……",
-      "another/file.md#12345678": "……本文……"
-    }
+{
+  "DB": {
+    "path/to/file.txt#deadbeef": "……本文……",
+    "another/file.md#12345678": "……本文……"
   }
-  ```
+}
 
-  のような形です。
-* `TOPK` を変えれば検索件数を調整できます（環境変数ではなく、スクリプト内定数）。
+のような形です。
+
+TOPK を変えれば検索件数を調整できます（環境変数ではなく、スクリプト内定数）。
+
+
 
 ---
 
-## `exec-llama-json-rag.sh` : プロンプト + RAG + ファイル群を llama-cli へ渡す
+exec-llama-json-rag.sh : プロンプト + RAG + ファイル群を llama-cli へ渡す
 
-### 役割
+役割
 
-* 標準入力からメインプロンプトを受け取る（なければ空）
-* `rag-search.sh` を呼び出して、プロンプトに関連するコーパス断片を取得
-* コマンドラインで指定されたファイル/ディレクトリ内のテキストファイルを読み込む
-* それらをまとめた JSON を一時ファイルに書き出し、そのファイルを `llama-cli -f` で食べさせます
+標準入力からメインプロンプトを受け取る（なければ空）
+
+rag-search.sh を呼び出して、プロンプトに関連するコーパス断片を取得
+
+コマンドラインで指定されたファイル/ディレクトリ内のテキストファイルを読み込む
+
+それらをまとめた JSON を一時ファイルに書き出し、そのファイルを llama-cli -f で食べさせます
+
 
 生成する JSON のイメージ：
 
-```json
 {
   "main_prompt": "ユーザからの依頼本文",
   "DB": { "...": "RAG 用の参考テキスト", "...": "..." },
@@ -507,11 +534,9 @@ PY
     { "path": "path/to/file2.txt", "text": "……内容……" }
   ]
 }
-```
 
-### スクリプト全文
+スクリプト全文
 
-```bash
 #!/usr/bin/env bash
 # exec-llama-json-rag.sh  (MSYS + RAG 改善版, DB は JSON オブジェクト)
 
@@ -809,12 +834,54 @@ for ((i=0; i<${#dirs[@]}-1; i++)); do
     done
   done
 done
-```
 
-### 主なオプションと環境変数
+主なオプションと環境変数
 
-* 環境変数
+環境変数
 
-  * `LLAMA_CLI` : `llama-cli` のパス
-  * `MODEL` : 使用する GGUF モデル
-  * `CTX`, `BATCH`, `N_PREDICT`,
+LLAMA_CLI : llama-cli のパス
+
+MODEL : 使用する GGUF モデル
+
+CTX, BATCH, N_PREDICT, SEED, MAINGPU, NGL : llama.cpp 側の各種パラメータ
+
+SYS_FILE : システムプロンプトファイル
+
+PROMPT_CACHE : llama.cpp のプロンプトキャッシュファイル
+
+TIMEOUT_SEC : llama-cli 実行のタイムアウト秒数
+
+MAX_INPUT_BYTES : 1 回の JSON 入力サイズ上限
+
+
+実行オプション
+
+-d <DIR> : ディレクトリを対象に
+
+-f <FILE> : 個別ファイルを対象に
+
+-r : ディレクトリを再帰的にたどる
+
+--ext .txt : 拡張子フィルタ
+
+-p, --pairwise : ディレクトリ間ペアワイズ比較モード
+
+-- 以降 : llama-cli にそのまま渡す
+
+
+
+
+---
+
+ちょっとした注意
+
+現状、rag-search.sh の出力キーと exec-llama-json-rag.sh 側の取り込みロジック（.dictionary を参照している部分）には差異があります。
+
+実際に使う際は、どちらかに合わせて調整してください。
+
+
+コーパス更新時は
+
+既存ファイルの中身を変更した場合 → いったん make-json.py を再実行 → db-build.sh は不整合を検知したら自動でフル再構築します。
+
+ファイル追加のみの場合 → make-json.py → db-build.sh が差分追加モードで高速に追記します。
