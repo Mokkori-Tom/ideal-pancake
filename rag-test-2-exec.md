@@ -18,7 +18,7 @@ db-build.sh       … corpus.jsonl → corpus.sqlite + corpus.index
 rag-search.sh     … クエリ → 近傍 id→text 辞書 (JSON)
 exec-llama-json-rag.sh
                   … プロンプト + RAG + ファイル群 → llama-cli
-
+```
 全体フロー
 
 ざっくり流れはこうなります。
