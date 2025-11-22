@@ -54,25 +54,25 @@
 
 ```bash
 MODEL="${MODEL:-./models/Qwen3-VL-4B-Instruct-IQ4_NL.gguf}"
-
+```
 別のファイル名・量子化を使う場合は、次のいずれかで変更します。
 
 実行時に環境変数で上書きする：
-
+```
 MODEL=./models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf llm.sh -ai ...
-
+```
 
 あるいは llm.sh 内の MODEL 既定値を書き換える
 
 
 モデルファイルの配置例
-
+```
 your-project/
   ├─ llm.sh
   ├─ llm-build-history-index.sh
   └─ models/
       └─ Qwen3-VL-4B-Instruct-IQ4_NL.gguf
-
+```
 
 ---
 
@@ -90,13 +90,13 @@ Qwen3 系の Instruct モデル（Qwen3-VL-*-Instruct-GGUF など）は、 出�
 ログファイル構成
 
 デフォルトでは、ホームディレクトリ配下に専用ディレクトリを作ります。
-
+```
 ~/.llm-history/
   ├─ history.jsonl        # 直近 N 発言（プロンプト用ウィンドウ）
   ├─ history-all.jsonl    # 全発言アーカイブ
   ├─ history.sqlite       # ts / who / text メタ情報
   └─ history.index        # FAISS インデックス
-
+```
 環境変数でパスを上書きすることもできます。
 
 
@@ -107,11 +107,11 @@ Qwen3 系の Instruct モデル（Qwen3-VL-*-Instruct-GGUF など）は、 出�
 1. メモモード（AI を呼ばずログだけ残す）
 
 -ai オプションなしで実行すると、「ユーザー発言を履歴にだけ保存」します。
-
+```bash
 echo "今日はお魚を食べた" | llm.sh
 # または
 llm.sh 今日はお魚を食べた
-
+```
 history-all.jsonl に全履歴を追記
 
 history.jsonl には直近 LLM_HISTORY_MAX_TURNS 件だけ残るようにトリミング
@@ -233,11 +233,11 @@ text（内容）
 
 
 llm-build-history-index.sh では、これらから安定した一意 ID を作ります。
-
+```
 def make_id(ts: str, who: str, text: str) -> str:
     h = hashlib.sha1(f"{ts}\n{who}\n{text}".encode("utf-8")).hexdigest()[:16]
     return f"{ts}|{who}|{h}"
-
+```
 この関数を変えない限り、同じ history-all.jsonl からは必ず同じ id が生成され、 SQLite / FAISS の内容も再現性を保てます。
 
 
@@ -278,7 +278,7 @@ UV_LINK_MODE
 ここからは、実際に利用しているスクリプトそのものです。
 
 llm.sh
-
+```
 #!/usr/bin/env bash
 # llm.sh — ts / who / text + now を使う履歴つきチャットラッパ
 #   -ai      : AI に質問して応答をもらう（会話モード）
@@ -669,12 +669,12 @@ echo "$JSON_ASSIST" >>"$LLM_HISTORY_LOG"
 TMP_HIST2="$(mktemp)"
 tail -n "$LLM_HISTORY_MAX_TURNS" "$LLM_HISTORY_LOG" >"$TMP_HIST2" || true
 mv "$TMP_HIST2" "$LLM_HISTORY_LOG"
-
+```
 
 ---
 
 llm-build-history-index.sh
-
+```
 #!/usr/bin/env bash
 # llm-build-history-index.sh
 # ~/.llm-history/history-all.jsonl をベクトル化して
@@ -857,3 +857,4 @@ else:
             conn.commit()
             print(f"追加完了: ntotal={index.ntotal}")
 PY
+```
