@@ -858,3 +858,13 @@ else:
             print(f"追加完了: ntotal={index.ntotal}")
 PY
 ```
+```
+# ==== end-of-text を削る小さなフィルタ =========================
+# Qwen3 系 Instruct モデルや llama.cpp が出力する
+# 文字列 "[end of text]" を、出力全体から取り除きます。
+llm_strip_eot() {
+  printf '%s' "$1" \
+    | sed -E 's/\[end of text\]//g' \
+    | sed -E ':a;/[[:space:]]$/ {s/[[:space:]]$//; ba;}'
+}
+```
