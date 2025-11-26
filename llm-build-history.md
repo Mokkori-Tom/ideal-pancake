@@ -404,13 +404,13 @@ echo "最近のお魚の話、覚えてる？" | ./llm.sh -ai
 ./llm.sh -ai 最近のお魚の話、覚えてる？
 
 多言語埋め込みモデル指定
-
+```
 export HISTORY_EMBED_MODEL="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
 ./llm-build-history-index.sh
 ./llm.sh -ai 今日は何してたか振り返りたいな
-
+```
 スクリプト全文
-
+```
 #!/usr/bin/env bash
 # llm.sh — ts / who / text + now を使う履歴つきチャットラッパ
 #   -ai      : AI に質問して応答をもらう（会話モード）
@@ -808,7 +808,7 @@ echo "$JSON_ASSIST" >>"$LLM_HISTORY_LOG"
 TMP_HIST2="$(mktemp)"
 tail -n "$LLM_HISTORY_MAX_TURNS" "$LLM_HISTORY_LOG" >"$TMP_HIST2" || true
 mv "$TMP_HIST2" "$LLM_HISTORY_LOG"
-
+```
 
 ---
 
