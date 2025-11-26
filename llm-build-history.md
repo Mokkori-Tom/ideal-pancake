@@ -860,5 +860,70 @@ if any(i not in corpus_ids_set for i in indexed_ids):
 CACHE_DIR = Path(os.environ.get("FASTEMBED_CACHE_PATH", str(Path.home() / ".cache" / "fastembed")))
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
-LOCAL_ONLY = os.environ.get("HISTORY_LOCAL_O
+LOCAL_ONLY = os.environ.get("HISTORY_LOCAL_ONLY", "1") != "0"
+print(f"Using embed model: {MODEL_NAME} (local_only={LOCAL_ONLY}, cache={CACHE_DIR})")
+
+model = TextEmbedding(
+    model_name=MODEL_NAME,
+    cache_dir=str(CACHE_DIR),
+    local_files_only=LOCAL_ONLY,
+)
+
+# ---------- 6A. フル再構築（IVF 専用） ----------
+if need_full_rebuild:
+    print("フル再構築中 …")
+    texts = [r["text"] for r in all_records]
+    emb_list = list(model.embed(texts))
+    if not emb_list:
+        print("埋め込み結果が空です。")
+        cur.execute("DELETE FROM history;")
+        conn.commit()
+        if IDX_PATH.exists():
+            IDX_PATH.unlink()
+        sys.exit(0)
+
+    emb = np.vstack(emb_list).astype("float32")
+    index = build_ivf_index(emb)
+    faiss.write_index(index, str(IDX_PATH))
+
+    cur.execute("DELETE FROM history;")
+    cur.executemany(
+        "INSERT INTO history(id, faiss_idx, ts, who, text) VALUES (?,?,?,?,?)",
+        [
+            (r["id"], idx, r["ts"], r["who"], r["text"])
+            for idx, r in enumerate(all_records)
+        ],
+    )
+    conn.commit()
+    print(f"再構築完了: ntotal={index.ntotal}")
+
+# ---------- 6B. 差分追加（IVF に対して add） ----------
+else:
+    new_records = [r for r in all_records if r["id"] not in indexed_ids]
+    if not new_records:
+        print("差分なし。")
+    else:
+        print(f"新規 {len(new_records)} 件の埋め込みを追加 …")
+        new_texts = [r["text"] for r in new_records]
+        emb_list = list(model.embed(new_texts))
+        if not emb_list:
+            print("新規レコードの埋め込みが空です。何も追加しません。")
+        else:
+            new_emb = np.vstack(emb_list).astype("float32")
+
+            # ここでは既存インデックスは IVF である前提
+            index = existing_index
+            index.add(new_emb)
+            faiss.write_index(index, str(IDX_PATH))
+
+            cur.executemany(
+                "INSERT INTO history(id, faiss_idx, ts, who, text) VALUES (?,?,?,?,?)",
+                [
+                    (r["id"], next_idx + i, r["ts"], r["who"], r["text"])
+                    for i, r in enumerate(new_records)
+                ],
+            )
+            conn.commit()
+            print(f"追加完了: ntotal={index.ntotal}")
+PY
 ```
