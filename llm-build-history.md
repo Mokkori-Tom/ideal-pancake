@@ -1,284 +1,416 @@
-# llm.sh / llm-build-history-index.sh
+# llm-history: ローカル履歴×ベクトル検索付き CLI チャット
 
-ローカルの `llama.cpp` ＋ Qwen3-VL Instruct GGUF で、
+ローカルの会話履歴を JSONL で貯めつつ、  
+FAISS + SQLite でインデックスして、過去ログをベクトル検索しながら Qwen3 を回すためのミニセットです。
 
-- 履歴付きチャット (`llm.sh`)
-- 履歴のベクトル検索インデックス構築 (`llm-build-history-index.sh`)
+- `llm.sh`  
+  履歴付きチャットラッパ（メモ保存 / AI 会話）
+- `llm-build-history-index.sh`  
+  履歴 JSONL → SQLite + FAISS にベクトル化するビルダー
 
-を行うための小さなスクリプトセットです。
-
-すべてのやり取りを JSONL で残しつつ、`fastembed + FAISS + SQLite` で似た話題を検索し、
-その内容をコンテキストとして LLM に渡します。
-
----
-
-## 特徴
-
-- シェルからワンライナーで使えるシンプルなチャットラッパ
-- 履歴はすべてプレーンな JSONL（`ts / who / text`）
-- 直近 N 件の履歴で「窓」を作りつつ、別ファイルに全履歴アーカイブ
-- `history-all.jsonl` をもとに、SQLite + FAISS のインデックスを構築
-- Qwen3 系 Instruct モデルが末尾に出力する `[end of text]` を自動で削除
-
----
-
-## 前提環境
-
-- Bash
-- [`llama.cpp`](https://github.com/ggerganov/llama.cpp) の CLI (`llama-cli`)
-- `jq`
-- `python` 3.10 以上程度
-- [`uv`](https://github.com/astral-sh/uv)（Python 実行に使用）
-- Python ライブラリ（`llm-build-history-index.sh` 側で使用）
-  - `fastembed`
-  - `faiss`（例: `faiss-cpu`）
-  - `numpy`
-
-`uv run` で使う仮想環境に、上記 Python パッケージをインストールしておいてください。
-
----
-
-## 使用するモデルについて
-
-このスクリプトは、Qwen3 系の Instruct モデル（Qwen3-VL Instruct-GGUF）での利用を想定しています。
-
-具体的には、次のコレクションの GGUF を想定しています。
-
-- Unsloth: Qwen3-VL Instruct-GGUF コレクション  
-  https://huggingface.co/collections/unsloth/qwen3-vl
-
-お好みのサイズの **Instruct-GGUF**（例: 4B / 8B など）をダウンロードし、
-プロジェクト配下の `./models/` ディレクトリに配置してください。
-
-`llm.sh` 中の既定値は次のようになっています。
-
-```bash
-MODEL="${MODEL:-./models/Qwen3-VL-4B-Instruct-IQ4_NL.gguf}"
-```
-別のファイル名・量子化を使う場合は、次のいずれかで変更します。
-
-実行時に環境変数で上書きする：
-```
-MODEL=./models/Qwen3-VL-8B-Instruct-Q4_K_M.gguf llm.sh -ai ...
-```
-
-あるいは llm.sh 内の MODEL 既定値を書き換える
+どちらも Docker 不要で、そのままホスト環境から使えます。
 
 
-モデルファイルの配置例
-```
-your-project/
-  ├─ llm.sh
-  ├─ llm-build-history-index.sh
-  └─ models/
-      └─ Qwen3-VL-4B-Instruct-IQ4_NL.gguf
-```
+## ディレクトリ構成イメージ
 
----
+```text
+$HOME/
+  .llm-history/
+    history.jsonl       # 直近 N 発言（プロンプト用ウィンドウ）
+    history-all.jsonl   # 全履歴アーカイブ
+    history.sqlite      # メタ情報（ts / who / text / faiss_idx）
+    history.index       # FAISS インデックス
 
-Qwen3 Instruct 系と [end of text] について
+./
+  llm.sh
+  llm-build-history-index.sh
+  models/
+    Qwen3-VL-4B-Instruct-IQ4_NL.gguf
 
-Qwen3 系の Instruct モデル（Qwen3-VL-*-Instruct-GGUF など）は、 出力の末尾にトークン [end of text] をそのまま文字列として出力することがあります。
+埋め込みモデルは fastembed の多言語・軽量モデル
+sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 をデフォルトにしています。
+（環境変数で差し替え可能です）
 
-ターミナル上では邪魔になりやすいため、llm.sh の llm_strip_eot 関数で 末尾の [end of text] をまとめて削り、きれいなテキストだけを表示するようにしています。
+前提・依存
 
-モデル自体は [end of text] を出していても、ユーザーが見る標準出力には残りません。
+Bash
+
+llama.cpp の CLI
+
+例: llama-cli（LLAMA_CLI で変更可）
+
+
+Python + uv
+
+Python パッケージ
+
+fastembed
+
+faiss（もしくは faiss-cpu）
+
+numpy
+
+
+CLI ツール
+
+jq
+
+
+
+初回だけオンラインで実行しておくと良いもの:
+
+uv run が必要パッケージをダウンロード
+
+fastembed が埋め込みモデル（ONNX）をダウンロード
+
+
+それ以降はキャッシュから読まれるので、オフラインで運用できます。
 
 
 ---
 
-ログファイル構成
+1. 履歴インデックスビルダー: llm-build-history-index.sh
 
-デフォルトでは、ホームディレクトリ配下に専用ディレクトリを作ります。
-```
-~/.llm-history/
-  ├─ history.jsonl        # 直近 N 発言（プロンプト用ウィンドウ）
-  ├─ history-all.jsonl    # 全発言アーカイブ
-  ├─ history.sqlite       # ts / who / text メタ情報
-  └─ history.index        # FAISS インデックス
-```
-環境変数でパスを上書きすることもできます。
+役割
+
+入力: ~/.llm-history/history-all.jsonl
+
+出力:
+
+~/.llm-history/history.sqlite
+
+~/.llm-history/history.index（FAISS）
 
 
----
+差分ビルド対応
+
+履歴 JSONL と SQLite/FAISS の整合をチェック
+
+必要に応じてフル再構築
+
+そうでなければ新規レコードだけ追記
+
+
+
+SQLite にはテキストとタイムスタンプを素のまま保存し、
+RAG 検索用 Python スクリプトからそのまま取り出せるようにしています。
+
+主な環境変数
+
+HISTORY_JSONL
+入力 JSONL（既定: $HOME/.llm-history/history-all.jsonl）
+
+HISTORY_DB
+SQLite ファイルパス
+
+HISTORY_INDEX
+FAISS インデックス
+
+HISTORY_EMBED_MODEL
+埋め込みモデル名
+未指定時は
+sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+
 
 使い方
 
-1. メモモード（AI を呼ばずログだけ残す）
-
--ai オプションなしで実行すると、「ユーザー発言を履歴にだけ保存」します。
-```bash
-echo "今日はお魚を食べた" | llm.sh
-# または
-llm.sh 今日はお魚を食べた
-```
-history-all.jsonl に全履歴を追記
-
-history.jsonl には直近 LLM_HISTORY_MAX_TURNS 件だけ残るようにトリミング
-
-
-LLM は呼びませんので、単純な日記・メモログとして使えます。
-
-
----
-
-2. 会話モード（AI に質問して応答をもらう）
-
--ai を付けると、LLM に質問して応答をもらいます。
-```
-echo "今日の夕飯の献立を考えて" | llm.sh -ai
-# あるいは
-llm.sh -ai 今日の夕飯の献立を考えて
-```
-内部の流れは、だいたい次のとおりです。
-
-1. history.jsonl から直近 LLM_HISTORY_MAX_TURNS 件を読み込み、JSON 配列に変換
-
-
-2. history.sqlite / history.index があれば、クエリ文を fastembed で埋め込み
-
-
-3. FAISS で類似発言 TOP10 を検索し、SQLite から ts / who / text を取得
-
-
-4. 既存履歴と検索ヒットをマージし、重複削除＋時系列ソート
-
-
-5. history / current / now という JSON オブジェクトを作り、llama-cli に渡す
-
-
-6. モデル出力から末尾の [end of text] を削除して標準出力へ表示
-
-
-7. 今回の user / assistant 両方を history-all.jsonl / history.jsonl に追記
-
-
-
-
----
-
-system prompt の方針
-
-llm.sh は、特に指定がない場合、内蔵の system prompt を使います（LLM_SYS_PROMPT で差し替え可能）。
-
-要点は：
-
-入力は 1 つの JSON オブジェクト {now, history, current}
-
-「今の質問」は常に current.text
-
-history はあくまで背景情報であり、そこにない出来事をでっち上げない
-
-assistant として 1 回だけ返事をする（user セリフを自分で作らない）
-
-出力は日本語のテキスト 1 本だけ（JSON やログっぽい出力は禁止）
-
-
-というものです。
-
-
----
-
-ベクトル検索インデックスの構築
-
-llm-build-history-index.sh は、history-all.jsonl をもとに
-
-SQLite: history テーブル
-
-FAISS: history.index
-
-
-を同期させます。
-
-フル再構築が行われる条件
-
-次のいずれかに該当した場合、フル再構築になります。
-
-history.index が存在しない
-
-history.index の件数 (ntotal) と SQLite の件数が違う
-
-history-all.jsonl から削除された行が、SQLite に残っている
-
-
-このときは、全レコードのテキストを埋め込み直し、FAISS / SQLite を作り直します。
-
-差分追加
-
-整合が取れている状態で history-all.jsonl に新しい行が増えた場合は、
-
-まだ SQLite に登録されていない id のみを抽出
-
-その text だけ埋め込み
-
-既存の FAISS インデックスに index.add(...) で追加
-
-SQLite にもレコードを追記
-
-
-という差分更新だけ行います。
-
-
----
-
-ID 設計
-
-history-all.jsonl の 1 行は、次の 3 つだけを持っています。
-
-ts（タイムスタンプ）
-
-who（"user" or "assistant"）
-
-text（内容）
-
-
-llm-build-history-index.sh では、これらから安定した一意 ID を作ります。
-```
-def make_id(ts: str, who: str, text: str) -> str:
-    h = hashlib.sha1(f"{ts}\n{who}\n{text}".encode("utf-8")).hexdigest()[:16]
-    return f"{ts}|{who}|{h}"
-```
-この関数を変えない限り、同じ history-all.jsonl からは必ず同じ id が生成され、 SQLite / FAISS の内容も再現性を保てます。
-
-
----
-
-デバッグ用環境変数
-
-llm.sh
-
-LLM_SEARCH_DEBUG=1
-ベクトル検索のクエリと、ヒットした行の先頭 50 文字を stderr に表示
-
-LLM_PAYLOAD_DEBUG=1
-LLM に渡す JSON ペイロードを pretty-print して stderr に表示
-
-LLM_DEBUG=1
-llama-cli の stderr を捨てずにすべて表示（トークナイズ等のログ確認用）
-
-
-インデックス関連
-
-HISTORY_DB
-
-HISTORY_INDEX
-
-HISTORY_JSONL
-
-UV_LINK_MODE
-
-
-なども環境変数で上書きできます。
-
-
----
+# 既定パスでフルビルド or 差分ビルド
+./llm-build-history-index.sh
+
+# 埋め込みモデルを一時的に切り替えたい場合
+HISTORY_EMBED_MODEL="intfloat/multilingual-e5-large" \
+  ./llm-build-history-index.sh
 
 スクリプト全文
 
-ここからは、実際に利用しているスクリプトそのものです。
+#!/usr/bin/env bash
+# llm-build-history-index.sh
+# ~/.llm-history/history-all.jsonl をベクトル化して
+# FAISS + SQLite を同期させるビルダー
 
-llm.sh
-```
+set -euo pipefail
+export LC_ALL=C.UTF-8
+
+: "${UV_LINK_MODE:=copy}"
+
+# 入力となる全履歴 JSONL
+HISTORY_JSONL="${HISTORY_JSONL:-$HOME/.llm-history/history-all.jsonl}"
+
+# メタ情報 SQLite / FAISS インデックス出力先
+HISTORY_DB="${HISTORY_DB:-$HOME/.llm-history/history.sqlite}"
+HISTORY_INDEX="${HISTORY_INDEX:-$HOME/.llm-history/history.index}"
+
+mkdir -p "$(dirname "$HISTORY_DB")"
+mkdir -p "$(dirname "$HISTORY_INDEX")"
+
+UV_LINK_MODE="$UV_LINK_MODE" \
+HISTORY_JSONL="$HISTORY_JSONL" \
+HISTORY_DB="$HISTORY_DB" \
+HISTORY_INDEX="$HISTORY_INDEX" \
+  uv run python - << 'PY'
+from pathlib import Path
+import os, sqlite3, json, sys, hashlib
+import faiss, numpy as np
+from fastembed import TextEmbedding
+
+# ------------------ 設定 ------------------
+HISTORY_PATH = Path(os.environ["HISTORY_JSONL"])
+DB_PATH      = Path(os.environ["HISTORY_DB"])
+IDX_PATH     = Path(os.environ["HISTORY_INDEX"])
+MODEL_NAME   = os.environ.get(
+    "HISTORY_EMBED_MODEL",
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+)
+# ------------------------------------------
+
+
+def make_id(ts: str, who: str, text: str) -> str:
+    """
+    ts / who / text から安定した一意 id を作る。
+    ここを変えない限り、history-all.jsonl が同じなら
+    毎回同じ id になります。
+    """
+    h = hashlib.sha1(f"{ts}\n{who}\n{text}".encode("utf-8")).hexdigest()[:16]
+    return f"{ts}|{who}|{h}"
+
+
+# ---------- 1. SQLite 準備 ----------
+conn = sqlite3.connect(DB_PATH)
+cur  = conn.cursor()
+cur.execute("""
+CREATE TABLE IF NOT EXISTS history(
+    id        TEXT    PRIMARY KEY,
+    faiss_idx INTEGER UNIQUE,
+    ts        TEXT,
+    who       TEXT,
+    text      TEXT
+);
+""")
+cur.execute("CREATE INDEX IF NOT EXISTS idx_history_faiss ON history(faiss_idx);")
+conn.commit()
+
+# ---------- 2. 既存メタ情報取得 ----------
+cur.execute("SELECT id, faiss_idx FROM history;")
+rows = cur.fetchall()
+indexed_ids  = {r[0]: r[1] for r in rows}
+next_idx     = 0 if not rows else max(r[1] for r in rows) + 1
+print(f"インデックス済み件数: {len(indexed_ids)} (次の idx = {next_idx})")
+
+# ---------- 3. 既存 FAISS インデックス確認 ----------
+need_full_rebuild = False
+if IDX_PATH.exists():
+    index = faiss.read_index(str(IDX_PATH))
+    if index.ntotal != len(indexed_ids):
+        print("WARNING: FAISS と SQLite が不整合。フル再構築します。")
+        need_full_rebuild = True
+else:
+    need_full_rebuild = True
+
+# ---------- 4. history-all.jsonl 読み込み ----------
+if not HISTORY_PATH.exists():
+    sys.exit(f"ERROR: {HISTORY_PATH} が見つかりません")
+
+all_records = []
+with HISTORY_PATH.open(encoding="utf-8") as f:
+    for ln_no, line in enumerate(f, 1):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            obj = json.loads(line)
+        except json.JSONDecodeError as e:
+            sys.exit(f"JSONL パースエラー (行 {ln_no}): {e}")
+        for k in ("ts", "who", "text"):
+            if k not in obj:
+                sys.exit(f"行 {ln_no}: '{k}' がありません")
+
+        rec_id = make_id(obj["ts"], obj["who"], obj["text"])
+        all_records.append(
+            {
+                "id": rec_id,
+                "ts": obj["ts"],
+                "who": obj["who"],
+                "text": obj["text"],
+            }
+        )
+
+if not all_records:
+    print("注意: history-all.jsonl が空です。空インデックスのまま終了します。")
+    cur.execute("DELETE FROM history;")
+    conn.commit()
+    if IDX_PATH.exists():
+        IDX_PATH.unlink()
+    sys.exit(0)
+
+corpus_ids_set = {r["id"] for r in all_records}
+
+# history-all.jsonl から削除された id が SQLite に残っていればフル再構築
+if any(i not in corpus_ids_set for i in indexed_ids):
+    print("WARNING: history-all から削除された id が検出されました。フル再構築します。")
+    need_full_rebuild = True
+
+# ---------- 5. 埋め込みモデル ----------
+print(f"Using embed model: {MODEL_NAME}")
+model = TextEmbedding(model_name=MODEL_NAME)
+
+# ---------- 6A. フル再構築 ----------
+if need_full_rebuild:
+    print("フル再構築中 …")
+    texts = [r["text"] for r in all_records]
+    emb_list = list(model.embed(texts))
+    if not emb_list:
+        print("埋め込み結果が空です。")
+        cur.execute("DELETE FROM history;")
+        conn.commit()
+        if IDX_PATH.exists():
+            IDX_PATH.unlink()
+        sys.exit(0)
+
+    emb = np.vstack(emb_list).astype("float32")
+    d   = emb.shape[1]
+    index = faiss.IndexFlatL2(d)
+    index.add(emb)
+    faiss.write_index(index, str(IDX_PATH))
+
+    cur.execute("DELETE FROM history;")
+    cur.executemany(
+        "INSERT INTO history(id, faiss_idx, ts, who, text) VALUES (?,?,?,?,?)",
+        [
+            (r["id"], idx, r["ts"], r["who"], r["text"])
+            for idx, r in enumerate(all_records)
+        ],
+    )
+    conn.commit()
+    print(f"再構築完了: ntotal={index.ntotal}")
+
+# ---------- 6B. 差分追加 ----------
+else:
+    new_records = [r for r in all_records if r["id"] not in indexed_ids]
+    if not new_records:
+        print("差分なし。")
+    else:
+        print(f"新規 {len(new_records)} 件の埋め込みを追加 …")
+        new_texts = [r["text"] for r in new_records]
+        emb_list = list(model.embed(new_texts))
+        if not emb_list:
+            print("新規レコードの埋め込みが空です。何も追加しません。")
+        else:
+            new_emb = np.vstack(emb_list).astype("float32")
+            index.add(new_emb)
+            faiss.write_index(index, str(IDX_PATH))
+
+            cur.executemany(
+                "INSERT INTO history(id, faiss_idx, ts, who, text) VALUES (?,?,?,?,?)",
+                [
+                    (r["id"], next_idx + i, r["ts"], r["who"], r["text"])
+                    for i, r in enumerate(new_records)
+                ],
+            )
+            conn.commit()
+            print(f"追加完了: ntotal={index.ntotal}")
+PY
+
+
+---
+
+2. 履歴付きチャットラッパ: llm.sh
+
+役割
+
+メモモード
+
+ユーザー発言だけを JSONL に追記
+
+
+AI 会話モード（-ai）
+
+直近の履歴 + ベクトル検索ヒットをまとめて LLM に渡す
+
+応答を JSONL に追記
+
+
+
+履歴はすべて JSON 形式で保存され、
+システムプロンプトにしたがって LLM 側でも JSON をそのまま読める形になっています。
+
+簡易フロー
+
+(1) ユーザー入力
+       │
+       ▼
+  history.jsonl に追記
+       │
+       ├─ メモモードならここで終了
+       │
+       └─ AI モード:
+            │
+            ├─ history.sqlite + history.index を使ってベクトル検索
+            │
+            └─ 履歴 + 検索結果をマージして JSON で llama.cpp へ
+
+主な環境変数
+
+LLM 実行まわり
+
+LLAMA_CLI（既定: llama-cli）
+
+MODEL（既定: ./models/Qwen3-VL-4B-Instruct-IQ4_NL.gguf）
+
+CTX, BATCH, N_PREDICT, SEED, MAINGPU, NGL
+
+
+履歴
+
+LLM_HISTORY_LOG（直近 N 発言）
+
+LLM_HISTORY_MAX_TURNS（既定: 30）
+
+LLM_HISTORY_ARCHIVE（全履歴）
+
+
+ベクトル検索
+
+HISTORY_DB, HISTORY_INDEX
+
+HISTORY_EMBED_MODEL（埋め込みモデル名）
+
+
+デバッグ
+
+LLM_DEBUG=1          : llama.cpp の stderr も表示
+
+LLM_SEARCH_DEBUG=1   : 検索クエリとヒット要約を表示
+
+LLM_PAYLOAD_DEBUG=1  : LLM へ渡す JSON ペイロードを pretty 表示
+
+
+
+使い方
+
+メモとして使う
+
+# パイプでメモ
+echo "今日はお魚を食べた" | ./llm.sh
+
+# 引数でメモ
+./llm.sh 今日はお魚を食べた
+
+AI 会話モード
+
+# パイプで質問
+echo "最近のお魚の話、覚えてる？" | ./llm.sh -ai
+
+# 引数で質問
+./llm.sh -ai 最近のお魚の話、覚えてる？
+
+多言語埋め込みモデル指定
+
+export HISTORY_EMBED_MODEL="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+./llm-build-history-index.sh
+./llm.sh -ai 今日は何してたか振り返りたいな
+
+スクリプト全文
+
 #!/usr/bin/env bash
 # llm.sh — ts / who / text + now を使う履歴つきチャットラッパ
 #   -ai      : AI に質問して応答をもらう（会話モード）
@@ -315,6 +447,7 @@ LLM_HISTORY_ARCHIVE="${LLM_HISTORY_ARCHIVE:-$HOME/.llm-history/history-all.jsonl
 UV_LINK_MODE="${UV_LINK_MODE:-copy}"
 HISTORY_DB="${HISTORY_DB:-$HOME/.llm-history/history.sqlite}"
 HISTORY_INDEX="${HISTORY_INDEX:-$HOME/.llm-history/history.index}"
+# 埋め込みモデルは HISTORY_EMBED_MODEL で指定（インデックス作成スクリプトと共通）
 
 # ==== オプション解析（-ai だけ） ===============================
 
@@ -494,6 +627,7 @@ if command -v uv >/dev/null 2>&1; then
       HISTORY_DB="$HISTORY_DB" \
       HISTORY_INDEX="$HISTORY_INDEX" \
       QUERY="$USER_TEXT" \
+      HISTORY_EMBED_MODEL="${HISTORY_EMBED_MODEL:-}" \
       uv run python - << 'PY'
 import os, sys, json, sqlite3
 from pathlib import Path
@@ -509,10 +643,15 @@ else:
     import io
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-DB_PATH    = Path(os.environ["HISTORY_DB"])
-IDX_PATH   = Path(os.environ["HISTORY_INDEX"])
-TOPK       = 10
-MODEL_NAME = None  # インデックス作成時と同じ設定に合わせる
+DB_PATH  = Path(os.environ["HISTORY_DB"])
+IDX_PATH = Path(os.environ["HISTORY_INDEX"])
+TOPK     = 10
+
+# インデックス作成時と同じ多言語モデルを使う
+MODEL_NAME = os.environ.get(
+    "HISTORY_EMBED_MODEL",
+    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+)
 
 query = os.environ.get("QUERY", "").strip()
 if not query:
@@ -523,7 +662,7 @@ if not DB_PATH.exists() or not IDX_PATH.exists():
     sys.exit(0)
 
 # 埋め込みモデル
-model = TextEmbedding(model_name=MODEL_NAME) if MODEL_NAME else TextEmbedding()
+model = TextEmbedding(model_name=MODEL_NAME)
 
 # FAISS インデックス読み込み
 index = faiss.read_index(str(IDX_PATH))
@@ -669,202 +808,24 @@ echo "$JSON_ASSIST" >>"$LLM_HISTORY_LOG"
 TMP_HIST2="$(mktemp)"
 tail -n "$LLM_HISTORY_MAX_TURNS" "$LLM_HISTORY_LOG" >"$TMP_HIST2" || true
 mv "$TMP_HIST2" "$LLM_HISTORY_LOG"
-```
+
 
 ---
 
+3. オフライン運用のポイント
+
+一度オンラインで
+
 llm-build-history-index.sh
-```
-#!/usr/bin/env bash
-# llm-build-history-index.sh
-# ~/.llm-history/history-all.jsonl をベクトル化して
-# FAISS + SQLite を同期させるビルダー
 
-set -euo pipefail
-export LC_ALL=C.UTF-8
-
-: "${UV_LINK_MODE:=copy}"
-
-# 入力となる全履歴 JSONL
-HISTORY_JSONL="${HISTORY_JSONL:-$HOME/.llm-history/history-all.jsonl}"
-
-# メタ情報 SQLite / FAISS インデックス出力先
-HISTORY_DB="${HISTORY_DB:-$HOME/.llm-history/history.sqlite}"
-HISTORY_INDEX="${HISTORY_INDEX:-$HOME/.llm-history/history.index}"
-
-mkdir -p "$(dirname "$HISTORY_DB")"
-mkdir -p "$(dirname "$HISTORY_INDEX")"
-
-UV_LINK_MODE="$UV_LINK_MODE" \
-HISTORY_JSONL="$HISTORY_JSONL" \
-HISTORY_DB="$HISTORY_DB" \
-HISTORY_INDEX="$HISTORY_INDEX" \
-  uv run python - << 'PY'
-from pathlib import Path
-import os, sqlite3, json, sys, hashlib
-import faiss, numpy as np
-from fastembed import TextEmbedding
-
-# ------------------ 設定 ------------------
-HISTORY_PATH = Path(os.environ["HISTORY_JSONL"])
-DB_PATH      = Path(os.environ["HISTORY_DB"])
-IDX_PATH     = Path(os.environ["HISTORY_INDEX"])
-MODEL_NAME   = None    # None なら fastembed 既定モデル
-# ------------------------------------------
+llm.sh -ai "テスト"
 
 
-def make_id(ts: str, who: str, text: str) -> str:
-    """
-    ts / who / text から安定した一意 id を作る。
-    ここを変えない限り、history-all.jsonl が同じなら
-    毎回同じ id になります。
-    """
-    h = hashlib.sha1(f"{ts}\n{who}\n{text}".encode("utf-8")).hexdigest()[:16]
-    return f"{ts}|{who}|{h}"
+を実行しておくと
+
+uv のパッケージ
+
+fastembed のモデル
 
 
-# ---------- 1. SQLite 準備 ----------
-conn = sqlite3.connect(DB_PATH)
-cur  = conn.cursor()
-cur.execute("""
-CREATE TABLE IF NOT EXISTS history(
-    id        TEXT    PRIMARY KEY,
-    faiss_idx INTEGER UNIQUE,
-    ts        TEXT,
-    who       TEXT,
-    text      TEXT
-);
-""")
-cur.execute("CREATE INDEX IF NOT EXISTS idx_history_faiss ON history(faiss_idx);")
-conn.commit()
-
-# ---------- 2. 既存メタ情報取得 ----------
-cur.execute("SELECT id, faiss_idx FROM history;")
-rows = cur.fetchall()
-indexed_ids  = {r[0]: r[1] for r in rows}
-next_idx     = 0 if not rows else max(r[1] for r in rows) + 1
-print(f"インデックス済み件数: {len(indexed_ids)} (次の idx = {next_idx})")
-
-# ---------- 3. 既存 FAISS インデックス確認 ----------
-need_full_rebuild = False
-if IDX_PATH.exists():
-    index = faiss.read_index(str(IDX_PATH))
-    if index.ntotal != len(indexed_ids):
-        print("WARNING: FAISS と SQLite が不整合。フル再構築します。")
-        need_full_rebuild = True
-else:
-    need_full_rebuild = True
-
-# ---------- 4. history-all.jsonl 読み込み ----------
-if not HISTORY_PATH.exists():
-    sys.exit(f"ERROR: {HISTORY_PATH} が見つかりません")
-
-all_records = []
-with HISTORY_PATH.open(encoding="utf-8") as f:
-    for ln_no, line in enumerate(f, 1):
-        line = line.strip()
-        if not line:
-            continue
-        try:
-            obj = json.loads(line)
-        except json.JSONDecodeError as e:
-            sys.exit(f"JSONL パースエラー (行 {ln_no}): {e}")
-        for k in ("ts", "who", "text"):
-            if k not in obj:
-                sys.exit(f"行 {ln_no}: '{k}' がありません")
-
-        rec_id = make_id(obj["ts"], obj["who"], obj["text"])
-        all_records.append(
-            {
-                "id": rec_id,
-                "ts": obj["ts"],
-                "who": obj["who"],
-                "text": obj["text"],
-            }
-        )
-
-if not all_records:
-    print("注意: history-all.jsonl が空です。空インデックスのまま終了します。")
-    cur.execute("DELETE FROM history;")
-    conn.commit()
-    if IDX_PATH.exists():
-        IDX_PATH.unlink()
-    sys.exit(0)
-
-corpus_ids_set = {r["id"] for r in all_records}
-
-# history-all.jsonl から削除された id が SQLite に残っていればフル再構築
-if any(i not in corpus_ids_set for i in indexed_ids):
-    print("WARNING: history-all から削除された id が検出されました。フル再構築します。")
-    need_full_rebuild = True
-
-# ---------- 5. 埋め込みモデル ----------
-model = TextEmbedding(model_name=MODEL_NAME) if MODEL_NAME else TextEmbedding()
-
-# ---------- 6A. フル再構築 ----------
-if need_full_rebuild:
-    print("フル再構築中 …")
-    texts = [r["text"] for r in all_records]
-    emb_list = list(model.embed(texts))
-    if not emb_list:
-        print("埋め込み結果が空です。")
-        cur.execute("DELETE FROM history;")
-        conn.commit()
-        if IDX_PATH.exists():
-            IDX_PATH.unlink()
-        sys.exit(0)
-
-    emb = np.vstack(emb_list).astype("float32")
-    d   = emb.shape[1]
-    index = faiss.IndexFlatL2(d)
-    index.add(emb)
-    faiss.write_index(index, str(IDX_PATH))
-
-    cur.execute("DELETE FROM history;")
-    cur.executemany(
-        "INSERT INTO history(id, faiss_idx, ts, who, text) VALUES (?,?,?,?,?)",
-        [
-            (r["id"], idx, r["ts"], r["who"], r["text"])
-            for idx, r in enumerate(all_records)
-        ],
-    )
-    conn.commit()
-    print(f"再構築完了: ntotal={index.ntotal}")
-
-# ---------- 6B. 差分追加 ----------
-else:
-    new_records = [r for r in all_records if r["id"] not in indexed_ids]
-    if not new_records:
-        print("差分なし。")
-    else:
-        print(f"新規 {len(new_records)} 件の埋め込みを追加 …")
-        new_texts = [r["text"] for r in new_records]
-        emb_list = list(model.embed(new_texts))
-        if not emb_list:
-            print("新規レコードの埋め込みが空です。何も追加しません。")
-        else:
-            new_emb = np.vstack(emb_list).astype("float32")
-            index.add(new_emb)
-            faiss.write_index(index, str(IDX_PATH))
-
-            cur.executemany(
-                "INSERT INTO history(id, faiss_idx, ts, who, text) VALUES (?,?,?,?,?)",
-                [
-                    (r["id"], next_idx + i, r["ts"], r["who"], r["text"])
-                    for i, r in enumerate(new_records)
-                ],
-            )
-            conn.commit()
-            print(f"追加完了: ntotal={index.ntotal}")
-PY
-```
-```
-# ==== end-of-text を削る小さなフィルタ =========================
-# Qwen3 系 Instruct モデルや llama.cpp が出力する
-# 文字列 "[end of text]" を、出力全体から取り除きます。
-llm_strip_eot() {
-  printf '%s' "$1" \
-    | sed -E 's/\[end of text\]//g' \
-    | sed -E ':a;/[[:space:]]$/ {s/[[:space:]]$//; ba;}'
-}
-```
+がローカルキャッシュに入り、その後はオフラインで使えます。
