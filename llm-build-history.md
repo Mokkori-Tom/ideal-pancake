@@ -904,3 +904,9 @@ export FASTEMBED_CACHE_PATH
 mkdir -p "$FASTEMBED_CACHE_PATH"
 # → ここまで
 ```
+```
+CACHE_DIR = Path(os.environ.get("FASTEMBED_CACHE_PATH", str(Path.home() / ".cache" / "fastembed")))
+CACHE_DIR.mkdir(parents=True, exist_ok=True)
+
+model = TextEmbedding(model_name=MODEL_NAME, cache_dir=str(CACHE_DIR))
+```
