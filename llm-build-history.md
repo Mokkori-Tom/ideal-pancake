@@ -896,3 +896,11 @@ fastembed のモデル
 
 
 がローカルキャッシュに入り、その後はオフラインで使えます。
+
+```
+# ← ここから 3 行くらい追加
+FASTEMBED_CACHE_PATH="${FASTEMBED_CACHE_PATH:-$HOME/.cache/fastembed}"
+export FASTEMBED_CACHE_PATH
+mkdir -p "$FASTEMBED_CACHE_PATH"
+# → ここまで
+```
