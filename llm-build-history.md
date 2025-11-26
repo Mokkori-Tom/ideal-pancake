@@ -26,7 +26,7 @@ $HOME/
   llm-build-history-index.sh
   models/
     Qwen3-VL-4B-Instruct-IQ4_NL.gguf
-
+```
 埋め込みモデルは fastembed の多言語・軽量モデル
 sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 をデフォルトにしています。
 （環境変数で差し替え可能です）
@@ -122,7 +122,7 @@ HISTORY_EMBED_MODEL="intfloat/multilingual-e5-large" \
   ./llm-build-history-index.sh
 
 スクリプト全文
-
+```
 #!/usr/bin/env bash
 # llm-build-history-index.sh
 # ~/.llm-history/history-all.jsonl をベクトル化して
@@ -309,7 +309,7 @@ else:
             conn.commit()
             print(f"追加完了: ntotal={index.ntotal}")
 PY
-
+```
 
 ---
 
