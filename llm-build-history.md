@@ -389,7 +389,7 @@ IndexHNSWFlat → 近似検索（efSearch を環境変数で調整）
 を行います。
 
 簡易フロー
-
+```
 (1) ユーザー入力
        │
        ▼
@@ -402,7 +402,7 @@ IndexHNSWFlat → 近似検索（efSearch を環境変数で調整）
             ├─ history.sqlite + history.index を使ってベクトル検索
             │     （flat / hnsw はインデックス側に追従）
             └─ 履歴 + 検索結果をマージして JSON で llama.cpp へ
-
+```
 主な環境変数
 
 LLM 実行まわり
@@ -873,4 +873,26 @@ echo "$JSON_USER"   >>"$LLM_HISTORY_LOG"
 echo "$JSON_ASSIST" >>"$LLM_HISTORY_LOG"
 
 TMP_HIST2="$(mktemp)"
-tail -n "$LLM_HISTORY_MAX_TURNS" "$LLM_H
+tail -n "$LLM_HISTORY_MAX_TURNS" "$LLM_HISTORY_LOG" >"$TMP_HIST2" || true
+mv "$TMP_HIST2" "$LLM_HISTORY_LOG"
+```
+
+---
+
+3. オフライン運用のポイント
+
+一度オンラインで
+
+llm-build-history-index.sh
+
+llm.sh -ai "テスト"
+
+
+を実行しておくと
+
+uv のパッケージ
+
+fastembed のモデル
+
+
+がローカルキャッシュに入り、その後はオフラインで使えます。
