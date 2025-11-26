@@ -81,6 +81,11 @@ chmod +x ~/bin/llm.sh ~/bin/llm-build-history-index.sh
 mkdir -p ~/models
 # Qwen3 系 Instruct GGUF をダウンロードして、例えば:
 #   ~/models/Qwen3-VL-30B-A3B-Instruct-IQ4_NL.gguf
+
+# 1回だけ、ダウンロードを許可する
+HISTORY_LOCAL_ONLY=0 \
+FASTEMBED_CACHE_PATH="$HOME/.cache/fastembed" \
+bash llm-build-history-index.sh
 ```
 llm.sh 内の MODEL 変数を、お使いのモデルパスに合わせてあげてください。
 
