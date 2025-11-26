@@ -136,7 +136,7 @@ HNSW 構築時探索幅（デフォルト: 40 相当）
 
 
 使い方
-
+```
 # 既定（正確検索・flat）
 ./llm-build-history-index.sh
 
@@ -149,7 +149,7 @@ export HISTORY_HNSW_EF_CONSTRUCTION=64
 # 埋め込みモデルを切り替えたい場合
 HISTORY_EMBED_MODEL="intfloat/multilingual-e5-large" \
   ./llm-build-history-index.sh
-
+```
 スクリプト全文
 ```
 #!/usr/bin/env bash
@@ -355,7 +355,7 @@ else:
             conn.commit()
             print(f"追加完了: ntotal={index.ntotal}")
 PY
-
+```
 
 ---
 
@@ -445,7 +445,7 @@ LLM_PAYLOAD_DEBUG=1  : LLM へ渡す JSON ペイロードを pretty 表示
 使い方
 
 メモとして使う
-
+```
 # パイプでメモ
 echo "今日はお魚を食べた" | ./llm.sh
 
@@ -470,9 +470,9 @@ export HISTORY_HNSW_EF_SEARCH=64
 
 ./llm-build-history-index.sh
 ./llm.sh -ai 今日は何してたか振り返りたいな
-
+```
 スクリプト全文
-
+```
 #!/usr/bin/env bash
 # llm.sh — ts / who / text + now を使う履歴つきチャットラッパ
 #   -ai      : AI に質問して応答をもらう（会話モード）
