@@ -1,12 +1,13 @@
-# llm-history: ローカル履歴×ベクトル検索付き CLI チャット
+# llm-history: ローカル履歴 × ベクトル検索（近似検索対応）CLI チャット
 
 ローカルの会話履歴を JSONL で貯めつつ、  
-FAISS + SQLite でインデックスして、過去ログをベクトル検索しながら Qwen3 を回すためのミニセットです。
+FAISS + SQLite でインデックスして、過去ログを **近似近傍検索（HNSW）** しながら Qwen3 を回すためのミニセットです。
 
 - `llm.sh`  
   履歴付きチャットラッパ（メモ保存 / AI 会話）
 - `llm-build-history-index.sh`  
-  履歴 JSONL → SQLite + FAISS にベクトル化するビルダー
+  履歴 JSONL → SQLite + FAISS にベクトル化するビルダー  
+  （**正確検索 / 近似検索** を環境変数で切り替え）
 
 どちらも Docker 不要で、そのままホスト環境から使えます。
 
@@ -26,7 +27,7 @@ $HOME/
   llm-build-history-index.sh
   models/
     Qwen3-VL-4B-Instruct-IQ4_NL.gguf
-```
+
 埋め込みモデルは fastembed の多言語・軽量モデル
 sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 をデフォルトにしています。
 （環境変数で差し替え可能です）
@@ -91,9 +92,17 @@ fastembed が埋め込みモデル（ONNX）をダウンロード
 そうでなければ新規レコードだけ追記
 
 
+インデックス方式
+
+IndexFlatL2（正確検索）
+
+IndexHNSWFlat（近似検索）
+を環境変数で切り替え
+
+
 
 SQLite にはテキストとタイムスタンプを素のまま保存し、
-RAG 検索用 Python スクリプトからそのまま取り出せるようにしています。
+RAG 検索用スクリプトからそのまま取り出せるようにしています。
 
 主な環境変数
 
@@ -108,21 +117,41 @@ FAISS インデックス
 
 HISTORY_EMBED_MODEL
 埋め込みモデル名
-未指定時は
+未指定時:
 sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+
+HISTORY_INDEX_KIND
+インデックス種別
+
+flat（既定・正確検索）
+
+hnsw（近似検索）
+
+
+HISTORY_HNSW_M
+HNSW の近傍数（デフォルト: 32 相当）
+
+HISTORY_HNSW_EF_CONSTRUCTION
+HNSW 構築時探索幅（デフォルト: 40 相当）
 
 
 使い方
 
-# 既定パスでフルビルド or 差分ビルド
+# 既定（正確検索・flat）
 ./llm-build-history-index.sh
 
-# 埋め込みモデルを一時的に切り替えたい場合
+# 近似検索 HNSW でインデックスを構築したい場合
+export HISTORY_INDEX_KIND=hnsw
+export HISTORY_HNSW_M=32
+export HISTORY_HNSW_EF_CONSTRUCTION=64
+./llm-build-history-index.sh
+
+# 埋め込みモデルを切り替えたい場合
 HISTORY_EMBED_MODEL="intfloat/multilingual-e5-large" \
   ./llm-build-history-index.sh
 
 スクリプト全文
-```
+
 #!/usr/bin/env bash
 # llm-build-history-index.sh
 # ~/.llm-history/history-all.jsonl をベクトル化して
@@ -161,6 +190,8 @@ MODEL_NAME   = os.environ.get(
     "HISTORY_EMBED_MODEL",
     "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
 )
+# インデックス種別: flat（正確） / hnsw（近似）
+INDEX_KIND   = os.environ.get("HISTORY_INDEX_KIND", "flat")
 # ------------------------------------------
 
 
@@ -268,7 +299,22 @@ if need_full_rebuild:
 
     emb = np.vstack(emb_list).astype("float32")
     d   = emb.shape[1]
-    index = faiss.IndexFlatL2(d)
+
+    # インデックス種別で切り替え
+    if INDEX_KIND == "flat":
+        # 正確な L2 検索
+        index = faiss.IndexFlatL2(d)
+    elif INDEX_KIND == "hnsw":
+        # 近似検索（HNSW）
+        M = int(os.environ.get("HISTORY_HNSW_M", "32"))
+        index = faiss.IndexHNSWFlat(d, M)
+        index.hnsw.efConstruction = int(
+            os.environ.get("HISTORY_HNSW_EF_CONSTRUCTION", "40")
+        )
+    else:
+        raise SystemExit(f"ERROR: unsupported HISTORY_INDEX_KIND={INDEX_KIND!r}")
+
+    print(f"Using FAISS index kind: {INDEX_KIND}")
     index.add(emb)
     faiss.write_index(index, str(IDX_PATH))
 
@@ -309,7 +355,7 @@ else:
             conn.commit()
             print(f"追加完了: ntotal={index.ntotal}")
 PY
-```
+
 
 ---
 
@@ -333,6 +379,15 @@ AI 会話モード（-ai）
 履歴はすべて JSON 形式で保存され、
 システムプロンプトにしたがって LLM 側でも JSON をそのまま読める形になっています。
 
+検索は、インデックスの種類に応じて:
+
+IndexFlatL2 → 正確検索
+
+IndexHNSWFlat → 近似検索（efSearch を環境変数で調整）
+
+
+を行います。
+
 簡易フロー
 
 (1) ユーザー入力
@@ -345,7 +400,7 @@ AI 会話モード（-ai）
        └─ AI モード:
             │
             ├─ history.sqlite + history.index を使ってベクトル検索
-            │
+            │     （flat / hnsw はインデックス側に追従）
             └─ 履歴 + 検索結果をマージして JSON で llama.cpp へ
 
 主な環境変数
@@ -373,6 +428,8 @@ LLM_HISTORY_ARCHIVE（全履歴）
 HISTORY_DB, HISTORY_INDEX
 
 HISTORY_EMBED_MODEL（埋め込みモデル名）
+
+HISTORY_HNSW_EF_SEARCH（HNSW の検索幅、既定: 64）
 
 
 デバッグ
@@ -403,14 +460,19 @@ echo "最近のお魚の話、覚えてる？" | ./llm.sh -ai
 # 引数で質問
 ./llm.sh -ai 最近のお魚の話、覚えてる？
 
-多言語埋め込みモデル指定
-```
+多言語埋め込みモデル + 近似検索
+
 export HISTORY_EMBED_MODEL="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+export HISTORY_INDEX_KIND=hnsw
+export HISTORY_HNSW_M=32
+export HISTORY_HNSW_EF_CONSTRUCTION=64
+export HISTORY_HNSW_EF_SEARCH=64
+
 ./llm-build-history-index.sh
 ./llm.sh -ai 今日は何してたか振り返りたいな
-```
+
 スクリプト全文
-```
+
 #!/usr/bin/env bash
 # llm.sh — ts / who / text + now を使う履歴つきチャットラッパ
 #   -ai      : AI に質問して応答をもらう（会話モード）
@@ -669,6 +731,11 @@ index = faiss.read_index(str(IDX_PATH))
 if index.ntotal == 0:
     sys.exit(0)
 
+# HNSW インデックスなら efSearch を調整（flat のときは何も起こらない）
+ef_search = int(os.environ.get("HISTORY_HNSW_EF_SEARCH", "64"))
+if hasattr(index, "hnsw"):
+    index.hnsw.efSearch = ef_search
+
 # クエリを埋め込み
 q_emb = np.vstack(list(model.embed([query]))).astype("float32")
 D, I  = index.search(q_emb, TOPK)
@@ -806,26 +873,4 @@ echo "$JSON_USER"   >>"$LLM_HISTORY_LOG"
 echo "$JSON_ASSIST" >>"$LLM_HISTORY_LOG"
 
 TMP_HIST2="$(mktemp)"
-tail -n "$LLM_HISTORY_MAX_TURNS" "$LLM_HISTORY_LOG" >"$TMP_HIST2" || true
-mv "$TMP_HIST2" "$LLM_HISTORY_LOG"
-```
-
----
-
-3. オフライン運用のポイント
-
-一度オンラインで
-
-llm-build-history-index.sh
-
-llm.sh -ai "テスト"
-
-
-を実行しておくと
-
-uv のパッケージ
-
-fastembed のモデル
-
-
-がローカルキャッシュに入り、その後はオフラインで使えます。
+tail -n "$LLM_HISTORY_MAX_TURNS" "$LLM_H
