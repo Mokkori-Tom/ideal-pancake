@@ -302,9 +302,9 @@ mkdir -p "$FASTEMBED_CACHE_PATH"
 # ==== 基本設定 =================================================
 
 LLAMA_CLI="${LLAMA_CLI:-$HOME/llama.cpp/build/bin/llama-cli}"
-MODEL="${MODEL:-./models/Qwen3-VL-30B-A3B-Instruct-IQ4_NL.gguf}"
+MODEL="${MODEL:-$HOME/llm/models/Qwen3-VL-4B-Instruct-IQ4_NL.gguf}"
 
-CTX="${CTX:-16384}"
+CTX="${CTX:-8192}"
 BATCH="${BATCH:-512}"
 N_PREDICT="${N_PREDICT:--1}"
 SEED="${SEED:--1}"
@@ -316,7 +316,7 @@ LLM_DEBUG="${LLM_DEBUG:-0}"   # 1 にすると stderr を捨てず全部表示
 
 # 履歴ログ
 LLM_HISTORY_LOG="${LLM_HISTORY_LOG:-$HOME/.llm-history/history.jsonl}"              # プロンプト用ウィンドウ
-LLM_HISTORY_MAX_TURNS="${LLM_HISTORY_MAX_TURNS:-20}"                                 # ウィンドウに残す発言数
+LLM_HISTORY_MAX_TURNS="${LLM_HISTORY_MAX_TURNS:-4}"                                 # ウィンドウに残す発言数
 LLM_HISTORY_ARCHIVE="${LLM_HISTORY_ARCHIVE:-$HOME/.llm-history/history-all.jsonl}"   # 全履歴アーカイブ
 
 # ベクトル検索用 DB / INDEX
@@ -359,7 +359,7 @@ while [[ $# -gt 0 ]]; do
     *)
       break
       ;;
-  end
+  esac
 done
 
 # ==== 依存コマンド確認 =========================================
@@ -429,7 +429,7 @@ fi
 # 表示前にここでまとめてトリミングしておきます。
 llm_strip_eot() {
   printf '%s' "$1" \
-    | sed -E 's/end of text//g' \
+    | sed -E 's/\[end of text\]//g' \
     | sed -E ':a;/[[:space:]]$/ {s/[[:space:]]$//; ba;}'
 }
 
@@ -521,7 +521,7 @@ else:
 
 DB_PATH    = Path(os.environ["HISTORY_DB"])
 IDX_PATH   = Path(os.environ["HISTORY_INDEX"])
-TOPK       = int(os.environ.get("HISTORY_TOPK", "20"))
+TOPK       = int(os.environ.get("HISTORY_TOPK", "6"))
 NPROBE     = int(os.environ.get("HISTORY_NPROBE", "16"))
 MODEL_NAME = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"  # インデックス作成時と同じ設定に合わせる
 
