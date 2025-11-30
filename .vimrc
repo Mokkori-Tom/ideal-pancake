@@ -7,7 +7,7 @@ call plug#begin('~/.vim/plugged')
 
 " カラースキーム・Wiki・クリップボードなど
 Plug 'crusoexia/vim-monokai'
-Plug 'vimwiki/vimwiki'
+"Plug 'vimwiki/vimwiki'
 Plug 'ojroques/vim-oscyank'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
@@ -69,7 +69,7 @@ set path+=**
 " set suffixesadd+=.md,.txt,.py,.go
 
 " === vimwiki 設定 ===
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': 'md'}]
+"let g:vimwiki_list = [{'path': '~/vimwiki/', 'syntax': 'markdown', 'ext': 'md'}]
 
 " === LSP 操作 (vim-lsp) ===
 " classic ‘gd/gy/gi/gr’ を vim-lsp 版に
