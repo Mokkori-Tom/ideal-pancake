@@ -121,7 +121,6 @@ nnoremap <silent> <Space>q :bdelete<CR>
 "==================================================
 " LSP (vim-lsp / vim-lsp-settings)
 "==================================================
-" Plug マッピング（README や記事の例に沿った形）
 nmap <silent> gd <Plug>(lsp-definition)
 nmap <silent> gr <Plug>(lsp-references)
 nmap <silent> K  <Plug>(lsp-hover)
@@ -132,18 +131,17 @@ nmap <silent> ]g <Plug>(lsp-next-diagnostic)
 "==================================================
 " asyncomplete（自動ポップアップ）
 "==================================================
-" README / doc にある基本オプションに限定しています
 let g:asyncomplete_auto_popup   = 1     " 入力中に自動ポップアップ
 let g:asyncomplete_min_chars    = 1     " 1文字から候補を出す
 let g:asyncomplete_popup_delay  = 200   " 200ms 待ってから表示
 
-" すべてのバッファで有効化（公式の例と同じパターン）
+" すべてのバッファで有効化
 augroup AsyncompleteEnable
   autocmd!
   autocmd BufEnter * call asyncomplete#enable_for_buffer()
 augroup END
 
-" ソース登録（buffer / file / LSP）
+" ソース登録（buffer / file）※LSP はプラグイン側が自動登録
 augroup AsyncompleteSources
   autocmd!
 
@@ -163,33 +161,23 @@ augroup AsyncompleteSources
         \   'priority': 10,
         \   'completor': function('asyncomplete#sources#file#completor'),
         \ }))
-
-  " LSP 補完（asyncomplete-lsp.vim）
-  autocmd User asyncomplete_setup call asyncomplete#register_source(
-        \ asyncomplete#sources#lsp#get_source_options({
-        \   'name': 'lsp',
-        \   'whitelist': ['*'],
-        \   'priority': 15,
-        \ }))
 augroup END
 
-" PUM 操作（README でもよく紹介される形）
+" PUM 操作
 inoremap <expr> <Tab>    pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab>  pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <CR>     pumvisible() ? "\<C-y>" : "\<CR>"
 
-" 手動補完トリガー（README 記載の <C-Space>）
+" 手動補完トリガー
 inoremap <silent> <C-Space> <Plug>(asyncomplete_force_refresh)
 
 "==================================================
 " OSC52 Yank (vim-oscyank)
 "==================================================
-" README 推奨のマッピング
 nmap <leader>c  <Plug>OSCYankOperator
 nmap <leader>cc <leader>c_
 vmap <leader>c  <Plug>OSCYankVisual
 
-" yank したテキストを自動で OSC52 でコピー（README の :OSCYankRegister に沿った簡易版）
 if exists(':OSCYankRegister')
   augroup osc52_yank
     autocmd!
