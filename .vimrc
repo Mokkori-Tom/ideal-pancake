@@ -30,6 +30,9 @@ call plug#begin('~/.vim/plugged')
   Plug 'prabirshrestha/asyncomplete-lsp.vim'
   Plug 'prabirshrestha/asyncomplete-file.vim'
   Plug 'prabirshrestha/asyncomplete-buffer.vim'
+
+  " SKK (skk-cli + asyncomplete-skk)
+  Plug 'mattn/asyncomplete-skk.vim'
 call plug#end()
 
 "==================================================
@@ -65,7 +68,6 @@ set hlsearch
 set laststatus=2
 set updatetime=300
 
-" asyncomplete.vim 推奨の completeopt
 set completeopt=menuone,noinsert,noselect
 
 " gf 用
@@ -95,25 +97,19 @@ let g:fzf_files_options =
 "==================================================
 " ターミナル (<Space>t)
 "==================================================
-" 端末モード Esc → ノーマル
 tnoremap <Esc> <C-\><C-n>
 
 function! s:TermOpenOrInsert() abort
   if &buftype ==# 'terminal'
-    " 既存ターミナルならジョブモードに戻る
     startinsert
   else
-    " 現在のウィンドウでターミナルを開く
     terminal ++curwin
   endif
 endfunction
 
-" ノーマル: <Space>t → ターミナルを開く or 端末モードへ
 nnoremap <silent> <leader>t :call <SID>TermOpenOrInsert()<CR>
-" 端末モード: <Space>t → ノーマルモードへ
 tnoremap <silent> <leader>t <C-\><C-n>
 
-" バッファ切り替え / 閉じる
 nnoremap <Tab>   :bnext<CR>
 nnoremap <S-Tab> :bprevious<CR>
 nnoremap <silent> <Space>q :bdelete<CR>
@@ -129,31 +125,25 @@ nmap <silent> [g <Plug>(lsp-previous-diagnostic)
 nmap <silent> ]g <Plug>(lsp-next-diagnostic)
 
 "==================================================
-" asyncomplete（自動ポップアップ）
+" asyncomplete
 "==================================================
-let g:asyncomplete_auto_popup   = 1     " 入力中に自動ポップアップ
-let g:asyncomplete_min_chars    = 1     " 1文字から候補を出す
-let g:asyncomplete_popup_delay  = 200   " 200ms 待ってから表示
+let g:asyncomplete_auto_popup   = 1
+let g:asyncomplete_min_chars    = 1
+let g:asyncomplete_popup_delay  = 200
 
-" すべてのバッファで有効化
 augroup AsyncompleteEnable
   autocmd!
   autocmd BufEnter * call asyncomplete#enable_for_buffer()
 augroup END
 
-" ソース登録（buffer / file）※LSP はプラグイン側が自動登録
 augroup AsyncompleteSources
   autocmd!
-
-  " バッファ内の単語
   autocmd User asyncomplete_setup call asyncomplete#register_source(
         \ asyncomplete#sources#buffer#get_source_options({
         \   'name': 'buffer',
         \   'whitelist': ['*'],
         \   'completor': function('asyncomplete#sources#buffer#completor'),
         \ }))
-
-  " ファイルパス
   autocmd User asyncomplete_setup call asyncomplete#register_source(
         \ asyncomplete#sources#file#get_source_options({
         \   'name': 'file',
@@ -163,13 +153,17 @@ augroup AsyncompleteSources
         \ }))
 augroup END
 
-" PUM 操作
 inoremap <expr> <Tab>    pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab>  pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <CR>     pumvisible() ? "\<C-y>" : "\<CR>"
 
-" 手動補完トリガー
 inoremap <silent> <C-Space> <Plug>(asyncomplete_force_refresh)
+
+"==================================================
+" SKK (asyncomplete-skk + skk-cli)
+"==================================================
+" 挿入モードで C-j で SKK ON/OFF
+imap <silent> <C-j> <Plug>(asyncomplete-skk-toggle)
 
 "==================================================
 " OSC52 Yank (vim-oscyank)
