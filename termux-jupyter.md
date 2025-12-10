@@ -79,7 +79,9 @@ c.NotebookApp.token = 'my-secret-token-123'
 保存したら、あとはいつも通り：
 ```
 jupyter notebook --ip=0.0.0.0 --no-browser
-# または
+```
+または
+```
 jupyter-lab --ip=0.0.0.0 --no-browser
 ```
 ブラウザからは
@@ -88,6 +90,11 @@ http://127.0.0.1:8888/?token=my-secret-token-123
 ```
 のようにアクセスできます。
 
+おまけ。
+起動時トークン指定
+```
+jupyter notebook --ip=0.0.0.0 --no-browser --NotebookApp.token='my-token'
+```
 
 ---
 
