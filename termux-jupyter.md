@@ -7,7 +7,7 @@
 pkg update
 pkg upgrade
 
-pkg install python build-essential libffi libzmq pkg-config
+pkg install python build-essential libffi libzmq clang make cmake binutils pkg-config
 ```
 
 ---
