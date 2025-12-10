@@ -96,6 +96,9 @@ http://127.0.0.1:8888/?token=my-secret-token-123
 jupyter notebook --ip=0.0.0.0 --no-browser --NotebookApp.token='my-token'
 ```
 
+```
+jupyter lab --ip=0.0.0.0 --no-browser --ServerApp.token='my-token'
+```
 ---
 
 5. 将来のためのメモ（お好みで）
